@@ -1,0 +1,45 @@
+# Change Log
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](http://keepachangelog.com/).
+
+
+## [0.0.6] - 2016-10-2
+### Added
+- Image loading capabilities
+- Basic SpriteSheet cropping 
+- KeyManager, Animation, Assets classes outlined (not fully implemented)
+
+
+## [0.0.5] - 2016-09-30
+### Added
+- Implemented State and GameState to manage different states or phases 
+of the game.
+
+
+## [0.0.4] - 2016-09-28
+### Added
+- Player rendered as a red block
+- Basic player movement implemented
+- World and Tile classes are outlined (not fully implemented)
+
+
+## [0.0.3] - 2016-09-25
+### Added
+- Enemy, StaticEntity, Projectile to the Entity Hierarchy.
+- Various images and sounds
+- Stub functions to prepare for graphics rendering
+- EntityManager to contain Entity objects and control their interactions.
+- Basic user interface sketched (not put into code)
+
+
+## [0.0.2] - 2016-09-23
+### Added
+- Entity hierarchy basic structure implemented: Entity, Creature,  
+and Player classes outlined with stub functions.
+- Handler to manage important Objects that will be passed between classes.
+
+## [0.0.1] - 2016-09-22
+### Added
+- Main Game Loop Run's properly
+- Blank JFrame is displayed 
