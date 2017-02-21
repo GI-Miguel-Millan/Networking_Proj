@@ -1,17 +1,29 @@
 package networking.project.game;
 
-/**
- *	Launches the game.
- *
- *	@author 
- *	@version 1.0
- *	@since version 1.0
- */
+import java.util.*;
+
 public class Launcher {
 
 	public static void main(String[] args){
-		Game game = new Game("Shoot'em up Good!", 500, 750);
-		game.start();
+		System.out.println("Host: Y or N ?");
+		Scanner input = new Scanner(System.in);
+		if(input.next().trim().toUpperCase().equals("Y")){
+			System.out.println("How many players?");
+			try{
+				new Server(input.nextInt()).startServer();
+			}catch(Exception e){
+				System.out.println("not a valid input, default to 1 player");
+				e.printStackTrace();
+				new Server(1).startServer();
+			}
+		}
+		
+		new Client().start();
+		
+		
+		
+		
+		
 	}
 	
 }
