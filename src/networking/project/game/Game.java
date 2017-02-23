@@ -55,6 +55,7 @@ public class Game implements Runnable {
 		this.width = width;
 		this.height = height;
 		this.title = title;
+		handler = new Handler(this);
 		keyManager = new KeyManager();
 		mouseManager = new MouseManager();
 	}
@@ -71,7 +72,7 @@ public class Game implements Runnable {
 		display.getCanvas().addMouseMotionListener(mouseManager);
 		Assets.init();
 		//Sound.background.play();//New jon edit
-		handler = new Handler(this);
+		
 		handler.loadHighScore();
 		gameState = new GameState(handler);
 		GameOverState = new GameOverState(handler);
@@ -89,11 +90,6 @@ public class Game implements Runnable {
 	 */
 	private void tick(){
 		keyManager.tick();
-		
-//		if(keyManager.ctrl && keyManager.mute && keyManager.wasReleased){
-//			Game.MUTED = !Game.MUTED;
-//			keyManager.wasReleased = false;
-//		}
 		
 		if(State.getState() != null && !getPAUSED())
 			State.getState().tick();
@@ -251,6 +247,13 @@ public class Game implements Runnable {
 		return (GameState) gameState;
 	}
 	
+	public Handler getHandler(){
+		return this.handler;
+	}
+	
+	public String getPlayerInput(){
+		return "This is temp input";
+	}
 }
 
 

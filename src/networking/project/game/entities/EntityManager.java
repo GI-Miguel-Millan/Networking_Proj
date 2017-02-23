@@ -22,7 +22,6 @@ import networking.project.game.entities.statics.powerups.PowerUp;
 public class EntityManager {
 	
 	private Handler handler;
-	private Player player;
 	private ArrayList<Entity> entities;
 	private Comparator<Entity> renderSorter = new Comparator<Entity>(){
 		@Override
@@ -33,11 +32,11 @@ public class EntityManager {
 		}
 	};
 	
-	public EntityManager(Handler handler, Player player){
+	public EntityManager(Handler handler, ArrayList<Player> player){
 		this.handler = handler;
-		this.player = player;
 		entities = new ArrayList<Entity>();
-		addEntity(player);
+		for (Player p: player)
+			addEntity(p);
 	}
 	
 	/**
@@ -171,22 +170,6 @@ public class EntityManager {
 	 */
 	public void setHandler(Handler handler) {
 		this.handler = handler;
-	}
-
-	/**
-	 * @return player
-	 */
-	public Player getPlayer() {
-		return player;
-	}
-
-	/**
-	 * Sets a new player to be the player.
-	 * 
-	 * @param player
-	 */
-	public void setPlayer(Player player) {
-		this.player = player;
 	}
 
 	/**

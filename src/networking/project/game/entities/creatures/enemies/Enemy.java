@@ -2,6 +2,7 @@ package networking.project.game.entities.creatures.enemies;
 
 import networking.project.game.Handler;
 import networking.project.game.entities.creatures.Creature;
+import networking.project.game.entities.creatures.Player;
 import networking.project.game.entities.creatures.projectiles.Projectile;
 import networking.project.game.utils.Utils;
 
@@ -30,8 +31,9 @@ public abstract class Enemy extends Creature{
 	@Override
 	public void tick(){
 		if (isOnScreen()){
-			playerX = (int)handler.getWorld().getEntityManager().getPlayer().getX();
-			playerY = (int)handler.getWorld().getEntityManager().getPlayer().getY();
+			// Will need to rework for multiple screens
+//			playerX = (int)handler.getWorld().getEntityManager().getPlayer().getX();
+//			playerY = (int)handler.getWorld().getEntityManager().getPlayer().getY();
 			//Set x and y movement values
 			AIMove();
 			
@@ -72,7 +74,7 @@ public abstract class Enemy extends Creature{
 	public void collisionWithPlayer(){
 		
 				if(intersectWithPlayer() && ready){
-					handler.getWorld().getEntityManager().getPlayer().hurt(1);
+					hurtPlayer(1);
 					ready = false;
 				}
 				
@@ -87,25 +89,38 @@ public abstract class Enemy extends Creature{
 	}
 	
 	public boolean isOnScreen(){
-		if (y >= (((handler.getGameCamera().getyOffset() - height))) 
-				&& y < (((handler.getGameCamera().getyOffset() + handler.getGame().getHeight())))){
-			return true;
-		}else{
-			return false;
-		}
+//		if (y >= (((handler.getGameCamera().getyOffset() - height))) 
+//				&& y < (((handler.getGameCamera().getyOffset() + handler.getGame().getHeight())))){
+//			return true;
+//		}else{
+//			return false;
+//		}
+		
+		return true;
 	}
 	
 	/**
 	 * @return true if this enemy intersects with the player.
 	 */
 	public boolean intersectWithPlayer(){
-		if(handler.getWorld().getEntityManager().getPlayer().getCollisionBounds(0f, 0f).intersects(getCollisionBounds(xMove, yMove))){
+		for(Player p: handler.getPlayers()){
+			if(p.getCollisionBounds(0f, 0f).intersects(getCollisionBounds(xMove, yMove))){
 			return true;
+			}
 		}
-		
 		return false;
 	}
 	
+	/**
+	 * finds and hurts player which collided with this enemy.
+	 */
+	public void hurtPlayer(int dmg){
+		for(Player p: handler.getPlayers()){
+			if(p.getCollisionBounds(0f, 0f).intersects(getCollisionBounds(xMove, yMove))){
+				p.hurt(dmg);
+			}
+		}
+	}
 	/**
 	 * 
 	 * 

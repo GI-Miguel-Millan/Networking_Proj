@@ -141,7 +141,6 @@ public class GameState extends State {
 	public void displayState(){
 		Sound.stopAll();
 		State.setState(handler.getGame().getGameState());
-		handler.setPlayer(new Player(handler, 100, 100));
 		handler.setLvlCounter(1);
 		world = new World(handler, Assets.fileNames[handler.getLvlCounter()]); // fileNames[1] = world1.txt
 		handler.setWorld(world);

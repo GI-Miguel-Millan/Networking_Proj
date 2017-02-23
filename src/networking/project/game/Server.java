@@ -12,7 +12,9 @@ public class Server implements Runnable{
 	private Thread thread;
 	private boolean running = false;
 	private final int number_of_players;
-	private ArrayList<Player> players = new ArrayList<Player>();
+	private int GAMEWIDTH = 640;
+	private int GAMEHEIGHT = 480;
+	private Game game = new Game("Battle Arena", GAMEWIDTH, GAMEHEIGHT);
 	
 	public Server(int numPlayers){
 		this.number_of_players = numPlayers;
@@ -40,6 +42,7 @@ public class Server implements Runnable{
 		try {
 			server_socket = new DatagramSocket(7777);
 			
+			
 			byte[] buffer = new byte[65536];
 			DatagramPacket incoming = new DatagramPacket(buffer, buffer.length);
 			
@@ -55,18 +58,17 @@ public class Server implements Runnable{
 					delta--;
 				}
 				
+				
 				// Get client data
 				server_socket.receive(incoming);
-				
-				
 				byte[] data = incoming.getData();
 				String s = new String(data, 0, incoming.getLength());
 				
 				// Do stuff with client data
-				s = "echo from the server: " + s;
+				evaluateCommand(s, incoming, server_socket);
 				// Return data to client
-				DatagramPacket dp = new DatagramPacket(s.getBytes(), s.getBytes().length , incoming.getAddress(), incoming.getPort());
-				server_socket.send(dp);
+				//DatagramPacket dp = new DatagramPacket(s.getBytes(), s.getBytes().length , incoming.getAddress(), incoming.getPort());
+				//server_socket.send(dp);
 			}
 			
 			stop();
@@ -75,8 +77,34 @@ public class Server implements Runnable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * This method will evaluate the command sent from the client to
+	 * determine which actions the server should take.
+	 * @throws IOException 
+	 */
+	private void evaluateCommand(String str, DatagramPacket clientDatagram, DatagramSocket serverSocket) throws IOException{
+		String[] commands = {"init"};
 		
-		
+		if(str.contains(commands[0])){
+			this.game.getHandler().getPlayers().add(new Player(game.getHandler(),0,0,clientDatagram.getAddress(), clientDatagram.getPort()));
+			
+			if (game.getHandler().getPlayers().size() == this.number_of_players){
+				String s = "start Battle_Arena " + GAMEWIDTH + " " + GAMEHEIGHT + " " + this.number_of_players;
+				for (Player p2: game.getHandler().getPlayers()){
+					s = s + " " + p2.getIP().getHostAddress() + " " + p2.getPort();
+				}
+				
+				for (Player p: game.getHandler().getPlayers()){
+					serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, p.getIP(), p.getPort()));
+					
+				}
+			}else{
+				String s = "waiting for players";
+				serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
+			}
+		}
 	}
 	
 	/**

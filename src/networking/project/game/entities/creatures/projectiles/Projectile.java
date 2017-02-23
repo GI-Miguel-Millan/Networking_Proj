@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import networking.project.game.Handler;
 import networking.project.game.entities.Entity;
 import networking.project.game.entities.creatures.Creature;
+import networking.project.game.entities.creatures.Player;
 import networking.project.game.gfx.Assets;
 import networking.project.game.sound.Sound;
 
@@ -97,13 +98,13 @@ public class Projectile extends Creature{
 			if(e.getCollisionBounds(0, 0).intersects(getCollisionBounds(xMove,yMove))){
 			
 				// If this projectile collides with the player hurt it.
-				if(e.equals(handler.getWorld().getEntityManager().getPlayer()) && !handler.getPlayer().getIsInvinc()){
+				if(e.getClass().equals(Player.class) && !e.getIsInvinc()){
 					e.hurt(1);
 				}
 					
 				// If the creator of this projectile is the player, then it should hurt
 				// all other entities (except FireBalls).
-				if(creator.equals(handler.getWorld().getEntityManager().getPlayer()) && !e.getClass().equals(FireBall.class))
+				if(creator.getClass().equals(Player.class) && !e.getClass().equals(FireBall.class))
 					e.hurt(1);
 				
 				// Regardless of whether or not the projectile deals damage,

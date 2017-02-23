@@ -46,9 +46,9 @@ public class DarkTumorRang extends Boss{
 				readyFire = true;
 				shootCounter = 0;
 			}
-			
-			playerX = (int)handler.getWorld().getEntityManager().getPlayer().getX();
-			playerY = (int)handler.getWorld().getEntityManager().getPlayer().getY();
+//			
+//			playerX = (int)handler.getWorld().getEntityManager().getPlayer().getX();
+//			playerY = (int)handler.getWorld().getEntityManager().getPlayer().getY();
 			//Set x and y movement values
 			AIMove();
 			
@@ -61,17 +61,17 @@ public class DarkTumorRang extends Boss{
 		
 	}
 	
-	@Override
-	public void AIMove(){
-		
-		if(handler.getWorld().getEntityManager().getPlayer().getX() > x){
-			xMove = Utils.randomNum(2, 3);
-		}else if (handler.getWorld().getEntityManager().getPlayer().getX() < x){
-			xMove = -(Utils.randomNum(2, 3));
-		}else {
-			xMove =0;
-		}
-	}
+//	@Override
+//	public void AIMove(){
+//		
+//		if(handler.getWorld().getEntityManager().getPlayer().getX() > x){
+//			xMove = Utils.randomNum(2, 3);
+//		}else if (handler.getWorld().getEntityManager().getPlayer().getX() < x){
+//			xMove = -(Utils.randomNum(2, 3));
+//		}else {
+//			xMove =0;
+//		}
+//	}
 	
 	private BufferedImage getCurrentAnimationFrame(){
 		if(xMove < 0){
@@ -83,33 +83,33 @@ public class DarkTumorRang extends Boss{
 		}
 	}
 	
-	@Override
-	public void attack(){
-		// DarkTumorRang spawns a DarkLaser whenever the player attacks
-		if(handler.getKeyManager().fire && readyFire){
-			handler.getWorld().getEntityManager().addEntity(new DarkLaser(handler, this, getProjectileOrientation(), -3));
-			readyFire = false;
-		}
-		
-		int randAttack = Utils.randomNum(0, 50);
-		if(randAttack == 0){
-			handler.getWorld().getEntityManager().addEntity(new DarkLaser(handler, this, getProjectileOrientation(),0));
-		}else if(randAttack == 1){
-			if (getProjectileOrientation() == 0 || getProjectileOrientation() == 1){
-				handler.getWorld().getEntityManager().addEntity
-						(new DarkLaser(handler, this, getProjectileOrientation(), -(width/2)));
-				handler.getWorld().getEntityManager().addEntity
-						(new DarkLaser(handler, this, getProjectileOrientation(), width/2));
-			}else{
-				handler.getWorld().getEntityManager().addEntity
-						(new DarkLaser(handler, this, getProjectileOrientation(), -(height/2)));
-				handler.getWorld().getEntityManager().addEntity
-						(new DarkLaser(handler, this, getProjectileOrientation(), height/2));
-			}
-			
-		}
-		
-		collisionWithPlayer();
-	}
+//	@Override
+//	public void attack(){
+//		// DarkTumorRang spawns a DarkLaser whenever the player attacks
+//		if(handler.getKeyManager().fire && readyFire){
+//			handler.getWorld().getEntityManager().addEntity(new DarkLaser(handler, this, getProjectileOrientation(), -3));
+//			readyFire = false;
+//		}
+//		
+//		int randAttack = Utils.randomNum(0, 50);
+//		if(randAttack == 0){
+//			handler.getWorld().getEntityManager().addEntity(new DarkLaser(handler, this, getProjectileOrientation(),0));
+//		}else if(randAttack == 1){
+//			if (getProjectileOrientation() == 0 || getProjectileOrientation() == 1){
+//				handler.getWorld().getEntityManager().addEntity
+//						(new DarkLaser(handler, this, getProjectileOrientation(), -(width/2)));
+//				handler.getWorld().getEntityManager().addEntity
+//						(new DarkLaser(handler, this, getProjectileOrientation(), width/2));
+//			}else{
+//				handler.getWorld().getEntityManager().addEntity
+//						(new DarkLaser(handler, this, getProjectileOrientation(), -(height/2)));
+//				handler.getWorld().getEntityManager().addEntity
+//						(new DarkLaser(handler, this, getProjectileOrientation(), height/2));
+//			}
+//			
+//		}
+//		
+//		collisionWithPlayer();
+//	}
 
 }

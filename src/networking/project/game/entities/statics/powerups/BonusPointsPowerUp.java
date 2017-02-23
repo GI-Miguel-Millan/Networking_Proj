@@ -25,7 +25,7 @@ public class BonusPointsPowerUp extends PowerUp{
 	
 	public void die(){
 		active = false;
-		handler.getPlayer().addScore(250);
+		//handler.getPlayer().addScore(250);
 	}
 	
 }

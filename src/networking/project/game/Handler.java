@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import networking.project.game.entities.creatures.Player;
 import networking.project.game.gfx.Assets;
@@ -28,7 +29,7 @@ public class Handler {
 	private World world;
 	private int playerScore;
 	private int playerHealth;
-	private Player player;
+	private ArrayList<Player> players = new ArrayList<Player>();
 	private int lvlCounter = 1;
 	private static final int NUMBER_LEVELS = 4;
 	private boolean isTransitioning = false;
@@ -143,13 +144,6 @@ public class Handler {
 		return playerHealth;
 	}
 
-	public Player getPlayer() {
-		return player;
-	}
-
-	public void setPlayer(Player player) {
-		this.player = player;
-	}
 	
 	public void setIsTransitioning(boolean b){
 		isTransitioning = b;
@@ -243,4 +237,8 @@ public class Handler {
 		        }
 		}
 	
+	public ArrayList<Player> getPlayers(){
+		return this.players;
+	}
+		
 }

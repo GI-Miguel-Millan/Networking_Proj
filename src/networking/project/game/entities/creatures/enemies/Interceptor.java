@@ -40,28 +40,28 @@ public class Interceptor extends Enemy{
 		
 	}
 	
-	public void AIMove(){
-		if(handler.getPlayer().getX() - speed > x){
-			xMove = speed/2;
-		}else if (handler.getPlayer().getX()+speed < x){
-			xMove = -speed/2;
-		}else {
-			xMove =0;
-		}
-		
-		if(handler.getPlayer().getY() - speed > y){
-			yMove = speed;
-		}else if (handler.getPlayer().getY() + speed < y){
-			yMove = -speed;
-		}else {
-			yMove =0;
-		}
-		
-	}
+//	public void AIMove(){
+//		if(handler.getPlayer().getX() - speed > x){
+//			xMove = speed/2;
+//		}else if (handler.getPlayer().getX()+speed < x){
+//			xMove = -speed/2;
+//		}else {
+//			xMove =0;
+//		}
+//		
+//		if(handler.getPlayer().getY() - speed > y){
+//			yMove = speed;
+//		}else if (handler.getPlayer().getY() + speed < y){
+//			yMove = -speed;
+//		}else {
+//			yMove =0;
+//		}
+//		
+//	}
 	
 	public void attack(){
 		if(intersectWithPlayer()){
-			handler.getWorld().getEntityManager().getPlayer().hurt(5);
+			hurtPlayer(5);
 			this.hurt(this.health);
 		}
 	}
@@ -79,8 +79,6 @@ public class Interceptor extends Enemy{
 
 	@Override
 	public void die() {
-		// An Interceptor death adds 100 to the player score
-		handler.getWorld().getEntityManager().getPlayer().addScore(50);
 		Sound.explosion.execute();//New jon edit
 	}
 

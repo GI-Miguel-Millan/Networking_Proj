@@ -5,6 +5,7 @@ import java.awt.Graphics;
 
 import networking.project.game.Handler;
 import networking.project.game.entities.Entity;
+import networking.project.game.entities.creatures.Player;
 import networking.project.game.gfx.Assets;
 
 /**
@@ -40,13 +41,13 @@ public class FireBall extends Projectile {
 			if(e.getCollisionBounds(0, 0).intersects(getCollisionBounds(0,yMove))){
 			
 				// If this projectile collides with the player hurt it.
-				if(e.equals(handler.getWorld().getEntityManager().getPlayer()) && !handler.getPlayer().getIsInvinc()){
+				if(e.getClass().equals(Player.class) && !e.getIsInvinc()){
 					e.hurt(2);
 				}
 					
 				// If the creator of this projectile is the player, then it should hurt
 				// all other entities.
-				if(creator.equals(handler.getWorld().getEntityManager().getPlayer())){
+				if(creator.getClass().equals(Player.class)){
 					e.hurt(2);
 				}
 				

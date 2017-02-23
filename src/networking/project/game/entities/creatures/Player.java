@@ -3,6 +3,7 @@ package networking.project.game.entities.creatures;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.net.*;
 
 import networking.project.game.Handler;
 import networking.project.game.entities.creatures.projectiles.*;
@@ -27,6 +28,11 @@ public class Player extends Creature {
 	//Animations
 	private Animation animDown, animUp, animLeft, animRight,
 						hurtDown, hurtUp, hurtLeft, hurtRight;
+	
+	//Networking info
+	private InetAddress ip;
+	private int port;
+	
 	private boolean readyFire;
 	private int counter;
 	private int score = 1000;
@@ -36,7 +42,6 @@ public class Player extends Creature {
 	private Rectangle playerBounds = new Rectangle(16,22,32,12);
 	private boolean isBossDead = false,
 					isHurt = false,
-					isInvinc = false,
 					isSpdUp = false,
 					isSplitShot = false,
 					fightingBoss = false,
@@ -44,7 +49,7 @@ public class Player extends Creature {
 					underSlowEffect = false;
 	
 	
-	public Player(Handler handler, float x, float y) {
+	public Player(Handler handler, float x, float y, InetAddress ip, int port) {
 		super(handler, x, y, Creature.DEFAULT_CREATURE_WIDTH, Creature.DEFAULT_CREATURE_HEIGHT);
 		
 		bounds = playerBounds;
@@ -54,6 +59,9 @@ public class Player extends Creature {
 		speed = 3;
 		handler.setPlayerHealth(health);
 		handler.setPlayerScore(score);
+		
+		this.ip = ip;
+		this.port = port;
 		
 		//Animatons
 		animDown = new Animation(500, Assets.player_down);
@@ -488,4 +496,11 @@ public class Player extends Creature {
 		return isInvinc;
 	}
 	
+	public InetAddress getIP(){
+		return this.ip;
+	}
+	
+	public int getPort(){
+		return this.port;
+	}
 }

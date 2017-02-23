@@ -25,8 +25,8 @@ public class InvincibilityPowerUp extends PowerUp{
 	
 	public void die() {
 		active = false;
-		handler.getPlayer().powerDown();
-		handler.getPlayer().setIsInvic(true);
+//		handler.getPlayer().powerDown();
+//		handler.getPlayer().setIsInvic(true);
 	}
 	
 }

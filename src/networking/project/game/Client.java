@@ -2,14 +2,19 @@ package networking.project.game;
 
 import java.io.*;
 import java.util.*;
+
+import networking.project.game.entities.creatures.Player;
+
 import java.net.*;
 
 public class Client implements Runnable {
 	private Thread thread;
 	private boolean running = false;
+	private Game game = null;
+	private boolean sendData = false;
 	
 	private void tick(){
-			
+		System.out.println("hi");
 	}
 	
 	@Override
@@ -19,8 +24,6 @@ public class Client implements Runnable {
 		double delta = 0;
 		long now;
 		long lastTime = System.nanoTime();
-		long timer = 0;
-		int ticks = 0;
 		
 		DatagramSocket client_socket = null;
 		int port = 7777;
@@ -33,35 +36,33 @@ public class Client implements Runnable {
 			
 			InetAddress host = InetAddress.getByName((String)cin.readLine());
 			
+			String cmd = "init";
+			byte[] b = cmd.getBytes();
+			
+			DatagramPacket dp = new DatagramPacket(b, b.length, host, port);
+			client_socket.send(dp);
+			
 			while(running){
 				now = System.nanoTime();
 				delta += (now - lastTime) / timePerTick;
-				timer += now - lastTime;
 				lastTime = now;
 				
 				if(delta >= 1){
 						tick();
-					ticks++;
 					delta--;
 				}
-				
-				// Send data to the server
-				System.out.println("enter test text:");
-				String s = (String)cin.readLine();
-				byte[] b = s.getBytes();
-				
-				DatagramPacket dp = new DatagramPacket(b, b.length, host, port);
-				client_socket.send(dp);
-				
 				// Get data from server
-				byte[] buffer = new byte[65536];
+				byte[] buffer = new byte[1460];
 				DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 				client_socket.receive(reply);
 				
 				byte[] data = reply.getData();
-				s = new String(data, 0, reply.getLength());
+				String ans = new String(data, 0, reply.getLength());
 				
-				System.out.println(s);
+				cmd = evaluateData(ans);
+				if(sendData){
+					
+				}
 			}
 			stop();
 			
@@ -76,6 +77,38 @@ public class Client implements Runnable {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	private String evaluateData(String messageFromServer) throws NumberFormatException, UnknownHostException{
+		String[] commands = {"wait", "start"};
+		
+		System.out.println(messageFromServer);
+		if (messageFromServer.contains(commands[0])){
+			sendData = false;
+			return null;
+		}else if(messageFromServer.contains(commands[1])){
+			// gameVars format: "start title width height number_of_players P1_address P1_port P2_address P2_port P3_address P3_port P4_address P4_port"
+			String[] gameVars = messageFromServer.split("\\s");
+			game = new Game(gameVars[1], Integer.parseInt(gameVars[2]), Integer.parseInt(gameVars[3]));
+			
+			int numP = Integer.parseInt(gameVars[4]);
+			System.out.println(numP);
+			int j = 5;
+			for (int i =0; i < numP; i++){
+				System.out.println(j);
+				int port = Integer.parseInt(gameVars[j+1]);
+				game.getHandler().getPlayers().add(new Player(game.getHandler(), 0, 0, InetAddress.getByName(gameVars[j]), port));
+				System.out.println(j);
+				j+=2;
+			}
+			
+			game.start();
+			sendData = true;
+			
+			return game.getPlayerInput();
+		}
+		
+		return null;
 	}
 	
 	/**

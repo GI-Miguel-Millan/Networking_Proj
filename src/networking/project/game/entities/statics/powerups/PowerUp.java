@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import networking.project.game.Handler;
 import networking.project.game.entities.Entity;
+import networking.project.game.entities.creatures.Player;
 import networking.project.game.entities.statics.StaticEntity;
 import networking.project.game.utils.Utils;
 
@@ -26,9 +27,12 @@ public class PowerUp extends StaticEntity{
 
 	@Override
 	public void tick() {
-		if(handler.getPlayer().getCollisionBounds(0, 0).intersects(getCollisionBounds(0,0))){
+		for(Player p: handler.getPlayers()){
+			if(p.getCollisionBounds(0, 0).intersects(getCollisionBounds(0,0))){
 			this.die();
 		}
+		}
+		
 		
 		counter++;
 		if(counter >= 300){

@@ -51,15 +51,14 @@ public class AssaultFighter extends Enemy{
 	public void collisionWithPlayer(){
 		
 		if(intersectWithPlayer()){
-			handler.getWorld().getEntityManager().getPlayer().hurt(10);
+			hurtPlayer(10);
 			this.hurt(this.health);
 		}
 }
 
 	@Override
 	public void die() {
-		// Add 150 to the players score whenever an AssaultFighter dies.
-		handler.getWorld().getEntityManager().getPlayer().addScore(150);
+		
 		Sound.explosion.execute();//New jon edit
 		
 	}

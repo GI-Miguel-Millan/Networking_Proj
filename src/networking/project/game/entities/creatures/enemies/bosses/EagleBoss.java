@@ -50,8 +50,8 @@ public class EagleBoss extends Boss{
 			canMove = true;
 		}
 		if(canMove){
-			playerX = (int)handler.getWorld().getEntityManager().getPlayer().getX();
-			playerY = (int)handler.getWorld().getEntityManager().getPlayer().getY();
+//			playerX = (int)handler.getWorld().getEntityManager().getPlayer().getX();
+//			playerY = (int)handler.getWorld().getEntityManager().getPlayer().getY();
 			
 			//Attack of the enemy
 			if(!waitHalfSec)

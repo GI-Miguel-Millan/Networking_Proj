@@ -30,24 +30,24 @@ public class StealthFighter extends Enemy{
 		
 	}
 
-	@Override
-	public void tick(){
-		if (isOnScreen()){
-			playerX = (int)handler.getWorld().getEntityManager().getPlayer().getX();
-			playerY = (int)handler.getWorld().getEntityManager().getPlayer().getY();
-			//Set x and y movement values
-			AIMove();
-			
-			//Movement of the enemy
-			move();
-			
-			//Attack of the enemy
-			if(isAttacking)
-				attack();
-			
-		}
-		
-	}
+//	@Override
+//	public void tick(){
+//		if (isOnScreen()){
+////			playerX = (int)handler.getWorld().getEntityManager().getPlayer().getX();
+////			playerY = (int)handler.getWorld().getEntityManager().getPlayer().getY();
+//			//Set x and y movement values
+//			AIMove();
+//			
+//			//Movement of the enemy
+//			move();
+//			
+//			//Attack of the enemy
+//			if(isAttacking)
+//				attack();
+//			
+//		}
+//		
+//	}
 
 	/**
 	 * In order for a StealthFighter to move, the player must be between its hold position 
@@ -60,72 +60,72 @@ public class StealthFighter extends Enemy{
 	 * @return true if the StealthFighter can move
 	 * @return false if the StealthFighter cannot/should not move
 	 */
-	private boolean canMove(){
-		int holdX1 = (int)x + holdDistance;
-		int sBreakX1 = (int)x + stealthBreakDistance;
-		int holdY1 = (int)y + holdDistance;
-		int sBreakY1 = (int)y + stealthBreakDistance;
-		int holdX2 = (int)x - holdDistance;
-		int sBreakX2 = (int)x - stealthBreakDistance;
-		int holdY2 = (int)y - holdDistance;
-		int sBreakY2 = (int)y - stealthBreakDistance;
-		
-		if((playerX > holdX1) && (playerX < sBreakX1)){
-			return true;
-		}
-		if((playerX < holdX2) && (playerX > sBreakX2)){
-			return true;
-		}
-		if((playerY > holdY1) && (playerY < sBreakY1)){
-			return true;
-		}
-		if((playerY < holdY2) && (playerY > sBreakY2)){
-			return true;
-		}
-		
-		return false;
-		
-	}
+//	private boolean canMove(){
+//		int holdX1 = (int)x + holdDistance;
+//		int sBreakX1 = (int)x + stealthBreakDistance;
+//		int holdY1 = (int)y + holdDistance;
+//		int sBreakY1 = (int)y + stealthBreakDistance;
+//		int holdX2 = (int)x - holdDistance;
+//		int sBreakX2 = (int)x - stealthBreakDistance;
+//		int holdY2 = (int)y - holdDistance;
+//		int sBreakY2 = (int)y - stealthBreakDistance;
+//		
+//		if((playerX > holdX1) && (playerX < sBreakX1)){
+//			return true;
+//		}
+//		if((playerX < holdX2) && (playerX > sBreakX2)){
+//			return true;
+//		}
+//		if((playerY > holdY1) && (playerY < sBreakY1)){
+//			return true;
+//		}
+//		if((playerY < holdY2) && (playerY > sBreakY2)){
+//			return true;
+//		}
+//		
+//		return false;
+//		
+//	}
 	
-	public void AIMove(){
-		if((x <= playerX + stealthBreakDistance || x > playerX - stealthBreakDistance) && 
-				 (y >= playerY + stealthBreakDistance || y < playerY - stealthBreakDistance)){
-			isStealthed = true;
-			isAttacking = false;
-		}else{
-			
-			isStealthed = false;
-			isAttacking = true;
-		}
-		
-		if(isStealthed || !canMove()){
-			xMove = 0;
-			yMove = 0;
-		}else{
-			if(handler.getPlayer().getX() - speed > x){
-				xMove = speed/2;
-			}else if (handler.getPlayer().getX()+speed < x){
-				xMove = -speed/2;
-			}else {
-				xMove =0;
-			}
-			
-			if(handler.getPlayer().getY() - speed > y){
-				yMove = speed;
-			}else if (handler.getPlayer().getY() + speed < y){
-				yMove = -speed;
-			}else {
-				yMove =0;
-			}
-			
-				
-			
-			
-		}
-		counter += Utils.randomNum(0, 3);
-		
-		collisionWithPlayer();
-	}
+//	public void AIMove(){
+//		if((x <= playerX + stealthBreakDistance || x > playerX - stealthBreakDistance) && 
+//				 (y >= playerY + stealthBreakDistance || y < playerY - stealthBreakDistance)){
+//			isStealthed = true;
+//			isAttacking = false;
+//		}else{
+//			
+//			isStealthed = false;
+//			isAttacking = true;
+//		}
+//		
+//		if(isStealthed || !canMove()){
+//			xMove = 0;
+//			yMove = 0;
+//		}else{
+//			if(handler.getPlayer().getX() - speed > x){
+//				xMove = speed/2;
+//			}else if (handler.getPlayer().getX()+speed < x){
+//				xMove = -speed/2;
+//			}else {
+//				xMove =0;
+//			}
+//			
+//			if(handler.getPlayer().getY() - speed > y){
+//				yMove = speed;
+//			}else if (handler.getPlayer().getY() + speed < y){
+//				yMove = -speed;
+//			}else {
+//				yMove =0;
+//			}
+//			
+//				
+//			
+//			
+//		}
+//		counter += Utils.randomNum(0, 3);
+//		
+//		collisionWithPlayer();
+//	}
 	
 	public void attack(){
 		int randAttack = Utils.randomNum(0, 50);
@@ -137,7 +137,7 @@ public class StealthFighter extends Enemy{
 	
 	public void collisionWithPlayer(){
 		if(intersectWithPlayer()){
-			handler.getPlayer().hurt(10);
+			hurtPlayer(5);
 			this.hurt(this.health);
 		}
 	}
@@ -160,8 +160,6 @@ public class StealthFighter extends Enemy{
 
 	@Override
 	public void die() {
-		// A StealthFighter awards 150 score to the player upon death.
-		handler.getWorld().getEntityManager().getPlayer().addScore(150);
 		Sound.explosion.execute();//New jon edit
 		
 	}

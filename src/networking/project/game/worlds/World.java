@@ -21,19 +21,15 @@ public class World {
 
 	private Handler handler;
 	private int width, height, bossType;
-	private int spawnX, spawnY;
 	private int[][] tiles;
 	//Entities
-	private EntityManager entityManager;
+	EntityManager entityManager;
 	
 	public World(Handler handler, String path){
 		this.handler = handler;
-		entityManager = new EntityManager(handler, handler.getPlayer());
 		loadWorld(path);
-		
-		//set player spawn point
-		entityManager.getPlayer().setX(spawnX);
-		entityManager.getPlayer().setY(spawnY);
+		entityManager = new EntityManager(handler, handler.getPlayers());
+	
 	}
 	
 	/**
@@ -41,7 +37,8 @@ public class World {
 	 *  resulting in the tick() of all Entities.
 	 */
 	public void tick(){
-		entityManager.tick();
+		for(Player p: handler.getPlayers())
+			p.tick();
 	}
 	
 	/**
@@ -62,17 +59,18 @@ public class World {
 		// Render each tile which is currently visible
 		for(int y = yStart;y < yEnd;y++){
 			for(int x = xStart;x < xEnd;x++){
-				if(getTile(x,y).isGoal() && handler.getPlayer().isBossDead()){
-					getTile(x,y).showGoal();
-				}else{
-					getTile(x,y).hideGoal();
-				}
+//				if(getTile(x,y).isGoal() && handler.getPlayer().isBossDead()){
+//					getTile(x,y).showGoal();
+//				}else{
+//					getTile(x,y).hideGoal();
+//				}
 				getTile(x, y).render(g, (int) (x * Tile.TILEWIDTH - handler.getGameCamera().getxOffset()),
 						(int) (y * Tile.TILEHEIGHT - handler.getGameCamera().getyOffset()));
 			}
 		}
 		// Render all Entities
-		entityManager.render(g);
+		for(Player p: handler.getPlayers())
+			p.render(g);
 	}
 	
 	/**
@@ -104,14 +102,11 @@ public class World {
 		String file = ResourceLoader.loadWorldFile(path);
 		String[] tokens = file.split("\\s+");
 		
-		handler.getPlayer().setIsBossDead(false);
 		
 		// In the world text file, the first four tokens (integers divided by a space or end line)
 		// determine the width, height, and (x,y) coordinates of the player spawn.
 		width = Utils.parseInt(tokens[0]);
 		height = Utils.parseInt(tokens[1]);
-		spawnX = Utils.parseInt(tokens[2]);
-		spawnY = Utils.parseInt(tokens[3]);
 		bossType = Utils.parseInt(tokens[4]);
 		
 		tiles = new int[width][height];
@@ -123,18 +118,25 @@ public class World {
 				
 					//Sets the player's spawn point if the tile at (x,y) is a player spawn tile
 				if(getTile(x,y).isPSpawn()){
-					spawnX = x * Tile.TILEWIDTH;
-					spawnY = (y) * Tile.TILEHEIGHT;
+					for(Player p: handler.getPlayers()){
+						if(p.getX() == 0 && p.getY() == 0){
+							p.setX(x * Tile.TILEWIDTH);
+							p.setY(y * Tile.TILEHEIGHT);
+							break;
+						}
+						
+					}
+						
 				
 					//Spawns a random enemy on an enemy spawn tile
 				}else if(getTile(x,y).isESpawn()){
-					int randomSpawn = Utils.randomNum(1,3);
-					entityManager.spawnEnemy(handler, x * Tile.TILEWIDTH, (y) * Tile.TILEHEIGHT, randomSpawn);
+//					int randomSpawn = Utils.randomNum(1,3);
+//					entityManager.spawnEnemy(handler, x * Tile.TILEWIDTH, (y) * Tile.TILEHEIGHT, randomSpawn);
 					
 					//Spawns the boss on a boss spawn tile
 				}else if(getTile(x,y).isBossSpawn()){
-					System.out.println(bossType + ", x: " + x * Tile.TILEWIDTH + ", y: "+ Tile.TILEHEIGHT);
-					entityManager.spawnBoss(handler, x * Tile.TILEWIDTH, y * Tile.TILEHEIGHT, bossType);
+//					System.out.println(bossType + ", x: " + x * Tile.TILEWIDTH + ", y: "+ Tile.TILEHEIGHT);
+//					entityManager.spawnBoss(handler, x * Tile.TILEWIDTH, y * Tile.TILEHEIGHT, bossType);
 					
 				}
 			}
@@ -156,14 +158,13 @@ public class World {
 	public int getHeight(){
 		return height;
 	}
-
+	
 	/**
 	 * @return entityManager the EntityManager of the world
 	 */
 	public EntityManager getEntityManager() {
 		return entityManager;
 	}
-	
 }
 
 

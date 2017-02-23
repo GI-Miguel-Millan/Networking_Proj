@@ -27,6 +27,7 @@ public abstract class Entity {
 	protected Rectangle bounds;
 	protected boolean active = true;
 	protected int collidedWith;
+	protected boolean isInvinc = false;
 	
 	public Entity(Handler handler, float x, float y, int width, int height){
 		this.handler = handler;
@@ -218,6 +219,10 @@ public abstract class Entity {
 	 */
 	public void setHealth(int health) {
 		this.health = health;
+	}
+	
+	public boolean getIsInvinc(){
+		return isInvinc;
 	}
 	
 }
