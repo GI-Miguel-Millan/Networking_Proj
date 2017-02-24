@@ -264,7 +264,7 @@ public class Player extends Creature {
 			g.drawImage(Assets.boosted,posX,posY,width,height,null);
 		if (isInvinc)
 			g.drawImage(Assets.invincible, posX, posY, width, height, null);
-		
+		System.out.println("render in the player");
 		g.drawRect(posX, posY, width, height);
 //		g.fillRect((int) (x + bounds.x - handler.getGameCamera().getxOffset()),
 //				(int) (y + bounds.y - handler.getGameCamera().getyOffset()),

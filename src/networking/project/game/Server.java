@@ -117,9 +117,9 @@ public class Server implements Runnable{
 				serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
 			}
 		}else if (str.contains(commands[1])){
-			// inputs format: "input up down left right attack"
+			// inputs format: "input up down left right attack clientID"
 			String[] inputs = str.split("\\s");
-			game.getHandler().getPlayer(clientDatagram.getAddress(), clientDatagram.getPort()).applyInput(
+			game.getHandler().getPlayer(Integer.parseInt(inputs[6])).applyInput(
 						Integer.parseInt(inputs[1]), Integer.parseInt(inputs[2]), Integer.parseInt(inputs[3]), Integer.parseInt(inputs[4]), Integer.parseInt(inputs[5]));
 			
 			String s = "update";

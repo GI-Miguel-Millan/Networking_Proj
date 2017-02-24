@@ -62,6 +62,7 @@ public class World {
 						(int) (y * Tile.TILEHEIGHT - handler.getGameCamera().getyOffset()));
 			}
 		}
+		
 		// Render all Entities
 		entityManager.render(g);
 	}

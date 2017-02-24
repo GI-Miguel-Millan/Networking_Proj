@@ -89,7 +89,7 @@ public class Game implements Runnable {
 	 *  Updates the game every tick.
 	 */
 	public void tick(){
-		keyManager.tick();
+		//keyManager.tick();
 		
 		if(State.getState() != null && !getPAUSED())
 			State.getState().tick();
@@ -260,7 +260,6 @@ public class Game implements Runnable {
 		int up = 0, down = 0, left = 0, right = 0, attack = 0;
 		if(keyManager.up){
 			up = 1;
-			System.out.println("up");
 		}
 		if(keyManager.down){
 			down = 1;
@@ -276,7 +275,7 @@ public class Game implements Runnable {
 		}
 			
 		
-		return "input " + up + " " + down + " " + left + " " + right + " " + attack;
+		return "input " + up + " " + down + " " + left + " " + right + " " + attack + " " + handler.getClientPlayer().getID();
 	}
 }
 

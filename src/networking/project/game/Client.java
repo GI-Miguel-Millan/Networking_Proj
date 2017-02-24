@@ -15,8 +15,8 @@ public class Client implements Runnable {
 	private int playerID; 
 	
 	private void tick(){
-		game.getGameCamera().centerOnEntity(game.getHandler().getClientPlayer());
-		//game.getGameCamera().centerOnCursor();
+		//game.getGameCamera().centerOnEntity(game.getHandler().getClientPlayer());
+		game.getGameCamera().centerOnCursor();
 		game.render();
 		game.getKeyManager().tick();
 	}
@@ -37,7 +37,15 @@ public class Client implements Runnable {
 			client_socket = new DatagramSocket();
 			System.out.println("Enter the ip address of the server.");
 			
-			InetAddress host = InetAddress.getByName((String)cin.readLine());
+			InetAddress host;
+			
+			try{
+				host = InetAddress.getByName((String)cin.readLine());
+			} catch (UnknownHostException e) {
+				host = InetAddress.getByName("localhost"); 	// default to localhost
+				e.printStackTrace();
+			}
+			
 			
 			String cmd = "init";
 			byte[] b = cmd.getBytes();
@@ -64,7 +72,7 @@ public class Client implements Runnable {
 				
 				evaluateData(ans);
 				if(sendData){
-					System.out.println("Message to server: " + game.getPlayerInput());
+					//System.out.println("Message to server: " + game.getPlayerInput());
 					b = game.getPlayerInput().getBytes();
 					dp = new DatagramPacket(b, b.length, host, port);
 					client_socket.send(dp);
@@ -74,9 +82,6 @@ public class Client implements Runnable {
 			
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnknownHostException e) {
-			System.out.println("There was an error with the IP Address");
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -88,7 +93,7 @@ public class Client implements Runnable {
 	private void evaluateData(String messageFromServer) throws NumberFormatException, UnknownHostException{
 		String[] commands = {"wait", "start", "identity", "update"};
 		
-		System.out.println("Message From Server: " + messageFromServer);
+		//System.out.println("Message From Server: " + messageFromServer);
 		
 		if (messageFromServer.contains(commands[0])){			// client waits for other clients to connect to server
 			sendData = false;
