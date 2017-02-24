@@ -20,7 +20,7 @@ import resources.ResourceLoader;
 public class World {
 
 	private Handler handler;
-	private int width, height, bossType;
+	private int width, height;
 	private int[][] tiles;
 	//Entities
 	EntityManager entityManager;
@@ -101,7 +101,6 @@ public class World {
 		// determine the width, height, and (x,y) coordinates of the player spawn.
 		width = Utils.parseInt(tokens[0]);
 		height = Utils.parseInt(tokens[1]);
-		bossType = Utils.parseInt(tokens[4]);
 		
 		tiles = new int[width][height];
 		for(int y = 0;y < height;y++){
@@ -120,18 +119,6 @@ public class World {
 						}
 						
 					}
-						
-				
-					//Spawns a random enemy on an enemy spawn tile
-				}else if(getTile(x,y).isESpawn()){
-//					int randomSpawn = Utils.randomNum(1,3);
-//					entityManager.spawnEnemy(handler, x * Tile.TILEWIDTH, (y) * Tile.TILEHEIGHT, randomSpawn);
-					
-					//Spawns the boss on a boss spawn tile
-				}else if(getTile(x,y).isBossSpawn()){
-//					System.out.println(bossType + ", x: " + x * Tile.TILEWIDTH + ", y: "+ Tile.TILEHEIGHT);
-//					entityManager.spawnBoss(handler, x * Tile.TILEWIDTH, y * Tile.TILEHEIGHT, bossType);
-					
 				}
 			}
 		}

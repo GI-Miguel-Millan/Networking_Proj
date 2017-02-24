@@ -28,16 +28,9 @@ public class Handler {
 	
 	private Game game;
 	private World world;
-	private int playerScore;
-	private int playerHealth;
 	private ArrayList<Player> players = new ArrayList<Player>();
-	private int lvlCounter = 1;
-	private static final int NUMBER_LEVELS = 4;
-	private boolean isTransitioning = false;
-	private boolean isVictorious = false;
 	private Player clientPlayer;
 
-	private int highScore;
 	
 	public Handler(Game game){
 		this.game = game;
@@ -105,140 +98,22 @@ public class Handler {
 	public void setWorld(World world) {
 		this.world = world;
 	}
-	
-	public void changeWorld(){
-		setWorld(new World(this, Assets.fileNames[lvlCounter]));
-	}
-	
-	public void setLvlCounter(int lvl){
-		lvlCounter = lvl;
-	}
-	
-	public int getLvlCounter(){
-		return lvlCounter;
-	}
-	
-	/**
-	 * @param score the new score
-	 */
-	public void setPlayerScore(int score){
-		playerScore = score;
-	}
-	
+
+
 	/**
 	 * @return player Score
 	 */
 	public int getPlayerScore(){
-		return playerScore;
+		return clientPlayer.getScore();
 	}
 
-	/**
-	 * @param hp the new health value to set to the playerHealth.
-	 */
-	public void setPlayerHealth(int hp){
-		playerHealth = hp;
-	}
-	
 	/**
 	 * @return playerHealth
 	 */
 	public int getPlayerHealth(){
-		return playerHealth;
+		return clientPlayer.getHealth();
 	}
 
-	
-	public void setIsTransitioning(boolean b){
-		isTransitioning = b;
-	}
-	
-	public int getNumLevels(){
-		return this.NUMBER_LEVELS;
-	}
-	
-	public boolean IsTransitioning(){
-		return isTransitioning;
-	}
-	
-	public boolean isVictorious(){
-		return isVictorious;
-	}
-	
-	public void setVictorious(boolean b){
-		this.isVictorious = b;
-	}
-	
-	//Checks the current score against the high score. If higher, update the high score
-	public void  checkAndSetHighScore(int score)
-	{
-		if(score > highScore)
-		{
-			highScore = score;
-		}
-	}
-	
-	//Returns high score
-		public int getHighScore()
-		{
-			return highScore;
-		}
-		
-		//Write high score to a file
-		public void writeHighScore()
-		{
-	        try {
-	            // Assume default encoding.
-	            FileOutputStream fOut = new FileOutputStream("highscore.txt");
-	            DataOutputStream out = new DataOutputStream(fOut);
-
-	            // Note that write() does not automatically
-	            // append a newline character.
-	            out.writeInt(highScore);
-
-	            // Always close files.
-	            out.close();
-	        }
-	        catch(IOException ex) {
-	            System.out.println(
-	                "Error writing to file '"
-	                + "highscore.txt" + "'");
-	            // Or we could just do this:
-	            // ex.printStackTrace();
-	        }
-	    }
-		
-		//Load high score from a file
-		public void loadHighScore()
-		{
-			 try {
-		            // FileReader reads text files in the default encoding.
-		            FileInputStream fIn = new FileInputStream("highscore.txt");
-		            DataInputStream in = new DataInputStream(fIn);
-		            
-		            int temp; //Stores high score from file
-		            temp = in.readInt();
-		            System.out.println(temp);
-
-		            // Always close files.
-		            in.close();
-		            
-		            //Sets high score 
-		            highScore = temp;
-		            System.out.println(highScore);
-		        }
-		        catch(FileNotFoundException ex) {
-		            System.out.println(
-		                "Unable to open file '" + 
-		                "highscore.txt" + "'");                
-		        }
-		        catch(IOException ex) {
-		            System.out.println(
-		                "Error reading file '" 
-		                + "highscore.txt" + "'");                  
-		            // Or we could just do this: 
-		            // ex.printStackTrace();
-		        }
-		}
-	
 	public ArrayList<Player> getPlayers(){
 		return this.players;
 	}

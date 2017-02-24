@@ -58,7 +58,6 @@ public class MenuState extends State {
 		Sound.stopAll();
 		Sound.resetAll();
 		Sound.Just_Move.play();
-		handler.setVictorious(false);
 		State.setState(handler.getGame().getMenuState());
 		handler.getMouseManager().setUIManager(uiManager);
 	}

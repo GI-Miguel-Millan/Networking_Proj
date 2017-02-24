@@ -86,7 +86,7 @@ public class GameCamera {
 		if(cameraStop)
 			camSpeed=0;
 		xOffset = Tile.TILEWIDTH/2 + 5;
-		yOffset -= camSpeed;
+		yOffset -= 1;
 		checkBlankSpace();
 	}
 	

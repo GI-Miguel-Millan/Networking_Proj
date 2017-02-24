@@ -23,15 +23,13 @@ import networking.project.game.tiles.Tile;
  */
 public class Game implements Runnable {
 
-	public static boolean MUTED = false;
-	
 	private Display display;
 	private int width, height;
 	public String title;
+	public static boolean MUTED = false;
 	
 	private boolean running = false;
 	private Thread thread;
-	private boolean PAUSED = false;
 	
 	private BufferStrategy bs;
 	private Graphics g;
@@ -73,7 +71,6 @@ public class Game implements Runnable {
 		Assets.init();
 		//Sound.background.play();//New jon edit
 		
-		handler.loadHighScore();
 		gameState = new GameState(handler);
 		GameOverState = new GameOverState(handler);
 		menuState = new MenuState(handler);
@@ -91,7 +88,7 @@ public class Game implements Runnable {
 	public void tick(){
 		//keyManager.tick();
 		
-		if(State.getState() != null && !getPAUSED())
+		if(State.getState() != null)
 			State.getState().tick();
 		//this.getGameCamera().centerOnEntity(getHandler().getClientPlayer());
 		
@@ -224,15 +221,6 @@ public class Game implements Runnable {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	
-	public boolean getPAUSED(){ 
-		if(keyManager.paused && keyManager.wasReleased){
-			PAUSED = !PAUSED;
-			keyManager.wasReleased = false;
-		}
-		return PAUSED;
 	}
 	
 	public Display getDisplay(){

@@ -15,8 +15,8 @@ public class Client implements Runnable {
 	private int playerID; 
 	
 	private void tick(){
-		//game.getGameCamera().centerOnEntity(game.getHandler().getClientPlayer());
-		game.getGameCamera().centerOnCursor();
+		game.getGameCamera().centerOnEntity(game.getHandler().getClientPlayer());
+		//game.getGameCamera().centerOnCursor();
 		game.render();
 		game.getKeyManager().tick();
 	}

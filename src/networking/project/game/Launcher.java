@@ -16,9 +16,9 @@ public class Launcher {
 				e.printStackTrace();
 				new Server(1).startServer();
 			}
-		}
+		}else{
 			new Client().start();
-		
+		}
 		
 		
 		

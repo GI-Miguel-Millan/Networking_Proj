@@ -48,7 +48,6 @@ public class GameOverState extends State
 	public void render(Graphics g) {
 		g.drawImage(Assets.gameOver, 0, 0, handler.getWidth(), handler.getHeight(), null);
 		String tmpScore = "Your Score: " + handler.getPlayerScore();
-		String tmpHighScore = "High Score: " + handler.getHighScore();
 		String gameOver = "GAME OVER";
 		String victory = "VICTORY";
 		Font stringFont = new Font("Arial", Font.PLAIN, 36);
@@ -58,18 +57,9 @@ public class GameOverState extends State
 		g.setFont(stringFont);
 		g.setColor(Color.ORANGE);
 		g.drawString(tmpScore , 100, 350);
-		g.drawString(tmpHighScore, 100, 250);
 		
 		
 		g.setFont(gameOverFont);
-		
-		if(handler.isVictorious()){
-			g.setColor(Color.yellow);
-			g.drawString(victory, 60, 112);
-		}else{
-			g.setColor(Color.getHSBColor(356, 96, 62));
-			g.drawString(gameOver, 10, 112);
-		}
 			
 		uiManager.render(g);
 	}
@@ -82,10 +72,6 @@ public class GameOverState extends State
 	public void displayState(){
 		State.setState(handler.getGame().getGameOverState());
 		Sound.stopAll();
-		if(handler.isVictorious())
-			Sound.victorious.play();
-		else
-			Sound.failure.play();
 		
 		handler.getMouseManager().setUIManager(uiManager);
 //		uiManager.removeObject(lblHighScore);

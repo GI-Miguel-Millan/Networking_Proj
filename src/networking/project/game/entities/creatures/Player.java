@@ -37,18 +37,8 @@ public class Player extends Creature {
 	private boolean readyFire;
 	private int counter;
 	private int score = 1000;
-	private int hurtCounter = 0;
-	private int powerUpCounter = 0;
-	private int speedUp =0;
 	private Rectangle playerBounds = new Rectangle(16,22,32,12);
-	private boolean isBossDead = false,
-					isHurt = false,
-					isSpdUp = false,
-					isSplitShot = false,
-					fightingBoss = false,
-					isBeingMoved =false,
-					underSlowEffect = false;
-	
+	private boolean isHurt = false;
 	
 	public Player(Handler handler, float x, float y, InetAddress ip, int port, int id) {
 		super(handler, x, y, Creature.DEFAULT_CREATURE_WIDTH, Creature.DEFAULT_CREATURE_HEIGHT);
@@ -57,9 +47,7 @@ public class Player extends Creature {
 		counter = 0;
 		readyFire = true;
 		health = 50;
-		speed = 3;
-		handler.setPlayerHealth(health);
-		handler.setPlayerScore(score);
+		speed = 5;
 		
 		this.ip = ip;
 		this.port = port;
@@ -88,17 +76,9 @@ public class Player extends Creature {
 //		hurtRight.tick();
 //		hurtLeft.tick();
 		
-		//System.out.println("px: " + x + ", py: "+ y);
 	
-		checkConditions();
 		//lowerBoundCheck();
 		updateCounters();
-		
-		collisionWithBlackHole((int)x,(int)y);
-		//handler.getGameCamera().staticCamera(this);
-		
-		handler.setPlayerScore(this.score);
-		handler.setPlayerHealth(health);
 		
 		move();
 		// only clear movement values after we've moved.
@@ -127,48 +107,9 @@ public class Player extends Creature {
 			readyFire = true;
 			counter = 0;
 		}
-		
-		if(isHurt == true)
-			hurtCounter++;
-		
-		if (hurtCounter == 50){
-			isHurt = false;
-			hurtCounter = 0;
-		}
-		
-		if(isPoweredUp()){
-			powerUpCounter++;
-		}
-		
-		if(powerUpCounter >= 300){
-			powerDown();
-		}
-		
-		if(isSpdUp){
-			speedUp = 2;
-		}else{
-			speedUp =0;
-		}
 	}
 	
-	/**
-	 * Any condition or attribute that must be checked each tick.
-	 */
-	private void checkConditions(){
-		
-		//check for slow conditions
-		if(collisionWithSlowVortex((int)x, (int)y)){
-			underSlowEffect = true;
-		}else{
-			underSlowEffect = false;
-		}
-		
-		//Check if boss fight is over.
-		if(isBossDead){
-			fightingBoss = false;
-			Sound.stopAll();
-		}
-	}
+
 	
 	
 	/**
@@ -182,89 +123,39 @@ public class Player extends Creature {
 
 		if(up == 1)
 		{
-			yMove = -speed - speedUp;
+			yMove = -speed;
 		}
 		
 		if(down == 1)
 		{
-			yMove = speed  + speedUp;
+			yMove = speed;
 				
 		}
 		
 		if(left == 1)
 		{
-			xMove = -speed -1 - speedUp;
+			xMove = -speed;
 		}
 		
 		if(right == 1)
 		{
-			xMove = speed + 1 + speedUp;
+			xMove = speed;
 		}		
 		// A player is only allowed to fire a projectile whenever readyFire is true 
 		// and they hit the fire key.
 		if(attack == 1 && readyFire){
-			// Spawns a projectile above the player moving upwards
-			if(!isSplitShot){
-				handler.getWorld().getEntityManager().addEntity(new Projectile(handler, this, 0, -3));
-			}else
-			{
-				handler.getWorld().getEntityManager().addEntity(new Projectile(handler, this, 0, -13));
-				handler.getWorld().getEntityManager().addEntity(new Projectile(handler, this, 0, -3));
-				handler.getWorld().getEntityManager().addEntity(new Projectile(handler, this, 0, 7));
-			}
-				
-			// Every time a player fires a projectile they lose 10 score (accuracy is important)
-			// and their guns go on cooldown (they are not ready to fire).
-			score -=10;
+			// attack here
+
 			readyFire = false;
 		}
 	}
 
-	/**
-	 * Checks if the player is colliding with a Black Hole Tile.
-	 * 
-	 * @param x the x position of the Tile
-	 * @param y the y position of the Tile
-	 * @return true if the Tile is not solid
-	 * @return false if the Tile is is solid
-	 */
-	protected void collisionWithBlackHole(int x, int y){
-		int ty = (int) (y + yMove + bounds.y) / Tile.TILEHEIGHT;
-		int tx = (int) (x + bounds.x) / Tile.TILEWIDTH;
-		if(handler.getWorld().getTile(tx, ty).isBlackHole() && !isHurt){
-			this.hurt(5);
-		}
-	}
-	
-	/**
-	 * Checks if the player is colliding with a Slow Vortex Tile.
-	 * 
-	 * @param x the x position of the Tile
-	 * @param y the y position of the Tile
-	 * @return true if the Tile is not solid
-	 * @return false if the Tile is is solid
-	 */
-	protected boolean collisionWithSlowVortex(int x, int y){
-		int ty = (int) (y + yMove + bounds.y) / Tile.TILEHEIGHT;
-		int tx = (int) (x + bounds.x) / Tile.TILEWIDTH;
-		if(handler.getWorld().getTile(tx, ty).isSlowVortex()){
-			return true;
-		}else
-		{
-			return false;
-		}
-	}
-	
 	@Override
 	public void render(Graphics g) {
 		posX = (int)(x - handler.getGameCamera().getxOffset());
 		posY = (int) (y - handler.getGameCamera().getyOffset());
 		//g.drawImage(getCurrentAnimationFrame(), posX, posY, width, height, null);
-		if (isSpdUp)
-			g.drawImage(Assets.boosted,posX,posY,width,height,null);
-		if (isInvinc)
-			g.drawImage(Assets.invincible, posX, posY, width, height, null);
-		System.out.println("render in the player");
+		
 		g.drawRect(posX, posY, width, height);
 //		g.fillRect((int) (x + bounds.x - handler.getGameCamera().getxOffset()),
 //				(int) (y + bounds.y - handler.getGameCamera().getyOffset()),
@@ -300,9 +191,7 @@ public class Player extends Creature {
 
 	@Override
 	public void die() {
-		handler.checkAndSetHighScore(score);
-		handler.writeHighScore();
-//		handler.getGame().getGameOverState().displayState();
+		// implement action upon player death
 		active =false;
 	}
 	
@@ -340,53 +229,7 @@ public class Player extends Creature {
 	public int getScore(){
 		return score;
 	}
-	
-	public void setIsBossDead(boolean bool){
-		isBossDead = bool;
-	}
-	
-	public boolean isBossDead(){
-		return isBossDead;
-	}
 
-	public void setIsSpdUp(boolean b){
-		isSpdUp = b;
-	}
-	
-	public boolean getIsSplitShot(){
-		return isSplitShot;
-	}
-	
-	public boolean getFightingBoss(){
-		return fightingBoss;
-	}
-	
-	public void setIsSplitShot(boolean b){
-		isSplitShot = b;
-	}
-	
-	public boolean getIsSpdUp(){
-		return isSpdUp;
-	}
-	
-	public void setIsInvic(boolean b) {
-		isInvinc = b;
-	}
-
-	public boolean isPoweredUp(){
-		if(isInvinc || isSpdUp || isSplitShot)
-			return true;
-		else 
-			return false;
-	}
-	
-	public void powerDown(){
-		isInvinc = false;
-		isSpdUp = false;
-		isSplitShot = false;
-		powerUpCounter = 0;
-	}
-	
 	public boolean getIsInvinc(){
 		return isInvinc;
 	}

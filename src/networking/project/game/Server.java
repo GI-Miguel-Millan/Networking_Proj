@@ -107,11 +107,10 @@ public class Server implements Runnable{
 				
 				for (Player p: game.getHandler().getPlayers()){
 					serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, p.getIP(), p.getPort()));
-					
-					game.init();		// initialze the game
-					gameStarted = true;	// start the game (allow it to tick)
 				}
-				game.getHandler().setClientPlayer(this.ids);
+				game.init();		// initialze the game
+				gameStarted = true;	// start the game (allow it to tick)
+				//game.getHandler().setClientPlayer(1);
 			}else{
 				String s = "waiting for players";
 				serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
@@ -124,7 +123,7 @@ public class Server implements Runnable{
 			
 			String s = "update";
 			for (Player p2: game.getHandler().getPlayers()){
-				//System.out.println("Server side player " + p2);
+				System.out.println("Server side player " + p2);
 				s = s + " " + p2.getIP().getHostAddress() + " " + p2.getPort() + " " + p2.getHealth() + " " + (int)p2.getX() + " " + (int)p2.getY();
 			}
 			serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));

@@ -42,7 +42,6 @@ public class GameState extends State {
 		world.render(g);
 		
 		String tmpScore = "SCORE: " + handler.getPlayerScore();
-		String tmpHighScore = "HighScore: " + handler.getHighScore();
 		Font stringFont = new Font("Sans Serif", Font.PLAIN, 18);
 		
 		g.setColor(Color.getHSBColor(.747222f, .91f, .13f));
@@ -51,8 +50,7 @@ public class GameState extends State {
 		g.setColor(Color.red);
 		g.setFont(stringFont);
 		g.drawString(tmpScore , 260, 20);	//Score placeholder
-		g.drawString("Health: ", 35, 45);	//Level number placeholder
-		g.drawString(tmpHighScore, 35, 20);
+		g.drawString("Health: ", 35, 45);	
 		g.fillRect(100, 35, (350/50) * 50, 10); //Healthbar background
 		g.setColor(Color.green);
 		g.fillRect(100, 35, (350/50) * handler.getPlayerHealth(), 10);
@@ -61,9 +59,6 @@ public class GameState extends State {
 		for(int i = 100 + (350/50); i < 100 + 350; i+=(350/50))
 			g.fillRect(i,35, 1, 10);
 		
-		if(handler.getGame().getPAUSED()){
-			g.drawImage(Assets.paused, 0, 0, null);
-		}
 		
 	}
 
@@ -75,10 +70,8 @@ public class GameState extends State {
 	public void displayState(){
 		Sound.stopAll();
 		State.setState(handler.getGame().getGameState());
-		handler.setLvlCounter(1);
-		world = new World(handler, Assets.fileNames[handler.getLvlCounter()]); // fileNames[1] = world1.txt
+		world = new World(handler, Assets.fileNames[1]); // fileNames[1] = world1.txt
 		handler.setWorld(world);
-		handler.setIsTransitioning(true);
 	}
 	
 }
