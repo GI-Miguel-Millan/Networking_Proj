@@ -16,7 +16,7 @@ public class GameCamera {
 	private Handler handler;
 	private float xOffset, yOffset;
 	private boolean cameraStop = false;
-	public static final int DEFAULT_CAMSPEED = 3;
+	public static final int DEFAULT_CAMSPEED = 0;
 	private int camSpeed = DEFAULT_CAMSPEED;
 	
 	public GameCamera(Handler handler, float xOffset, float yOffset){
@@ -50,9 +50,18 @@ public class GameCamera {
 	 * @param e
 	 */
 	public void centerOnEntity(Entity e){
-		//xOffset = e.getX() - handler.getWidth() / 2 + e.getWidth() / 2;
-		xOffset = Tile.TILEWIDTH/2 + 5;
-		yOffset = e.getY() - handler.getHeight() / 2 + e.getHeight() / 2;
+		if(e != null){
+			xOffset = e.getX() - handler.getWidth() / 2 + e.getWidth() / 2;
+			//xOffset = Tile.TILEWIDTH/2 + 5;
+			yOffset = e.getY() - handler.getHeight() / 2 + e.getHeight() / 2;
+			checkBlankSpace();
+		}
+		
+	}
+	
+	public void centerOnCursor(){
+		xOffset = handler.getMouseManager().getMouseX() - handler.getWidth() / 2 + handler.getMouseManager().getMouseX() / 2;
+		yOffset = handler.getMouseManager().getMouseY() - handler.getHeight() / 2 + handler.getMouseManager().getMouseY() / 2;
 		checkBlankSpace();
 	}
 	

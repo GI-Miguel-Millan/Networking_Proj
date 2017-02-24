@@ -31,7 +31,8 @@ public class Player extends Creature {
 	
 	//Networking info
 	private InetAddress ip;
-	private int port;
+	private final int port;
+	private final int ID;
 	
 	private boolean readyFire;
 	private int counter;
@@ -49,7 +50,7 @@ public class Player extends Creature {
 					underSlowEffect = false;
 	
 	
-	public Player(Handler handler, float x, float y, InetAddress ip, int port) {
+	public Player(Handler handler, float x, float y, InetAddress ip, int port, int id) {
 		super(handler, x, y, Creature.DEFAULT_CREATURE_WIDTH, Creature.DEFAULT_CREATURE_HEIGHT);
 		
 		bounds = playerBounds;
@@ -62,6 +63,7 @@ public class Player extends Creature {
 		
 		this.ip = ip;
 		this.port = port;
+		this.ID = id;
 		
 		//Animatons
 		animDown = new Animation(500, Assets.player_down);
@@ -77,33 +79,31 @@ public class Player extends Creature {
 	@Override
 	public void tick() {
 		//Animations
-		animDown.tick();
-		animUp.tick();
-		animRight.tick();
-		animLeft.tick();
-		hurtDown.tick();
-		hurtUp.tick();
-		hurtRight.tick();
-		hurtLeft.tick();
+//		animDown.tick();
+//		animUp.tick();
+//		animRight.tick();
+//		animLeft.tick();
+//		hurtDown.tick();
+//		hurtUp.tick();
+//		hurtRight.tick();
+//		hurtLeft.tick();
 		
 		//System.out.println("px: " + x + ", py: "+ y);
 	
 		checkConditions();
-		lowerBoundCheck();
+		//lowerBoundCheck();
 		updateCounters();
 		
-		collisionWithGoal((int)x,(int)y);
 		collisionWithBlackHole((int)x,(int)y);
-		if(!fightingBoss)
-			collisionWithBossFightStart((int)x, (int)y);
-		
-		//handler.getGameCamera().centerOnEntity(this);
-		handler.getGameCamera().staticCamera(this);
+		//handler.getGameCamera().staticCamera(this);
 		
 		handler.setPlayerScore(this.score);
 		handler.setPlayerHealth(health);
 		
 		move();
+		// only clear movement values after we've moved.
+		yMove = 0;
+		xMove = 0;
 	}
 	
 	/**
@@ -111,6 +111,7 @@ public class Player extends Creature {
 	 * collides with another entity.
 	 */
 	public void move(){
+		System.out.println("movement( x , y): " + xMove + " " + yMove);
 			moveX();
 			moveY();
 	}
@@ -154,11 +155,6 @@ public class Player extends Creature {
 	 * Any condition or attribute that must be checked each tick.
 	 */
 	private void checkConditions(){
-		//Movement
-		if(!isBeingMoved)
-			getInput();
-		else
-			moveToCenter();
 		
 		//check for slow conditions
 		if(collisionWithSlowVortex((int)x, (int)y)){
@@ -174,82 +170,39 @@ public class Player extends Creature {
 		}
 	}
 	
-	private void collisionWithBossFightStart(int x, int y) {
-		int ty = (int)(y + yMove + bounds.y) / Tile.TILEHEIGHT;
-		int tx = (int)(x + bounds.x) / Tile.TILEWIDTH;
-		if(handler.getWorld().getTile(tx, ty).isBFight()){
-			isBeingMoved = true;
-		}
-		
-		//System.out.println(" Ty: " + ty + " tx: " + tx + " this.x: " + this.x + " this.y " + this.y);
-	}
-
-	/**
-	 * Sets the players y position to the bottom of the game camera 
-	 * if the player moves below the screen
-	 */
-	private void lowerBoundCheck(){
-		if(y > (((handler.getGameCamera().getyOffset() + 700)))){
-			this.y = handler.getGameCamera().getyOffset() + 700;
-		}
-	}
 	
 	/**
 	 *  Gets input from the user and sets the players yMove and
 	 *  xMove according to which key is pressed.
 	 */
-	private void getInput(){
-		xMove = 0;
-		//yMove = -2;
-		if(underSlowEffect){
-			yMove = -(handler.getGameCamera().getCamSpeed()) + 2;
-		}else if(fightingBoss){
-			yMove = 0;
-		}else if(isBossDead){
-			yMove = -2;
-		}else{
-			yMove = -(handler.getGameCamera().getCamSpeed());
+	public void applyInput(int up, int down, int left, int right, int attack){
+		//System.out.println("up: " + up +" down: " + down +" left: " + left +" right: "+ right );
+		
+		
+
+		if(up == 1)
+		{
+			yMove = -speed - speedUp;
 		}
 		
-		int bottomBounds = handler.getHeight() - 100;
-		
-//		if(fightingBoss)
-//			bottomBounds = handler.getHeight() - 100;
-		
-		if(handler.getKeyManager().up)
+		if(down == 1)
 		{
-			if (y >= (((handler.getGameCamera().getyOffset() + 1))))
-			{
-				yMove += -speed - speedUp;
-			}
-			else
-				yMove += 0;
-		}
-		
-		if(handler.getKeyManager().down)
-		{
-			if (y < (((handler.getGameCamera().getyOffset() + bottomBounds))))
-			{	
-			yMove += speed + 2 + speedUp;
-			}
-			else{
-				yMove += 0;
-			}
+			yMove = speed  + speedUp;
 				
 		}
 		
-		if(handler.getKeyManager().left)
+		if(left == 1)
 		{
 			xMove = -speed -1 - speedUp;
 		}
 		
-		if(handler.getKeyManager().right)
+		if(right == 1)
 		{
 			xMove = speed + 1 + speedUp;
 		}		
 		// A player is only allowed to fire a projectile whenever readyFire is true 
 		// and they hit the fire key.
-		if(handler.getKeyManager().fire && readyFire){
+		if(attack == 1 && readyFire){
 			// Spawns a projectile above the player moving upwards
 			if(!isSplitShot){
 				handler.getWorld().getEntityManager().addEntity(new Projectile(handler, this, 0, -3));
@@ -266,63 +219,7 @@ public class Player extends Creature {
 			readyFire = false;
 		}
 	}
-	
-	/**
-	 * Moves the player to the center of the screen.
-	 */
-	public void moveToCenter(){
-		xMove = 0;
-		yMove = -2;
-		
-		//System.out.println("y " + y + ", camY: "+ (camY + handler.getHeight()/2) + ", x " + x + ", camX " + camX);
-		if (y + height + 5 >= (((handler.getHeight()/2 + (yMove + speed))))){
-			yMove += -speed;
-		}else
-			yMove += 0;
-		
-		if(x >= (handler.getWidth()/2 + speed)){
-			xMove += -speed;
-		}else{
-			xMove += 0;
-		}
-		
-		if(x <= (handler.getWidth()/2 - speed)){
-			xMove += speed;
-		}else{
-			xMove += 0;
-		}
-		
-		if(y + height + 1 <= handler.getHeight()/2 + 100 ){
-			isBeingMoved = false;
-			fightingBoss = true;
-		}
-	}
-	
-	/**
-	 * Checks if the player is colliding with a Goal Tile.
-	 * 
-	 * @param x the x position of the Tile
-	 * @param y the y position of the Tile
-	 * @return true if the Tile is not solid
-	 * @return false if the Tile is is solid
-	 */
-	protected void collisionWithGoal(int x, int y){
-		int ty = (int) (y + yMove + bounds.y) / Tile.TILEHEIGHT;
-		int tx = (int) (x + bounds.x) / Tile.TILEWIDTH;
-		if(handler.getWorld().getTile(tx, ty).isGoal() && isBossDead){
-			handler.setPlayerScore(score);
-			handler.setLvlCounter(handler.getLvlCounter() + 1);
-			if (handler.getLvlCounter() > handler.getNumLevels()){
-				this.die();
-				handler.setVictorious(true);
-			}else{
-				handler.setIsTransitioning(true);
-			}
-				
-		}
-	}
-	
-	
+
 	/**
 	 * Checks if the player is colliding with a Black Hole Tile.
 	 * 
@@ -362,13 +259,13 @@ public class Player extends Creature {
 	public void render(Graphics g) {
 		posX = (int)(x - handler.getGameCamera().getxOffset());
 		posY = (int) (y - handler.getGameCamera().getyOffset());
-		g.drawImage(getCurrentAnimationFrame(), posX, posY, width, height, null);
+		//g.drawImage(getCurrentAnimationFrame(), posX, posY, width, height, null);
 		if (isSpdUp)
 			g.drawImage(Assets.boosted,posX,posY,width,height,null);
 		if (isInvinc)
 			g.drawImage(Assets.invincible, posX, posY, width, height, null);
 		
-		//g.drawRect(posX, posY, width, height);
+		g.drawRect(posX, posY, width, height);
 //		g.fillRect((int) (x + bounds.x - handler.getGameCamera().getxOffset()),
 //				(int) (y + bounds.y - handler.getGameCamera().getyOffset()),
 //				bounds.width, bounds.height);
@@ -405,8 +302,6 @@ public class Player extends Creature {
 	public void die() {
 		handler.checkAndSetHighScore(score);
 		handler.writeHighScore();
-		handler.getGame().getGameState().setLastTrans(true);
-		handler.setIsTransitioning(true);
 //		handler.getGame().getGameOverState().displayState();
 		active =false;
 	}
@@ -502,5 +397,14 @@ public class Player extends Creature {
 	
 	public int getPort(){
 		return this.port;
+	}
+	
+	public int getID(){
+		return this.ID;
+	}
+	
+	public String toString(){
+		return "Player ID: " + getID() + ", Address: " + getIP() + ", Port: " + getPort() + ", x position: " + getX() + " y position: " + getY();
+		
 	}
 }

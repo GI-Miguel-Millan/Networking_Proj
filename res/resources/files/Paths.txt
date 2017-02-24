@@ -1,5 +1,5 @@
 sheet.png
-world1.txt
+world0.txt
 world2.txt
 world3.txt
 world4.txt

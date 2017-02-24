@@ -63,7 +63,7 @@ public class Game implements Runnable {
 	/**
 	 *  Initializes everything.
 	 */
-	private void init(){
+	public void init(){
 		display = new Display(title, width, height);
 		display.getFrame().addKeyListener(keyManager);
 		display.getFrame().addMouseListener(mouseManager);
@@ -82,23 +82,25 @@ public class Game implements Runnable {
 		gameCamera = new GameCamera(handler, 0, handler.getWorld().getHeight() * Tile.TILEHEIGHT);
 		
 		
-		menuState.displayState();
+		gameState.displayState();
 	}
 	
 	/**
 	 *  Updates the game every tick.
 	 */
-	private void tick(){
+	public void tick(){
 		keyManager.tick();
 		
 		if(State.getState() != null && !getPAUSED())
 			State.getState().tick();
+		//this.getGameCamera().centerOnEntity(getHandler().getClientPlayer());
+		
 	}
 	
 	/**
 	 *  Renders all the graphics in the game to the screen.
 	 */
-	private void render(){
+	public void render(){
 		bs = display.getCanvas().getBufferStrategy();
 		if(bs == null){
 			display.getCanvas().createBufferStrategy(3);
@@ -147,6 +149,8 @@ public class Game implements Runnable {
 				ticks++;
 				delta--;
 			}
+			
+			
 			
 			// Temporary FPS counter
 			if(timer >= 1000000000){
@@ -251,8 +255,28 @@ public class Game implements Runnable {
 		return this.handler;
 	}
 	
+	
 	public String getPlayerInput(){
-		return "This is temp input";
+		int up = 0, down = 0, left = 0, right = 0, attack = 0;
+		if(keyManager.up){
+			up = 1;
+			System.out.println("up");
+		}
+		if(keyManager.down){
+			down = 1;
+		}
+		if(keyManager.left){
+			left = 1;
+		}
+		if(keyManager.right){
+			right = 1;
+		}
+		if(keyManager.fire){
+			attack = 1;
+		}
+			
+		
+		return "input " + up + " " + down + " " + left + " " + right + " " + attack;
 	}
 }
 

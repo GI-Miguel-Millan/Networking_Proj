@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 
 import networking.project.game.entities.creatures.Player;
@@ -34,6 +35,7 @@ public class Handler {
 	private static final int NUMBER_LEVELS = 4;
 	private boolean isTransitioning = false;
 	private boolean isVictorious = false;
+	private Player clientPlayer;
 
 	private int highScore;
 	
@@ -241,4 +243,28 @@ public class Handler {
 		return this.players;
 	}
 		
+	/**
+	 * identifies the player belonging to this client
+	 */
+	public void setClientPlayer(int id){
+		clientPlayer = this.getPlayer(id);
+	}
+	
+	public Player getClientPlayer(){
+		return this.clientPlayer;
+	}
+	
+	public Player getPlayer(int id){
+		for(Player p : players)
+			if(p.getID() == id)
+				return p;
+		return null;
+	}
+	
+	public Player getPlayer(InetAddress ip, int port){
+		for(Player p : players)
+			if(p.getIP().equals(ip) && p.getPort() == port)
+				return p;
+		return null;
+	}
 }

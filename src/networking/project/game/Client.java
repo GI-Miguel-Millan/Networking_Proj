@@ -12,9 +12,13 @@ public class Client implements Runnable {
 	private boolean running = false;
 	private Game game = null;
 	private boolean sendData = false;
+	private int playerID; 
 	
 	private void tick(){
-		System.out.println("hi");
+		game.getGameCamera().centerOnEntity(game.getHandler().getClientPlayer());
+		//game.getGameCamera().centerOnCursor();
+		game.render();
+		game.getKeyManager().tick();
 	}
 	
 	@Override
@@ -31,7 +35,6 @@ public class Client implements Runnable {
 		
 		try {
 			client_socket = new DatagramSocket();
-			
 			System.out.println("Enter the ip address of the server.");
 			
 			InetAddress host = InetAddress.getByName((String)cin.readLine());
@@ -47,7 +50,7 @@ public class Client implements Runnable {
 				delta += (now - lastTime) / timePerTick;
 				lastTime = now;
 				
-				if(delta >= 1){
+				if(delta >= 1 && sendData){
 						tick();
 					delta--;
 				}
@@ -59,9 +62,12 @@ public class Client implements Runnable {
 				byte[] data = reply.getData();
 				String ans = new String(data, 0, reply.getLength());
 				
-				cmd = evaluateData(ans);
+				evaluateData(ans);
 				if(sendData){
-					
+					System.out.println("Message to server: " + game.getPlayerInput());
+					b = game.getPlayerInput().getBytes();
+					dp = new DatagramPacket(b, b.length, host, port);
+					client_socket.send(dp);
 				}
 			}
 			stop();
@@ -79,15 +85,15 @@ public class Client implements Runnable {
 		
 	}
 	
-	private String evaluateData(String messageFromServer) throws NumberFormatException, UnknownHostException{
-		String[] commands = {"wait", "start"};
+	private void evaluateData(String messageFromServer) throws NumberFormatException, UnknownHostException{
+		String[] commands = {"wait", "start", "identity", "update"};
 		
-		System.out.println(messageFromServer);
-		if (messageFromServer.contains(commands[0])){
+		System.out.println("Message From Server: " + messageFromServer);
+		
+		if (messageFromServer.contains(commands[0])){			// client waits for other clients to connect to server
 			sendData = false;
-			return null;
-		}else if(messageFromServer.contains(commands[1])){
-			// gameVars format: "start title width height number_of_players P1_address P1_port P2_address P2_port P3_address P3_port P4_address P4_port"
+		}else if(messageFromServer.contains(commands[1])){		// Client starts the game
+			// gameVars format: "start title width height number_of_players P1_address P1_port P1_ID --- up to P4"
 			String[] gameVars = messageFromServer.split("\\s");
 			game = new Game(gameVars[1], Integer.parseInt(gameVars[2]), Integer.parseInt(gameVars[3]));
 			
@@ -95,20 +101,45 @@ public class Client implements Runnable {
 			System.out.println(numP);
 			int j = 5;
 			for (int i =0; i < numP; i++){
-				System.out.println(j);
 				int port = Integer.parseInt(gameVars[j+1]);
-				game.getHandler().getPlayers().add(new Player(game.getHandler(), 0, 0, InetAddress.getByName(gameVars[j]), port));
-				System.out.println(j);
-				j+=2;
+				int id = Integer.parseInt(gameVars[j+2]);
+				game.getHandler().getPlayers().add(new Player(game.getHandler(), 0, 0, InetAddress.getByName(gameVars[j]), port, id));
+				j+=3;
 			}
+			game.getHandler().setClientPlayer(playerID);
 			
-			game.start();
+			game.init();
+			//game.start();
 			sendData = true;
 			
-			return game.getPlayerInput();
+		}else if(messageFromServer.contains(commands[2])){		// identify the clients IP and port as seen by the server.
+			// info format: "identity playerID"
+			String[] info = messageFromServer.split("\\s");
+			playerID = Integer.parseInt(info[1]);
+		}else if (messageFromServer.contains(commands[3])){		// update position and health of players
+			// info format: "update P1_address P1_Port P1_health P1_X P1_Y .... "
+			String[] info = messageFromServer.split("\\s");
+			int num_entities = (info.length - 1)/5;
+			
+			//System.out.println(game.getHandler().getClientPlayer().toString());
+			int j = 1;
+			for (int i =0; i < num_entities; i++){
+				InetAddress ip = InetAddress.getByName(info[j]);
+				int port = Integer.parseInt(info[j+1]);
+				int hp = Integer.parseInt(info[j+2]);
+				int xPos = Integer.parseInt(info[j+3]);
+				int yPos = Integer.parseInt(info[j+4]);
+				
+				Player current = game.getHandler().getPlayer(ip, port);
+				
+				current.setHealth(hp);
+				current.setX(xPos);
+				current.setY(yPos);
+				
+				j+=5;
+			}
 		}
 		
-		return null;
 	}
 	
 	/**

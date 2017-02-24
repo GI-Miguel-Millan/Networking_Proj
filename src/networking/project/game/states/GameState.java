@@ -21,45 +21,25 @@ import networking.project.game.worlds.World;
 public class GameState extends State {
 	
 	private World world;
-	private Animation transIn, transOut;
-	private boolean tIn = false, 
-			tOut = false,
-			stillTransitioning = false,
-			firstTrans = false,
-			lastTrans = false;
 	
 	public GameState(Handler handler){
 		super(handler);
 		displayState();
-		
-		transIn = new Animation(100, Assets.transIn);
-		transOut = new Animation(200, Assets.transOut);
 	}
 	
 	@Override
 	public void tick() {
-		if(tIn)
-			transIn.tick();
-		if(tOut)
-			transOut.tick();
 		
 		if (world != handler.getWorld())
 			world = handler.getWorld();
 		
-		if(!handler.IsTransitioning())
 			world.tick();
-		else
-			checkTransition();
+
 	}
 
 	@Override
 	public void render(Graphics g) {
 		world.render(g);
-		
-		if(tIn)
-			g.drawImage(transIn.getCurrentFrame(), 0, 0, handler.getWidth(), handler.getHeight(), null);
-		if(tOut)
-			g.drawImage(transOut.getCurrentFrame(), 0, 0, handler.getWidth(), handler.getHeight(), null);
 		
 		String tmpScore = "SCORE: " + handler.getPlayerScore();
 		String tmpHighScore = "HighScore: " + handler.getHighScore();
@@ -86,54 +66,8 @@ public class GameState extends State {
 		}
 		
 	}
-	
-	public void checkTransition(){
-		if(!stillTransitioning){
-			tOut = true;
-			transitionOut();
-		}else{
-			tIn = true;
-			transitionIn();
-		}
-	}
-	
-	public void transitionIn(){
-		world.tick();
-		if(transIn.onLastFrame() || lastTrans){
-			stillTransitioning = false;
-			handler.setIsTransitioning(false);
-			tIn = false;
-			if(lastTrans){
-				handler.getGame().getGameOverState().displayState();
-			}
-			
-			lastTrans = false;
-			
-			
-		}
-		if(handler.getLvlCounter() == 1){
-			Sound.bgm4.play();
-		}else if(handler.getLvlCounter() == 2)
-			Sound.venus.play();
-		else if(handler.getLvlCounter() == 3)
-			Sound.BossMain.play();
-		else if(handler.getLvlCounter() == 4)
-			Sound.fight_looped.play();
-	}
 
-	public void transitionOut(){
-		if(transOut.onLastFrame() || firstTrans){
-			stillTransitioning = true;
-			tIn = true;
-			tOut = false;
-			handler.changeWorld();
-			handler.getGameCamera().resetCamera();
-			transOut = new Animation(200, Assets.transOut);
-			firstTrans = false;
-		}
-		
-	}
-	
+
 	/**
 	 * Sets the state to the game state 
 	 * and starts the game over at level 1
@@ -145,10 +79,6 @@ public class GameState extends State {
 		world = new World(handler, Assets.fileNames[handler.getLvlCounter()]); // fileNames[1] = world1.txt
 		handler.setWorld(world);
 		handler.setIsTransitioning(true);
-		firstTrans = true;
 	}
 	
-	public void setLastTrans(boolean b){
-		this.lastTrans = b;
-	}
 }

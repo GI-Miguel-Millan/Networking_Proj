@@ -11,10 +11,14 @@ public class Server implements Runnable{
 
 	private Thread thread;
 	private boolean running = false;
+	private boolean gameStarted = false;
 	private final int number_of_players;
-	private int GAMEWIDTH = 640;
-	private int GAMEHEIGHT = 480;
+//	private int GAMEWIDTH = 640;
+//	private int GAMEHEIGHT = 480;
+	private int GAMEWIDTH = 1080;
+	private int GAMEHEIGHT = 720;
 	private Game game = new Game("Battle Arena", GAMEWIDTH, GAMEHEIGHT);
+	private int ids = 0;
 	
 	public Server(int numPlayers){
 		this.number_of_players = numPlayers;
@@ -25,7 +29,7 @@ public class Server implements Runnable{
 	}
 
 	private void tick(){
-		
+		game.tick();
 	}
 	
 	@Override
@@ -52,7 +56,7 @@ public class Server implements Runnable{
 				timer += now - lastTime;
 				lastTime = now;
 				
-				if(delta >= 1){
+				if(delta >= 1 && gameStarted){
 						tick();
 					ticks++;
 					delta--;
@@ -85,25 +89,45 @@ public class Server implements Runnable{
 	 * @throws IOException 
 	 */
 	private void evaluateCommand(String str, DatagramPacket clientDatagram, DatagramSocket serverSocket) throws IOException{
-		String[] commands = {"init"};
+		String[] commands = {"init", "input"};
 		
 		if(str.contains(commands[0])){
-			this.game.getHandler().getPlayers().add(new Player(game.getHandler(),0,0,clientDatagram.getAddress(), clientDatagram.getPort()));
+			this.ids +=1;					// add new player, must increment ids
+			this.game.getHandler().getPlayers().add(new Player(game.getHandler(),0,0,clientDatagram.getAddress(), clientDatagram.getPort(), this.ids));
+			
+			//Let the client the id of its own player.
+			String t = "identity " + this.ids;
+			serverSocket.send(new DatagramPacket(t.getBytes(), t.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
 			
 			if (game.getHandler().getPlayers().size() == this.number_of_players){
 				String s = "start Battle_Arena " + GAMEWIDTH + " " + GAMEHEIGHT + " " + this.number_of_players;
 				for (Player p2: game.getHandler().getPlayers()){
-					s = s + " " + p2.getIP().getHostAddress() + " " + p2.getPort();
+					s = s + " " + p2.getIP().getHostAddress() + " " + p2.getPort() + " " + p2.getID();
 				}
 				
 				for (Player p: game.getHandler().getPlayers()){
 					serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, p.getIP(), p.getPort()));
 					
+					game.init();		// initialze the game
+					gameStarted = true;	// start the game (allow it to tick)
 				}
+				game.getHandler().setClientPlayer(this.ids);
 			}else{
 				String s = "waiting for players";
 				serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
 			}
+		}else if (str.contains(commands[1])){
+			// inputs format: "input up down left right attack"
+			String[] inputs = str.split("\\s");
+			game.getHandler().getPlayer(clientDatagram.getAddress(), clientDatagram.getPort()).applyInput(
+						Integer.parseInt(inputs[1]), Integer.parseInt(inputs[2]), Integer.parseInt(inputs[3]), Integer.parseInt(inputs[4]), Integer.parseInt(inputs[5]));
+			
+			String s = "update";
+			for (Player p2: game.getHandler().getPlayers()){
+				//System.out.println("Server side player " + p2);
+				s = s + " " + p2.getIP().getHostAddress() + " " + p2.getPort() + " " + p2.getHealth() + " " + (int)p2.getX() + " " + (int)p2.getY();
+			}
+			serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
 		}
 	}
 	

@@ -37,8 +37,7 @@ public class World {
 	 *  resulting in the tick() of all Entities.
 	 */
 	public void tick(){
-		for(Player p: handler.getPlayers())
-			p.tick();
+		entityManager.tick();
 	}
 	
 	/**
@@ -59,18 +58,12 @@ public class World {
 		// Render each tile which is currently visible
 		for(int y = yStart;y < yEnd;y++){
 			for(int x = xStart;x < xEnd;x++){
-//				if(getTile(x,y).isGoal() && handler.getPlayer().isBossDead()){
-//					getTile(x,y).showGoal();
-//				}else{
-//					getTile(x,y).hideGoal();
-//				}
 				getTile(x, y).render(g, (int) (x * Tile.TILEWIDTH - handler.getGameCamera().getxOffset()),
 						(int) (y * Tile.TILEHEIGHT - handler.getGameCamera().getyOffset()));
 			}
 		}
 		// Render all Entities
-		for(Player p: handler.getPlayers())
-			p.render(g);
+		entityManager.render(g);
 	}
 	
 	/**
