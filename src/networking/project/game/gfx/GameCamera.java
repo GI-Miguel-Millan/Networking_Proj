@@ -30,6 +30,9 @@ public class GameCamera {
 	 *  sure the xOffset and yOffset is never outside of the dimensions of the world.
 	 */
 	public void checkBlankSpace(){
+		
+		//System.out.println("xoff: " + xOffset + ", yoff: " + yOffset);
+		
 		if(xOffset < 0){
 			xOffset = 0;
 		}else if(xOffset > handler.getWorld().getWidth() * Tile.TILEWIDTH - handler.getWidth()){
@@ -38,10 +41,11 @@ public class GameCamera {
 		
 		if(yOffset < -50){
 			yOffset = -50;
-			cameraStop = true;
 		}else if(yOffset > handler.getWorld().getHeight() * Tile.TILEHEIGHT - handler.getHeight()){
 			yOffset = handler.getWorld().getHeight() * Tile.TILEHEIGHT - handler.getHeight();
 		}
+		
+		//System.out.println("After transformation: xoff: " + xOffset + ", yoff: " + yOffset);
 	}
 	
 	/**
@@ -63,17 +67,6 @@ public class GameCamera {
 		xOffset = handler.getMouseManager().getMouseX() - handler.getWidth() / 2 + handler.getMouseManager().getMouseX() / 2;
 		yOffset = handler.getMouseManager().getMouseY() - handler.getHeight() / 2 + handler.getMouseManager().getMouseY() / 2;
 		checkBlankSpace();
-	}
-	
-	/**
-	 * Resets the camera's location to the bottom of the screen, and sets 
-	 * the cameraStop to false so the camera will resume scrolling.
-	 */
-	public void resetCamera(){
-		cameraStop= false;
-		camSpeed = DEFAULT_CAMSPEED;
-		yOffset = handler.getWorld().getHeight() * Tile.TILEHEIGHT;
-		xOffset = 0;
 	}
 	
 	/**

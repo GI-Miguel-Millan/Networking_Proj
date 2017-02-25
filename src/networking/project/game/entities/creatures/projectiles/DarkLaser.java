@@ -5,6 +5,7 @@ import java.awt.Graphics;
 
 import networking.project.game.Handler;
 import networking.project.game.entities.Entity;
+import networking.project.game.entities.creatures.Player;
 import networking.project.game.gfx.Assets;
 
 /**
@@ -16,7 +17,7 @@ import networking.project.game.gfx.Assets;
  */
 public class DarkLaser extends Projectile {
 
-	public DarkLaser(Handler handler, Entity e, int orient, int offset, int id) {
+	public DarkLaser(Handler handler, Player e, int orient, int offset, int id) {
 		super(handler, e, orient, offset, id);
 		speed = 8.0f + handler.getGameCamera().getCamSpeed();
 	}

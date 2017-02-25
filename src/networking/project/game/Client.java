@@ -118,14 +118,17 @@ public class Client implements Runnable {
 			//game.start();
 			sendData = true;
 			
-		}else if(messageFromServer.contains(commands[2])){		// identify the clients IP and port as seen by the server.
+			// identify the clients IP and port as seen by the server.
+		}else if(messageFromServer.contains(commands[2])){		
 			// info format: "identity playerID"
 			String[] info = messageFromServer.split("\\s");
 			playerID = Integer.parseInt(info[1]);
-		}else if (messageFromServer.contains(commands[3])){		// update position and health of players
-			// info format: "update P1_address P1_Port P1_health P1_X P1_Y P1_mouseX P1_mouseY.... "
+			
+			// update position and health of players
+		}else if (messageFromServer.contains(commands[3])){		
+			// info format: "update P1_address P1_Port P1_health P1_X P1_Y P1_mouseX P1_mouseY P1_camX P1_camY.... "
 			String[] info = messageFromServer.split("\\s");
-			int num_entities = (info.length - 1)/7;
+			int num_entities = (info.length - 1)/9;
 			
 			//System.out.println(game.getHandler().getClientPlayer().toString());
 			int j = 1;
@@ -137,6 +140,8 @@ public class Client implements Runnable {
 				int yPos = Integer.parseInt(info[j+4]);
 				int mouseX = Integer.parseInt(info[j+5]);
 				int mouseY = Integer.parseInt(info[j+6]);
+				int camX = Integer.parseInt(info[j+7]);
+				int camY = Integer.parseInt(info[j+8]);
 				
 				Player current = game.getHandler().getPlayer(ip, port);
 				
@@ -144,8 +149,10 @@ public class Client implements Runnable {
 				current.setX(xPos);
 				current.setY(yPos);
 				current.setMouseCoord(mouseX, mouseY);
+				current.setCamX(camX);
+				current.setCamY(camY);
 				
-				j+=7;
+				j+=9;
 			}
 		}else if(messageFromServer.contains(commands[4])){
 			//info format: spawnProj playerID mouseX mouseY projectileID

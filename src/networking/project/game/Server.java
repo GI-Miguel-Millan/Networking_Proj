@@ -123,10 +123,12 @@ public class Server implements Runnable{
 			
 			//This is where most of the game updates happen in real time.
 		}else if (str.contains(commands[1])){
-			// inputs format: "input up down left right attack clientID mouseX mouseY"
+			// inputs format: "input up down left right attack clientID mouseX mouseY camX camY"
 			String[] inputs = str.split("\\s");
 			Player cP = game.getHandler().getPlayer(Integer.parseInt(inputs[6]));
-			cP.applyInput(Integer.parseInt(inputs[1]), Integer.parseInt(inputs[2]), Integer.parseInt(inputs[3]), Integer.parseInt(inputs[4]), Integer.parseInt(inputs[5]));
+			cP.applyInput(Integer.parseInt(inputs[1]), Integer.parseInt(inputs[2]), Integer.parseInt(inputs[3]), 
+					Integer.parseInt(inputs[4]), Integer.parseInt(inputs[9]), Integer.parseInt(inputs[10]));
+			
 			cP.setMouseCoord(Integer.parseInt(inputs[7]), Integer.parseInt(inputs[8]));
 			
 			// player making an attack will require additional action than just assigning inputs.
@@ -139,7 +141,8 @@ public class Server implements Runnable{
 			for (Player p2: game.getHandler().getPlayers()){
 				//System.out.println("Server side player " + p2);
 				s = s + " " + p2.getIP().getHostAddress() + " " + p2.getPort() + " " + p2.getHealth() 
-				+ " " + (int)p2.getX() + " " + (int)p2.getY() + " " + p2.getMouseX() + " " + p2.getMouseY();
+				+ " " + (int)p2.getX() + " " + (int)p2.getY() + " " + p2.getMouseX() + " " + p2.getMouseY()
+				+ " " + (int)p2.getCamX() + " " + (int)p2.getCamY();
 			}
 			
 			String s2 = "proj_pos";

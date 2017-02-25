@@ -262,9 +262,11 @@ public class Game implements Runnable {
 			attack = 1;
 		}
 			
+		gameCamera.checkBlankSpace();
 		
 		return "input " + up + " " + down + " " + left + " " + right + " " + attack + " " +
-		handler.getClientPlayer().getID() + " " + mouseManager.getMouseX() + " " + mouseManager.getMouseY();
+		handler.getClientPlayer().getID() + " " + mouseManager.getMouseX() + " " + mouseManager.getMouseY() + " " + 
+		(int)gameCamera.getxOffset()+ " " + (int)gameCamera.getyOffset();
 	}
 }
 

@@ -40,7 +40,7 @@ public class Player extends Creature {
 	private int score = 1000;
 	private Rectangle playerBounds = new Rectangle(16,22,32,12);
 	private boolean isHurt = false;
-	private int mouseX =0 , mouseY =0;
+	private int mouseX =0 , mouseY =0, camX = 0, camY =0;
 	
 	public Player(Handler handler, float x, float y, InetAddress ip, int port, int id) {
 		super(handler, x, y, Creature.DEFAULT_CREATURE_WIDTH, Creature.DEFAULT_CREATURE_HEIGHT, id);
@@ -98,7 +98,7 @@ public class Player extends Creature {
 	 *  Gets input from the user and sets the players yMove and
 	 *  xMove according to which key is pressed.
 	 */
-	public void applyInput(int up, int down, int left, int right, int attack){
+	public void applyInput(int up, int down, int left, int right, int xOffset, int yOffset){
 		//System.out.println("up: " + up +" down: " + down +" left: " + left +" right: "+ right );
 		
 		
@@ -123,13 +123,9 @@ public class Player extends Creature {
 		{
 			xMove = speed;
 		}		
-		// A player is only allowed to fire a projectile whenever readyFire is true 
-		// and they hit the fire key.
-		if(attack == 1 && readyFire){
-			// attack here
-
-			//readyFire = false;
-		}
+		
+		this.camX = xOffset;
+		this.camY = yOffset;
 	}
 
 	@Override
@@ -282,6 +278,24 @@ public class Player extends Creature {
 	
 	public void setReady(boolean b){
 		readyFire = b;
+	}
+	
+	public float getCamX(){
+		return (float) camX;
+	}
+	
+	public float getCamY(){
+		return (float) camY;
+	}
+
+	public void setCamX(int cx) {
+		this.camX = cx;
+		
+	}
+
+	public void setCamY(int cy) {
+		this.camY = cy;
+		
 	}
 }
 

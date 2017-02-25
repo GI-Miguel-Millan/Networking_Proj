@@ -20,15 +20,13 @@ import networking.project.game.sound.Sound;
 public class Projectile extends Creature{
 
 	public static final int DEFAULT_PROJECTILE_WIDTH = 5,
-							DEFAULT_PROJECTILE_HEIGHT = 20;
-	protected int orientation; // 0 = up, 1 = down, 2 = right, 3 = left
+							DEFAULT_PROJECTILE_HEIGHT = 5;
 	protected int counter = 0; 
-	protected Entity creator; 
+	protected Player creator; 
 	protected int mouseX, mouseY;
 	
-	public Projectile(Handler handler, Entity e, int mX, int mY, int id) {
-		super(handler, e.getX(), e.getY(), DEFAULT_PROJECTILE_WIDTH, DEFAULT_PROJECTILE_HEIGHT, id);
-		orientation = 0;
+	public Projectile(Handler handler, Player e, int mX, int mY, int id) {
+		super(handler, e.getX() + e.getWidth()/2, e.getY() + e.getHeight()/2, DEFAULT_PROJECTILE_WIDTH, DEFAULT_PROJECTILE_HEIGHT, id);
 		mouseX=mX;
 		mouseY=mY;
 		speed = handler.getGameCamera().getCamSpeed() + 5.0f;
@@ -36,32 +34,37 @@ public class Projectile extends Creature{
 		creator = e;
 		Sound.lazer.execute();//makes lazer sound while shooting
 		
-		int offset = 10; // temporary until Projectile is reworked.
+		handler.getGameCamera().checkBlankSpace();
 		
-		if(orientation == 0){
-			x += e.getWidth()/2 - width/2 + offset;
-			y += -80;
-			yMove = speed;
-		}else if(orientation == 1){
-			x += e.getWidth()/2 - width/2 + offset;
-			y += e.getHeight() + 15;
-			yMove = -speed;
-		}else if(orientation == 2){
-			x += e.getWidth() + 10;
-			y += e.getHeight()/2 + offset;
+		
+		posX = (int)(x - creator.getCamX());
+		posY = (int) (y - creator.getCamY());
+		float speedX =(speed*(mouseX/mouseY));
+		float speedY =(speed*(mouseY/mouseX));
+		
+		if (speedX > speed)
+			speedX = speed;
+		if (speedY>speed)
+			speedY = speed;
+		
+		//System.out.println("poX: " + posX + ", posY: " + posY + ", mX: " + (int)(mouseX - handler.getGameCamera().getxOffset()) + " " + ", mY: " +  (int) (mouseY - handler.getGameCamera().getyOffset()));
+		System.out.println("poX: " + posX + ", posY: " + posY + ", mX: " + mouseX + " " + ", mY: " +  mouseY);
+		
+		if(posX < mouseX){
 			xMove = speed;
-			width = DEFAULT_PROJECTILE_HEIGHT;
-			height =DEFAULT_PROJECTILE_WIDTH;
-		}else{
-			x += -10;
-			y += e.getHeight()/2 + offset;
+		}else if (posX > mouseX){
 			xMove = -speed;
-			width = DEFAULT_PROJECTILE_HEIGHT;
-			height =DEFAULT_PROJECTILE_WIDTH;
+		}else {
+			xMove =0;
 		}
 		
-		
-		
+		if(posY > mouseY){
+			yMove = speed;
+		}else if (posY < mouseY){
+			yMove = -speed;
+		}else {
+			yMove =0;
+		}
 	}
 
 	@Override
@@ -69,15 +72,6 @@ public class Projectile extends Creature{
 		//Ensures that a projectile is eventually killed
 		if(counter == 80)
 			this.hurt(1);
-		
-		if(orientation == 0)
-			yMove = speed;
-		else if(orientation == 1)
-			yMove = -speed;
-		else if(orientation == 2)
-			xMove = speed;
-		else if(orientation == 3)
-			xMove = -speed;
 			
 		
 		if(!checkEntityCollisions(xMove, yMove)){
@@ -117,6 +111,34 @@ public class Projectile extends Creature{
 				this.hurt(1);
 			}
 		}
+	}
+	
+	/**
+	 * Checks for collision between entities by checking for an intersection
+	 * between boundaries of each entity.
+	 * 
+	 * @param xOffset - how far away from the entity in the x direction to check for intersections
+	 * @param yOffset - how far away from the entity in the y direction to check for intersections
+	 * @return true there is a collision
+	 * @return false if there is no collision
+	 */
+	public boolean checkEntityCollisions(float xOffset, float yOffset){
+		// Loop through each entity that exist in a world.
+		for(Entity e : handler.getWorld().getEntityManager().getEntities()){
+			
+			// Skip this entity, no need to check for self collision, also ignore Projectiles since
+			// they have their own method to check for collision with other entities.
+			if(e.getID() == creator.getID() || e.isProjectile())
+				continue;
+			
+			// Compare the collision bounds of the other entity, with the collision bounds of this entity.
+			if(e.getCollisionBounds(0f, 0f).intersects(getCollisionBounds(xOffset, yOffset))){
+				collidedWith = handler.getWorld().getEntityManager().getIndex(e);
+				return true;
+			}
+				
+		}
+		return false;
 	}
 
 	@Override

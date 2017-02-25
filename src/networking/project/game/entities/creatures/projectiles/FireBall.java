@@ -18,7 +18,7 @@ import networking.project.game.gfx.Assets;
  */
 public class FireBall extends Projectile {
 
-	public FireBall(Handler handler, Entity e, int orient, int offset, int id) {
+	public FireBall(Handler handler, Player e, int orient, int offset, int id) {
 		super(handler, e, orient, offset, id);
 		speed = 3.0f;
 		width = 20;
@@ -62,16 +62,6 @@ public class FireBall extends Projectile {
 		//Ensures that a projectile is eventually killed
 		if(counter == 200)
 			this.hurt(1);
-		
-		if(orientation == 0)
-			yMove = speed;
-		else if(orientation == 1)
-			yMove = -speed;
-		else if(orientation == 2)
-			xMove = speed;
-		else if(orientation == 3)
-			xMove = -speed;
-			
 		
 		if(!checkEntityCollisions(xMove, yMove)){
 			y -= yMove;
