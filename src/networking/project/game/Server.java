@@ -5,7 +5,9 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
 
+import networking.project.game.entities.Entity;
 import networking.project.game.entities.creatures.Player;
+import networking.project.game.entities.creatures.projectiles.Projectile;
 
 public class Server implements Runnable{
 
@@ -118,19 +120,70 @@ public class Server implements Runnable{
 				String s = "waiting for players";
 				serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
 			}
+			
+			//This is where most of the game updates happen in real time.
 		}else if (str.contains(commands[1])){
-			// inputs format: "input up down left right attack clientID"
+			// inputs format: "input up down left right attack clientID mouseX mouseY"
 			String[] inputs = str.split("\\s");
-			game.getHandler().getPlayer(Integer.parseInt(inputs[6])).applyInput(
-						Integer.parseInt(inputs[1]), Integer.parseInt(inputs[2]), Integer.parseInt(inputs[3]), Integer.parseInt(inputs[4]), Integer.parseInt(inputs[5]));
+			Player cP = game.getHandler().getPlayer(Integer.parseInt(inputs[6]));
+			cP.applyInput(Integer.parseInt(inputs[1]), Integer.parseInt(inputs[2]), Integer.parseInt(inputs[3]), Integer.parseInt(inputs[4]), Integer.parseInt(inputs[5]));
+			cP.setMouseCoord(Integer.parseInt(inputs[7]), Integer.parseInt(inputs[8]));
+			
+			// player making an attack will require additional action than just assigning inputs.
+			if(Integer.parseInt(inputs[5]) == 1 && cP.isReady()){
+				cP.setReady(false);
+				performAttack(cP,Integer.parseInt(inputs[7]), Integer.parseInt(inputs[8]), serverSocket);
+			}
 			
 			String s = "update";
 			for (Player p2: game.getHandler().getPlayers()){
 				//System.out.println("Server side player " + p2);
-				s = s + " " + p2.getIP().getHostAddress() + " " + p2.getPort() + " " + p2.getHealth() + " " + (int)p2.getX() + " " + (int)p2.getY();
+				s = s + " " + p2.getIP().getHostAddress() + " " + p2.getPort() + " " + p2.getHealth() 
+				+ " " + (int)p2.getX() + " " + (int)p2.getY() + " " + p2.getMouseX() + " " + p2.getMouseY();
 			}
+			
+			String s2 = "proj_pos";
+			for(Entity e: game.getHandler().getWorld().getEntityManager().getEntities()){
+				if(e.getClass().equals(Projectile.class)){
+					Projectile p = (Projectile)e;
+					s2 = s2 + " " + (int)p.getX() + " " + (int)p.getY() + " " + p.getID() + " " + p.getMouseX() + " " + p.getMouseY() + " " + p.getCreator().getID();
+				}
+			}
+			
+			String s3 = "kill";
+			for(Integer i: game.getHandler().getK_ID()){
+				s3 = s3 + " " + i.intValue();
+			}
+			
+			// Send player info
 			serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
+			// Send projectile positions
+			serverSocket.send(new DatagramPacket(s2.getBytes(), s2.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
+			// Send ID's of entities to kill.
+			serverSocket.send(new DatagramPacket(s2.getBytes(), s2.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
 		}
+	}
+	
+	/**
+	 * The client is attacking. Spawn a projectile using the given information, then message all clients 
+	 * telling them to spawn a projectile with the same info.
+	 * @param p
+	 * @param clientDatagram
+	 * @param serverSocket
+	 */
+	private void performAttack(Player p, int mouseX, int mouseY, DatagramSocket serverSocket){
+		ids+=1;		// add new entity, increment ids 
+		game.getHandler().getWorld().getEntityManager().addEntity(new Projectile(game.getHandler(), p, mouseX, mouseY, ids));
+		String s = "spawnProj " + p.getID() + " " + mouseX + " " + mouseY + " " + ids;
+		for (Player p2: game.getHandler().getPlayers()){
+			try {
+				serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, p2.getIP(), p2.getPort()));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 	}
 	
 	/**

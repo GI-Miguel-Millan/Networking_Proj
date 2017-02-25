@@ -24,18 +24,23 @@ public class Projectile extends Creature{
 	protected int orientation; // 0 = up, 1 = down, 2 = right, 3 = left
 	protected int counter = 0; 
 	protected Entity creator; 
+	protected int mouseX, mouseY;
 	
-	public Projectile(Handler handler, Entity e, int orient, int offset, int id) {
+	public Projectile(Handler handler, Entity e, int mX, int mY, int id) {
 		super(handler, e.getX(), e.getY(), DEFAULT_PROJECTILE_WIDTH, DEFAULT_PROJECTILE_HEIGHT, id);
-		orientation = orient;
+		orientation = 0;
+		mouseX=mX;
+		mouseY=mY;
 		speed = handler.getGameCamera().getCamSpeed() + 5.0f;
 		health = 1;
 		creator = e;
-		Sound.lazer.execute();//New jon edit
-		//makes lazer sound while shooting
+		Sound.lazer.execute();//makes lazer sound while shooting
+		
+		int offset = 10; // temporary until Projectile is reworked.
+		
 		if(orientation == 0){
 			x += e.getWidth()/2 - width/2 + offset;
-			y += -30;
+			y += -80;
 			yMove = speed;
 		}else if(orientation == 1){
 			x += e.getWidth()/2 - width/2 + offset;
@@ -126,7 +131,7 @@ public class Projectile extends Creature{
 
 	@Override
 	public void die() {
-		// TODO Auto-generated method stub
+		handler.getK_ID().add(this.ID);
 		
 	}
 	
@@ -136,6 +141,18 @@ public class Projectile extends Creature{
 	 */
 	public boolean isProjectile(){
 		return true;
+	}
+	
+	public Entity getCreator(){
+		return creator;
+	}
+	
+	public int getMouseX(){
+		return mouseX;
+	}
+	
+	public int getMouseY(){
+		return mouseY;
 	}
 
 }

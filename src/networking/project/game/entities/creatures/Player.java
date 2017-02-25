@@ -40,6 +40,7 @@ public class Player extends Creature {
 	private int score = 1000;
 	private Rectangle playerBounds = new Rectangle(16,22,32,12);
 	private boolean isHurt = false;
+	private int mouseX =0 , mouseY =0;
 	
 	public Player(Handler handler, float x, float y, InetAddress ip, int port, int id) {
 		super(handler, x, y, Creature.DEFAULT_CREATURE_WIDTH, Creature.DEFAULT_CREATURE_HEIGHT, id);
@@ -127,7 +128,7 @@ public class Player extends Creature {
 		if(attack == 1 && readyFire){
 			// attack here
 
-			readyFire = false;
+			//readyFire = false;
 		}
 	}
 
@@ -147,7 +148,11 @@ public class Player extends Creature {
 		
 		Graphics2D gr = (Graphics2D)g;
 		AffineTransform transform = gr.getTransform();
-		double angle = Math.atan2((posX+width/2) - handler.getMouseManager().getMouseX(), -((posY+height/2) - handler.getMouseManager().getMouseY())) - Math.PI;
+//		System.out.println("mouseX: " + mouseX + ", mouseY: " + mouseY);
+//		System.out.println("mmX: " + handler.getMouseManager().getMouseX() + ", mmY: " + handler.getMouseManager().getMouseY());
+		//double angle = Math.atan2((posX+width/2) - handler.getMouseManager().getMouseX() , -((posY+height/2) - handler.getMouseManager().getMouseY())) - Math.PI;
+		double angle = Math.atan2((posX+width/2) - mouseX , -((posY+height/2) - mouseY)) - Math.PI;
+		//double angle = Math.atan2(-((posY+height/2) - mouseY), (posX+width/2) - mouseX) - Math.PI/2;
 		//double angle = Math.PI/2 - Math.atan(-handler.getMouseManager().getMouseY()/(handler.getMouseManager().getMouseX()+1));
 		gr.rotate(angle, posX+width/2, posY+width/2);
 		if(this.ID == 1)
@@ -160,7 +165,7 @@ public class Player extends Creature {
 			gr.drawImage(Assets.interceptor, posX, posY, width, height, null);
 		gr.setTransform(transform);
 		
-		g.drawLine((int)posX+width/2, (int)posY, (int)(handler.getMouseManager().getMouseX()),(int)(handler.getMouseManager().getMouseY()));
+		//g.drawLine((int)posX+width/2, (int)posY, (int)(handler.getMouseManager().getMouseX()),(int)(handler.getMouseManager().getMouseY()));
 		//g.drawRect(posX, posY, width, height);
 //		g.fillRect((int) (x + bounds.x - handler.getGameCamera().getxOffset()),
 //				(int) (y + bounds.y - handler.getGameCamera().getyOffset()),
@@ -197,6 +202,7 @@ public class Player extends Creature {
 	@Override
 	public void die() {
 		// implement action upon player death
+		handler.getK_ID().add(this.ID);
 		active =false;
 	}
 	
@@ -255,4 +261,28 @@ public class Player extends Creature {
 		return "Player ID: " + getID() + ", Address: " + getIP() + ", Port: " + getPort() + ", x position: " + getX() + " y position: " + getY();
 		
 	}
+
+	public void setMouseCoord(int x, int y) {
+		mouseX = x;
+		mouseY = y;
+	}
+
+	public int getMouseX() {
+		return mouseX;
+	}
+
+	public int getMouseY() {
+		
+		return mouseY;
+	}
+	
+	public boolean isReady(){
+		return readyFire;
+	}
+	
+	public void setReady(boolean b){
+		readyFire = b;
+	}
 }
+
+

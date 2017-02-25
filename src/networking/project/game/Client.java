@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import networking.project.game.entities.creatures.Player;
+import networking.project.game.entities.creatures.projectiles.Projectile;
 
 import java.net.*;
 
@@ -91,7 +92,7 @@ public class Client implements Runnable {
 	}
 	
 	private void evaluateData(String messageFromServer) throws NumberFormatException, UnknownHostException{
-		String[] commands = {"wait", "start", "identity", "update"};
+		String[] commands = {"wait", "start", "identity", "update", "spawnProj", "proj_pos", "kill"};
 		
 		//System.out.println("Message From Server: " + messageFromServer);
 		
@@ -122,9 +123,9 @@ public class Client implements Runnable {
 			String[] info = messageFromServer.split("\\s");
 			playerID = Integer.parseInt(info[1]);
 		}else if (messageFromServer.contains(commands[3])){		// update position and health of players
-			// info format: "update P1_address P1_Port P1_health P1_X P1_Y .... "
+			// info format: "update P1_address P1_Port P1_health P1_X P1_Y P1_mouseX P1_mouseY.... "
 			String[] info = messageFromServer.split("\\s");
-			int num_entities = (info.length - 1)/5;
+			int num_entities = (info.length - 1)/7;
 			
 			//System.out.println(game.getHandler().getClientPlayer().toString());
 			int j = 1;
@@ -134,14 +135,63 @@ public class Client implements Runnable {
 				int hp = Integer.parseInt(info[j+2]);
 				int xPos = Integer.parseInt(info[j+3]);
 				int yPos = Integer.parseInt(info[j+4]);
+				int mouseX = Integer.parseInt(info[j+5]);
+				int mouseY = Integer.parseInt(info[j+6]);
 				
 				Player current = game.getHandler().getPlayer(ip, port);
 				
 				current.setHealth(hp);
 				current.setX(xPos);
 				current.setY(yPos);
+				current.setMouseCoord(mouseX, mouseY);
 				
-				j+=5;
+				j+=7;
+			}
+		}else if(messageFromServer.contains(commands[4])){
+			//info format: spawnProj playerID mouseX mouseY projectileID
+			String[] info = messageFromServer.split("\\s");
+			int pID = Integer.parseInt(info[1]);
+			int mX = Integer.parseInt(info[2]);
+			int mY = Integer.parseInt(info[3]);
+			int projectileID = Integer.parseInt(info[4]);
+			System.out.println("client side: spawn projectile");
+			game.getHandler().getWorld().getEntityManager().addEntity(new Projectile(game.getHandler(), game.getHandler().getPlayer(pID), mX,mY, projectileID));
+		}else if(messageFromServer.contains(commands[5])){
+			// info format: "proj_pos proj1_X proj1Y proj1_ID proj1_mouseX proj1_mouseY proj1_creatorID"
+			String[] info = messageFromServer.split("\\s");
+			int num_entities = (info.length - 1)/6;
+			
+			//System.out.println(game.getHandler().getClientPlayer().toString());
+			int j = 1;
+			for (int i =0; i < num_entities; i++){
+				int xPos = Integer.parseInt(info[j]);
+				int yPos = Integer.parseInt(info[j+1]);
+				int id = Integer.parseInt(info[j+2]);
+				int mouseX = Integer.parseInt(info[j+3]);
+				int mouseY = Integer.parseInt(info[j+4]);
+				int pID = Integer.parseInt(info[j+5]);
+				Player p = game.getHandler().getPlayer(pID);
+				
+				Projectile current = (Projectile)game.getHandler().getEntity(id);
+				
+				// If for some reason the projectile was never created locally (a lost packet) make the projectile before updating it's position
+				if(current == null){
+					game.getHandler().getWorld().getEntityManager().addEntity(new Projectile(game.getHandler(),p, mouseX, mouseY, id));
+					current = (Projectile)game.getHandler().getEntity(id);
+				}
+				
+				current.setX(xPos);
+				current.setY(yPos);
+				
+				j+=6;
+			}
+		}else if (messageFromServer.contains(commands[6])){
+			// info format: "kill id1 id2 id3...."
+			String[] info = messageFromServer.split("\\s");
+			int num_entities = (info.length -1);
+			
+			for(int i=0; i < num_entities;i++){
+				game.getHandler().killEntity(Integer.parseInt(info[i+1]));
 			}
 		}
 		

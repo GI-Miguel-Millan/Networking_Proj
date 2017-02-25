@@ -263,7 +263,8 @@ public class Game implements Runnable {
 		}
 			
 		
-		return "input " + up + " " + down + " " + left + " " + right + " " + attack + " " + handler.getClientPlayer().getID();
+		return "input " + up + " " + down + " " + left + " " + right + " " + attack + " " +
+		handler.getClientPlayer().getID() + " " + mouseManager.getMouseX() + " " + mouseManager.getMouseY();
 	}
 }
 

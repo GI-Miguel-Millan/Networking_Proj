@@ -26,7 +26,7 @@ public abstract class UIObject {
 	public abstract void onClick();
 	
 	public void onMouseMove(MouseEvent e){
-		System.out.println(e.getPoint());
+		//System.out.println(e.getPoint());
 		if(bounds.contains(e.getX(), e.getY()))
 			hovering = true;
 		else
