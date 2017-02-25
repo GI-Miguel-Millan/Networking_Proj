@@ -164,14 +164,6 @@ public class Handler {
 	}
 
 	public void killEntity(int id) {
-		for(Entity e: world.getEntityManager().getEntities()){
-			if(e.getID() == id){
-				while(e.getHealth() > 0)
-					e.hurt(1);
-				
-				break;
-			}
-				
-		}
+		world.getEntityManager().removeEntity(getEntity(id));
 	}
 }
