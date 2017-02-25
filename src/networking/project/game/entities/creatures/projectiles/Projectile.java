@@ -37,40 +37,24 @@ public class Projectile extends Creature{
 		handler.getGameCamera().checkBlankSpace();
 		
 		
+		// Adjust projectile xMove and yMove so that it will travel in the direction of the clients mouse position
 		posX = (int)(x - creator.getCamX());
 		posY = (int) (y - creator.getCamY());
-		float speedX =(speed*(mouseX/mouseY));
-		float speedY =(speed*(mouseY/mouseX));
+		float r = (float) Math.sqrt(Math.pow(mouseX - posX, 2) + Math.pow(posY - mouseY, 2));
+		float speedX = speed * ( (mouseX - posX)/ r);
+		float speedY = speed * ( (posY - mouseY)/ r);
 		
-		if (speedX > speed)
-			speedX = speed;
-		if (speedY>speed)
-			speedY = speed;
-		
-		//System.out.println("poX: " + posX + ", posY: " + posY + ", mX: " + (int)(mouseX - handler.getGameCamera().getxOffset()) + " " + ", mY: " +  (int) (mouseY - handler.getGameCamera().getyOffset()));
-		System.out.println("poX: " + posX + ", posY: " + posY + ", mX: " + mouseX + " " + ", mY: " +  mouseY);
-		
-		if(posX < mouseX){
-			xMove = speed;
-		}else if (posX > mouseX){
-			xMove = -speed;
-		}else {
-			xMove =0;
-		}
-		
-		if(posY > mouseY){
-			yMove = speed;
-		}else if (posY < mouseY){
-			yMove = -speed;
-		}else {
-			yMove =0;
-		}
+		xMove = speedX;
+		yMove = speedY;
+		//System.out.println("speedX: "+ speedX + ", speedY: " + speedY);
+		//System.out.println("poX: " + posX + ", posY: " + posY + ", mX: " + mouseX + " " + ", mY: " +  mouseY);
+	
 	}
 
 	@Override
 	public void tick() {
 		//Ensures that a projectile is eventually killed
-		if(counter == 80)
+		if(counter == 100)
 			this.hurt(1);
 			
 		
