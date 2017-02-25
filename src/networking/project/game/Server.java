@@ -123,7 +123,7 @@ public class Server implements Runnable{
 			
 			String s = "update";
 			for (Player p2: game.getHandler().getPlayers()){
-				System.out.println("Server side player " + p2);
+				//System.out.println("Server side player " + p2);
 				s = s + " " + p2.getIP().getHostAddress() + " " + p2.getPort() + " " + p2.getHealth() + " " + (int)p2.getX() + " " + (int)p2.getY();
 			}
 			serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));

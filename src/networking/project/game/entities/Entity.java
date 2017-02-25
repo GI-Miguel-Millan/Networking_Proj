@@ -29,12 +29,15 @@ public abstract class Entity {
 	protected int collidedWith;
 	protected boolean isInvinc = false;
 	
-	public Entity(Handler handler, float x, float y, int width, int height){
+	protected final int ID;
+	
+	public Entity(Handler handler, float x, float y, int width, int height, int id){
 		this.handler = handler;
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
+		this.ID = id;
 		health = DEFAULT_HEALTH;
 		
 		bounds = new Rectangle(0, 0, width, height);
@@ -76,7 +79,7 @@ public abstract class Entity {
 			
 			// Skip this entity, no need to check for self collision, also ignore Projectiles since
 			// they have their own method to check for collision with other entities.
-			if(e.equals(this) || e.isProjectile())
+			if(e.getID() == this.ID || e.isProjectile())
 				continue;
 			
 			// Compare the collision bounds of the other entity, with the collision bounds of this entity.
@@ -225,4 +228,7 @@ public abstract class Entity {
 		return isInvinc;
 	}
 	
+	public int getID(){
+		return this.ID;
+	}
 }

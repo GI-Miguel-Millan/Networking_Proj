@@ -32,7 +32,6 @@ public class Player extends Creature {
 	//Networking info
 	private InetAddress ip;
 	private final int port;
-	private final int ID;
 	
 	private boolean readyFire;
 	private int counter;
@@ -41,9 +40,9 @@ public class Player extends Creature {
 	private boolean isHurt = false;
 	
 	public Player(Handler handler, float x, float y, InetAddress ip, int port, int id) {
-		super(handler, x, y, Creature.DEFAULT_CREATURE_WIDTH, Creature.DEFAULT_CREATURE_HEIGHT);
+		super(handler, x, y, Creature.DEFAULT_CREATURE_WIDTH, Creature.DEFAULT_CREATURE_HEIGHT, id);
 		
-		bounds = playerBounds;
+		//bounds = playerBounds;
 		counter = 0;
 		readyFire = true;
 		health = 50;
@@ -51,7 +50,6 @@ public class Player extends Creature {
 		
 		this.ip = ip;
 		this.port = port;
-		this.ID = id;
 		
 		//Animatons
 		animDown = new Animation(500, Assets.player_down);
@@ -85,17 +83,7 @@ public class Player extends Creature {
 		yMove = 0;
 		xMove = 0;
 	}
-	
-	/**
-	 * A player goes crashing through space, it should not stop before it 
-	 * collides with another entity.
-	 */
-	public void move(){
-		System.out.println("movement( x , y): " + xMove + " " + yMove);
-			moveX();
-			moveY();
-	}
-	
+
 	/**
 	 * Updates counters
 	 */
@@ -156,10 +144,10 @@ public class Player extends Creature {
 		posY = (int) (y - handler.getGameCamera().getyOffset());
 		//g.drawImage(getCurrentAnimationFrame(), posX, posY, width, height, null);
 		
-		g.drawRect(posX, posY, width, height);
-//		g.fillRect((int) (x + bounds.x - handler.getGameCamera().getxOffset()),
-//				(int) (y + bounds.y - handler.getGameCamera().getyOffset()),
-//				bounds.width, bounds.height);
+		//g.drawRect(posX, posY, width, height);
+		g.fillRect((int) (x + bounds.x - handler.getGameCamera().getxOffset()),
+				(int) (y + bounds.y - handler.getGameCamera().getyOffset()),
+				bounds.width, bounds.height);
 	}
 	
 	/**

@@ -25,8 +25,8 @@ public class Projectile extends Creature{
 	protected int counter = 0; 
 	protected Entity creator; 
 	
-	public Projectile(Handler handler, Entity e, int orient, int offset) {
-		super(handler, e.getX(), e.getY(), DEFAULT_PROJECTILE_WIDTH, DEFAULT_PROJECTILE_HEIGHT);
+	public Projectile(Handler handler, Entity e, int orient, int offset, int id) {
+		super(handler, e.getX(), e.getY(), DEFAULT_PROJECTILE_WIDTH, DEFAULT_PROJECTILE_HEIGHT, id);
 		orientation = orient;
 		speed = handler.getGameCamera().getCamSpeed() + 5.0f;
 		health = 1;
