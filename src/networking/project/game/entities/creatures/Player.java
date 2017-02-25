@@ -144,7 +144,14 @@ public class Player extends Creature {
 		
 		posX = (int)(x - handler.getGameCamera().getxOffset());
 		posY = (int) (y - handler.getGameCamera().getyOffset());
-		g.drawImage(getCurrentAnimationFrame(), posX, posY, width, height, null);
+		if(this.ID == 1)
+			g.drawImage(Assets.eagle, posX, posY, width, height, null);
+		if(this.ID == 2)
+			g.drawImage(Assets.assault, posX, posY, width, height, null);
+		if(this.ID == 3)
+			g.drawImage(Assets.stealth, posX, posY, width, height, null);
+		if(this.ID == 4)
+			g.drawImage(Assets.interceptor, posX, posY, width, height, null);
 		
 		//g.drawRect(posX, posY, width, height);
 //		g.fillRect((int) (x + bounds.x - handler.getGameCamera().getxOffset()),

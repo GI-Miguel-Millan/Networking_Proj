@@ -30,6 +30,7 @@ public class Server implements Runnable{
 
 	private void tick(){
 		game.tick();
+		game.render();
 	}
 	
 	@Override
@@ -112,7 +113,7 @@ public class Server implements Runnable{
 				}
 				game.getGameState().displayState();
 				gameStarted = true;	// start the game (allow it to tick)
-				//game.getHandler().setClientPlayer(1);
+				game.getHandler().setClientPlayer(1);
 			}else{
 				String s = "waiting for players";
 				serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
