@@ -1,7 +1,9 @@
 package networking.project.game.entities.creatures;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.net.*;
 
@@ -140,19 +142,25 @@ public class Player extends Creature {
 		hurtUp.tick();
 		hurtRight.tick();
 		hurtLeft.tick();
-		
-		
 		posX = (int)(x - handler.getGameCamera().getxOffset());
 		posY = (int) (y - handler.getGameCamera().getyOffset());
-		if(this.ID == 1)
-			g.drawImage(Assets.eagle, posX, posY, width, height, null);
-		if(this.ID == 2)
-			g.drawImage(Assets.assault, posX, posY, width, height, null);
-		if(this.ID == 3)
-			g.drawImage(Assets.stealth, posX, posY, width, height, null);
-		if(this.ID == 4)
-			g.drawImage(Assets.interceptor, posX, posY, width, height, null);
 		
+		Graphics2D gr = (Graphics2D)g;
+		AffineTransform transform = gr.getTransform();
+		double angle = Math.atan2((posX+width/2) - handler.getMouseManager().getMouseX(), -((posY+height/2) - handler.getMouseManager().getMouseY())) - Math.PI;
+		//double angle = Math.PI/2 - Math.atan(-handler.getMouseManager().getMouseY()/(handler.getMouseManager().getMouseX()+1));
+		gr.rotate(angle, posX+width/2, posY+width/2);
+		if(this.ID == 1)
+			gr.drawImage(Assets.eagle, posX, posY, width, height, null);
+		if(this.ID == 2)
+			gr.drawImage(Assets.assault, posX, posY, width, height, null);
+		if(this.ID == 3)
+			gr.drawImage(Assets.stealth, posX, posY, width, height, null);
+		if(this.ID == 4)
+			gr.drawImage(Assets.interceptor, posX, posY, width, height, null);
+		gr.setTransform(transform);
+		
+		g.drawLine((int)posX+width/2, (int)posY, (int)(handler.getMouseManager().getMouseX()),(int)(handler.getMouseManager().getMouseY()));
 		//g.drawRect(posX, posY, width, height);
 //		g.fillRect((int) (x + bounds.x - handler.getGameCamera().getxOffset()),
 //				(int) (y + bounds.y - handler.getGameCamera().getyOffset()),
