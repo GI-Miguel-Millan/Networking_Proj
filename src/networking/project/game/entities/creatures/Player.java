@@ -64,16 +64,7 @@ public class Player extends Creature {
 
 	@Override
 	public void tick() {
-		//Animations
-//		animDown.tick();
-//		animUp.tick();
-//		animRight.tick();
-//		animLeft.tick();
-//		hurtDown.tick();
-//		hurtUp.tick();
-//		hurtRight.tick();
-//		hurtLeft.tick();
-		
+
 	
 		//lowerBoundCheck();
 		updateCounters();
@@ -140,14 +131,25 @@ public class Player extends Creature {
 
 	@Override
 	public void render(Graphics g) {
+		//Animations
+		animDown.tick();
+		animUp.tick();
+		animRight.tick();
+		animLeft.tick();
+		hurtDown.tick();
+		hurtUp.tick();
+		hurtRight.tick();
+		hurtLeft.tick();
+		
+		
 		posX = (int)(x - handler.getGameCamera().getxOffset());
 		posY = (int) (y - handler.getGameCamera().getyOffset());
-		//g.drawImage(getCurrentAnimationFrame(), posX, posY, width, height, null);
+		g.drawImage(getCurrentAnimationFrame(), posX, posY, width, height, null);
 		
 		//g.drawRect(posX, posY, width, height);
-		g.fillRect((int) (x + bounds.x - handler.getGameCamera().getxOffset()),
-				(int) (y + bounds.y - handler.getGameCamera().getyOffset()),
-				bounds.width, bounds.height);
+//		g.fillRect((int) (x + bounds.x - handler.getGameCamera().getxOffset()),
+//				(int) (y + bounds.y - handler.getGameCamera().getyOffset()),
+//				bounds.width, bounds.height);
 	}
 	
 	/**
@@ -155,21 +157,21 @@ public class Player extends Creature {
 	 */
 	private BufferedImage getCurrentAnimationFrame(){
 		if(isHurt == false){
-			if(xMove < 0){
+			if(handler.getKeyManager().left){
 				return animLeft.getCurrentFrame();
-			}else if(xMove > 0){
+			}else if(handler.getKeyManager().right){
 				return animRight.getCurrentFrame();
-			}else if(yMove < 0){
+			}else if(handler.getKeyManager().up){
 				return animUp.getCurrentFrame();
 			}else{
 				return animDown.getCurrentFrame();
 			}
 		}else{
-			if(xMove < 0){
+			if(handler.getKeyManager().left){
 				return hurtLeft.getCurrentFrame();
-			}else if(xMove > 0){
+			}else if(handler.getKeyManager().right){
 				return hurtRight.getCurrentFrame();
-			}else if(yMove < 0){
+			}else if(handler.getKeyManager().up){
 				return hurtUp.getCurrentFrame();
 			}else{
 				return hurtDown.getCurrentFrame();

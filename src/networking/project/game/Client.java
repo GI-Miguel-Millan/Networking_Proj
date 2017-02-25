@@ -101,9 +101,9 @@ public class Client implements Runnable {
 			// gameVars format: "start title width height number_of_players P1_address P1_port P1_ID --- up to P4"
 			String[] gameVars = messageFromServer.split("\\s");
 			game = new Game(gameVars[1], Integer.parseInt(gameVars[2]), Integer.parseInt(gameVars[3]));
+			game.init(); // must initialize assets early
 			
 			int numP = Integer.parseInt(gameVars[4]);
-			System.out.println(numP);
 			int j = 5;
 			for (int i =0; i < numP; i++){
 				int port = Integer.parseInt(gameVars[j+1]);
@@ -113,7 +113,7 @@ public class Client implements Runnable {
 			}
 			game.getHandler().setClientPlayer(playerID);
 			
-			game.init();
+			game.getGameState().displayState();
 			//game.start();
 			sendData = true;
 			

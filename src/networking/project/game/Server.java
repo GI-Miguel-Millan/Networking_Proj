@@ -42,6 +42,7 @@ public class Server implements Runnable{
 		long timer = 0;
 		int ticks = 0;
 		DatagramSocket server_socket = null;
+		game.init();		// initialze the game before creating players to avoid null pointers
 		
 		try {
 			server_socket = new DatagramSocket(7777);
@@ -100,6 +101,7 @@ public class Server implements Runnable{
 			serverSocket.send(new DatagramPacket(t.getBytes(), t.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
 			
 			if (game.getHandler().getPlayers().size() == this.number_of_players){
+				
 				String s = "start Battle_Arena " + GAMEWIDTH + " " + GAMEHEIGHT + " " + this.number_of_players;
 				for (Player p2: game.getHandler().getPlayers()){
 					s = s + " " + p2.getIP().getHostAddress() + " " + p2.getPort() + " " + p2.getID();
@@ -108,7 +110,7 @@ public class Server implements Runnable{
 				for (Player p: game.getHandler().getPlayers()){
 					serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, p.getIP(), p.getPort()));
 				}
-				game.init();		// initialze the game
+				game.getGameState().displayState();
 				gameStarted = true;	// start the game (allow it to tick)
 				//game.getHandler().setClientPlayer(1);
 			}else{

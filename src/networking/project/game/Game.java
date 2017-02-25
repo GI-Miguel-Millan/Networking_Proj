@@ -79,7 +79,7 @@ public class Game implements Runnable {
 		gameCamera = new GameCamera(handler, 0, handler.getWorld().getHeight() * Tile.TILEHEIGHT);
 		
 		
-		gameState.displayState();
+		
 	}
 	
 	/**
