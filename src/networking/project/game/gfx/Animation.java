@@ -47,6 +47,9 @@ public class Animation {
 		return frames[index];
 	}
 	
+	/**
+	 * @return true if this Animation is on the last frame, false otherwise.
+	 */
 	public boolean onLastFrame(){
 		return (frames[index].equals(frames[frames.length-1]));
 	}

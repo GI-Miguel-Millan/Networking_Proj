@@ -17,7 +17,6 @@ public class Client implements Runnable {
 	
 	private void tick(){
 		game.getGameCamera().centerOnEntity(game.getHandler().getClientPlayer());
-		//game.getGameCamera().centerOnCursor();
 		game.render();
 		game.getKeyManager().tick();
 	}
@@ -91,10 +90,17 @@ public class Client implements Runnable {
 		
 	}
 	
+	/**
+	 * All data received from the server is evaluated here. Each datagram from the server will
+	 * start with a command telling the client which actions it must perform.
+	 * 
+	 * @param messageFromServer - the command from the server
+	 * @throws NumberFormatException
+	 * @throws UnknownHostException
+	 */
 	private void evaluateData(String messageFromServer) throws NumberFormatException, UnknownHostException{
 		String[] commands = {"wait", "start", "identity", "update", "spawnProj", "proj_pos", "kill"};
 		
-		//System.out.println("Message From Server: " + messageFromServer);
 		
 		if (messageFromServer.contains(commands[0])){			// client waits for other clients to connect to server
 			System.out.println("connected to server");
@@ -116,7 +122,6 @@ public class Client implements Runnable {
 			game.getHandler().setClientPlayer(playerID);
 			
 			game.getGameState().displayState();
-			//game.start();
 			sendData = true;
 			
 			// identify the clients IP and port as seen by the server.
@@ -131,7 +136,6 @@ public class Client implements Runnable {
 			String[] info = messageFromServer.split("\\s");
 			int num_entities = (info.length - 1)/9;
 			
-			//System.out.println(game.getHandler().getClientPlayer().toString());
 			int j = 1;
 			for (int i =0; i < num_entities; i++){
 				InetAddress ip = InetAddress.getByName(info[j]);

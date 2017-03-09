@@ -63,6 +63,9 @@ public class GameCamera {
 		
 	}
 	
+	/**
+	 * Centers the GameCamera on the mouse.
+	 */
 	public void centerOnCursor(){
 		xOffset = handler.getMouseManager().getMouseX() - handler.getWidth() / 2 + handler.getMouseManager().getMouseX() / 2;
 		yOffset = handler.getMouseManager().getMouseY() - handler.getHeight() / 2 + handler.getMouseManager().getMouseY() / 2;
@@ -123,6 +126,9 @@ public class GameCamera {
 		this.yOffset = yOffset;
 	}
 
+	/**
+	 * @return the integer value of the camSpeed
+	 */
 	public int getCamSpeed(){
 		return camSpeed;
 	}

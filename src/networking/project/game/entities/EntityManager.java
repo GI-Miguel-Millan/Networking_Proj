@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 
 import networking.project.game.Handler;
 import networking.project.game.entities.creatures.*;
-import networking.project.game.entities.statics.DeadEntity;
 
 /**
  *	The EntityManager manages all entities, rendering each entity
@@ -52,14 +51,6 @@ public class EntityManager {
 			Entity e = iter.next().getValue();
 			e.tick();
 			
-			if(!e.isActive() && e.isEnemy()){
-				DeadEntity.addDeadEntity(handler, e);
-			}
-			
-			// If an Entity has died since the last tick(), remove it from entities.
-//			if(!e.isActive())
-//				entities.remove(e.getID());
-			
 			if(!e.isActive())
 				entities_to_remove.add(e.getID());
 		}
@@ -70,14 +61,6 @@ public class EntityManager {
 			entities.remove(iter2.next());
 		}
 		
-		
-		for (int i = 0; i < DeadEntity.deadEntities.size();i++){
-			Entity e = DeadEntity.deadEntities.get(i);
-			e.tick();
-			
-			if(!e.isActive())
-				DeadEntity.deadEntities.remove(e);
-		}
 		//entities.sort(renderSorter);
 	}
 	
@@ -94,12 +77,6 @@ public class EntityManager {
 		
 		while(iter.hasNext()){
 			iter.next().getValue().render(g);
-		}
-		
-		
-		
-		for(Entity e : DeadEntity.deadEntities){
-			e.render(g);
 		}
 	}
 

@@ -111,14 +111,6 @@ public abstract class Entity {
 	}
 	
 	/**
-	 * Should be overwritten to return true if an Entity is a Boss.
-	 * @return false by default.
-	 */
-	public boolean isBoss(){
-		return false;
-	}
-	
-	/**
 	 * Should be overwritten to return true if an Entity is a Projectile.
 	 * @return false by default.
 	 */
@@ -234,10 +226,16 @@ public abstract class Entity {
 		this.health = health;
 	}
 	
+	/**
+	 * @return true if this entity is invincible, false otherwise
+	 */
 	public boolean getIsInvinc(){
 		return isInvinc;
 	}
 	
+	/**
+	 * @return integer ID of this entity
+	 */
 	public int getID(){
 		return this.ID;
 	}

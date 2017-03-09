@@ -35,7 +35,7 @@ public class Server implements Runnable{
 
 	private void tick(){
 		game.tick();
-		game.render();
+		//game.render(); // uncomment for testing purposes
 	}
 	
 	@Override

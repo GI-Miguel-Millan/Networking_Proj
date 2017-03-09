@@ -117,6 +117,9 @@ public class Handler {
 		return clientPlayer.getHealth();
 	}
 
+	/**
+	 * @return players arraylist
+	 */
 	public ArrayList<Player> getPlayers(){
 		return this.players;
 	}
@@ -128,10 +131,18 @@ public class Handler {
 		clientPlayer = this.getPlayer(id);
 	}
 	
+	/**
+	 * @return the player associated with this handler's client
+	 */
 	public Player getClientPlayer(){
 		return this.clientPlayer;
 	}
 	
+	/**
+	 * Gets the player from the players arrayList using an id.
+	 * @param id
+	 * @return
+	 */
 	public Player getPlayer(int id){
 		for(Player p : players)
 			if(p.getID() == id)
@@ -139,6 +150,14 @@ public class Handler {
 		return null;
 	}
 	
+	/**
+	 * Gets the player from the players ArrayList using the ip and port 
+	 * number associated with that player.
+	 * 
+	 * @param ip
+	 * @param port
+	 * @return
+	 */
 	public Player getPlayer(InetAddress ip, int port){
 		for(Player p : players)
 			if(p.getIP().equals(ip) && p.getPort() == port)
@@ -155,10 +174,18 @@ public class Handler {
 		return world.getEntityManager().getEntities().get(id);
 	}
 	
+	/**
+	 * @return ArrayList of entities ID's indicating entities to deactivate
+	 */
 	public ArrayList<Integer> getK_ID(){
 		return this.kill_ids;
 	}
 
+	/**
+	 * Removes an entity from the world based on its id
+	 * 
+	 * @param id - the id of the entity to remove
+	 */
 	public void killEntity(int id) {
 		world.getEntityManager().removeEntity(id);
 	}

@@ -168,14 +168,23 @@ public class Projectile extends Creature{
 		return true;
 	}
 	
+	/**
+	 * @return creator - the reference to the Entity which spawned this Projectile.
+	 */
 	public Entity getCreator(){
 		return creator;
 	}
 	
+	/**
+	 * @return the x position of the mouse when this Projectile was spawned.
+	 */
 	public int getMouseX(){
 		return mouseX;
 	}
 	
+	/**
+	 * @return the y position of the mouse when this Projectile was spawned.
+	 */
 	public int getMouseY(){
 		return mouseY;
 	}

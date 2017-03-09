@@ -21,6 +21,7 @@ import resources.ResourceLoader;
 
 public class Sound {
 	
+	//Initialize sounds
 	public static final Sound bgm4 = new Sound(ResourceLoader.loadSounds(Assets.fileNames[16]), -15);
 	public static final Sound venus = new Sound(ResourceLoader.loadSounds(Assets.fileNames[15]), -15);
 	public static final Sound bgm3 = new Sound(ResourceLoader.loadSounds(Assets.fileNames[17]), -15);
@@ -58,6 +59,9 @@ public class Sound {
 		
 	}
 	
+	/**
+	 * Plays this sound clip.
+	 */
 	public void play()
 	{
 		if(!Game.MUTED){
@@ -90,11 +94,17 @@ public class Sound {
 		}
 	}
 	
+	/**
+	 * Stops the clip from playing
+	 */
 	public void stop(){
 		clip.stop();
 		clip.close();
 	}
 	
+	/**
+	 * resets the clip so it can be replayed.
+	 */
 	public void reset(){
 		try {
 			audioInputStream = AudioSystem.getAudioInputStream(name);
@@ -111,6 +121,9 @@ public class Sound {
 		}
 	}
 	
+	/**
+	 * Resets all sound objects.
+	 */
 	public static void resetAll(){
 		bgm4.reset();
 		venus.reset();
@@ -125,6 +138,9 @@ public class Sound {
 		failure.reset();
 	}
 	
+	/**
+	 * Stops all sound objects
+	 */
 	public static void stopAll(){
 		bgm4.stop();
 		venus.stop();

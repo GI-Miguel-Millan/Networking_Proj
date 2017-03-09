@@ -78,19 +78,15 @@ public class Game implements Runnable {
 		
 		gameCamera = new GameCamera(handler, 0, handler.getWorld().getHeight() * Tile.TILEHEIGHT);
 		
-		
-		
 	}
 	
 	/**
 	 *  Updates the game every tick.
 	 */
 	public void tick(){
-		//keyManager.tick();
 		
 		if(State.getState() != null)
 			State.getState().tick();
-		//this.getGameCamera().centerOnEntity(getHandler().getClientPlayer());
 		
 	}
 	
@@ -243,7 +239,12 @@ public class Game implements Runnable {
 		return this.handler;
 	}
 	
-	
+	/**
+	 * The Game takes player input and client side camera information and creates a 
+	 * single input command string that the client will then send to the Server.
+	 * 
+	 * @return string containing player input and camera offset of this Game's GameCamera.
+	 */
 	public String getPlayerInput(){
 		int up = 0, down = 0, left = 0, right = 0, attack = 0;
 		if(keyManager.up){

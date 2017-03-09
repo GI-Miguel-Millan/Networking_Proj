@@ -38,14 +38,14 @@ public class Player extends Creature {
 	private boolean readyFire;
 	private int counter;
 	private int score = 1000;
-	private Rectangle playerBounds = new Rectangle(16,22,32,12);
+	//private Rectangle playerBounds = new Rectangle(16,22,32,12); // Can be used to adjust player bounds
 	private boolean isHurt = false;
 	private int mouseX =0 , mouseY =0, camX = 0, camY =0;
 	
 	public Player(Handler handler, float x, float y, InetAddress ip, int port, int id) {
 		super(handler, x, y, Creature.DEFAULT_CREATURE_WIDTH, Creature.DEFAULT_CREATURE_HEIGHT, id);
 		
-		//bounds = playerBounds;
+		//bounds = playerBounds; // uncomment to use specified bounds rather than default ones
 		counter = 0;
 		readyFire = true;
 		health = 50;
@@ -67,9 +67,7 @@ public class Player extends Creature {
 
 	@Override
 	public void tick() {
-
-	
-		//lowerBoundCheck();
+		
 		updateCounters();
 		
 		move();
@@ -95,13 +93,11 @@ public class Player extends Creature {
 	
 	
 	/**
-	 *  Gets input from the user and sets the players yMove and
-	 *  xMove according to which key is pressed.
+	 *  Gets input from the client and sets the players yMove and
+	 *  xMove according to which key is pressed, as well as the camera offsets for 
+	 *  that player (which are used for proper rendering)
 	 */
 	public void applyInput(int up, int down, int left, int right, int xOffset, int yOffset){
-		//System.out.println("up: " + up +" down: " + down +" left: " + left +" right: "+ right );
-		
-		
 
 		if(up == 1)
 		{
@@ -236,63 +232,103 @@ public class Player extends Creature {
 	public int getScore(){
 		return score;
 	}
-
-	public boolean getIsInvinc(){
-		return isInvinc;
-	}
 	
+	/**
+	 * @return IP address of this Player
+	 */
 	public InetAddress getIP(){
 		return this.ip;
 	}
 	
+	/**
+	 * @return port of this Player
+	 */
 	public int getPort(){
 		return this.port;
 	}
 	
+	/**
+	 * @return unique ID of this Player
+	 */
 	public int getID(){
 		return this.ID;
 	}
 	
+	/**
+	 * returns a string containing this player ID, associated IP and Port, and x and y positions.
+	 */
 	public String toString(){
 		return "Player ID: " + getID() + ", Address: " + getIP() + ", Port: " + getPort() + ", x position: " + getX() + " y position: " + getY();
 		
 	}
 
+	/**
+	 * Sets (x, y) position of the mouse associated with this Player.
+	 * @param x
+	 * @param y
+	 */
 	public void setMouseCoord(int x, int y) {
 		mouseX = x;
 		mouseY = y;
 	}
 
+	/**
+	 * @return the x coordinate of the mouse associated with this Player
+	 */
 	public int getMouseX() {
 		return mouseX;
 	}
 
+	/**
+	 * @return the y coordinate of the mouse associated with this Player
+	 */
 	public int getMouseY() {
 		
 		return mouseY;
 	}
 	
+	/**
+	 * @return true if this player is ready to attack, false otherwise.
+	 */
 	public boolean isReady(){
 		return readyFire;
 	}
 	
+	/**
+	 * Sets whether or not a player is ready to attack.
+	 * @param b 
+	 */
 	public void setReady(boolean b){
 		readyFire = b;
 	}
 	
+	/**
+	 * @return the xOffset of the GameCamera associated with this player.
+	 */
 	public float getCamX(){
 		return (float) camX;
 	}
 	
+	/**
+	 * @return the yOffset of the GameCamera associated with this player.
+	 */
 	public float getCamY(){
 		return (float) camY;
 	}
 
+	/**
+	 * Set the xOffset of the GameCamera associated with this Player.
+	 * @param cx
+	 */
 	public void setCamX(int cx) {
 		this.camX = cx;
 		
 	}
 
+	/**
+	 * Set the yOffset of the GameCamera associated with this Player.
+	 * @param cy
+	 */
 	public void setCamY(int cy) {
 		this.camY = cy;
 		

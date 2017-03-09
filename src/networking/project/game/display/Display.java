@@ -64,6 +64,9 @@ public class Display {
 		return frame;
 	}
 	
+	/**
+	 * Sets the Display's frame visibility to true
+	 */
 	public void trueVisibility(){
 		frame.setVisible(true);
 	}
