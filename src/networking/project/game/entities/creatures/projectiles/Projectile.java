@@ -2,6 +2,9 @@ package networking.project.game.entities.creatures.projectiles;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import networking.project.game.Handler;
 import networking.project.game.entities.Entity;
@@ -74,7 +77,16 @@ public class Projectile extends Creature{
 	 *  with another entity, and act accordingly.
 	 */
 	public void checkAttack(){
-		for(Entity e: handler.getWorld().getEntityManager().getEntities()){
+		
+
+		Set<Entry<Integer, Entity>> set = handler.getWorld().getEntityManager().getEntities().entrySet();
+		
+		Iterator<Entry<Integer, Entity>> iter = set.iterator();
+		
+		// Loop through each entity that exist in a world.
+		while(iter.hasNext()){
+			Entity e = iter.next().getValue();
+			
 			//No Need to check for collision if e is this projectile or its creator.
 			if(e.equals(this) || e.equals(creator))
 				continue;
@@ -95,6 +107,7 @@ public class Projectile extends Creature{
 				this.hurt(1);
 			}
 		}
+		
 	}
 	
 	/**
@@ -107,8 +120,14 @@ public class Projectile extends Creature{
 	 * @return false if there is no collision
 	 */
 	public boolean checkEntityCollisions(float xOffset, float yOffset){
+		
+		Set<Entry<Integer, Entity>> set = handler.getWorld().getEntityManager().getEntities().entrySet();
+		
+		Iterator<Entry<Integer, Entity>> iter = set.iterator();
+		
 		// Loop through each entity that exist in a world.
-		for(Entity e : handler.getWorld().getEntityManager().getEntities()){
+		while(iter.hasNext()){
+			Entity e = iter.next().getValue();
 			
 			// Skip this entity, no need to check for self collision, also ignore Projectiles since
 			// they have their own method to check for collision with other entities.
@@ -117,11 +136,11 @@ public class Projectile extends Creature{
 			
 			// Compare the collision bounds of the other entity, with the collision bounds of this entity.
 			if(e.getCollisionBounds(0f, 0f).intersects(getCollisionBounds(xOffset, yOffset))){
-				collidedWith = handler.getWorld().getEntityManager().getIndex(e);
+				//collidedWith = handler.getWorld().getEntityManager().getIndex(e);
 				return true;
 			}
-				
 		}
+		
 		return false;
 	}
 

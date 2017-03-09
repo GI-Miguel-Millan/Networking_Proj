@@ -97,6 +97,7 @@ public class Client implements Runnable {
 		//System.out.println("Message From Server: " + messageFromServer);
 		
 		if (messageFromServer.contains(commands[0])){			// client waits for other clients to connect to server
+			System.out.println("connected to server");
 			sendData = false;
 		}else if(messageFromServer.contains(commands[1])){		// Client starts the game
 			// gameVars format: "start title width height number_of_players P1_address P1_port P1_ID --- up to P4"

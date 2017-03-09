@@ -1,8 +1,8 @@
 package networking.project.game.entities;
 
 import java.awt.Graphics;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.*;
+import java.util.Map.Entry;
 
 import networking.project.game.Handler;
 import networking.project.game.entities.creatures.*;
@@ -19,7 +19,7 @@ import networking.project.game.entities.statics.DeadEntity;
 public class EntityManager {
 	
 	private Handler handler;
-	private ArrayList<Entity> entities;
+	private HashMap<Integer, Entity> entities;
 	private Comparator<Entity> renderSorter = new Comparator<Entity>(){
 		@Override
 		public int compare(Entity a, Entity b) {
@@ -31,7 +31,7 @@ public class EntityManager {
 	
 	public EntityManager(Handler handler, ArrayList<Player> player){
 		this.handler = handler;
-		entities = new ArrayList<Entity>();
+		entities = new HashMap<Integer, Entity>();
 		for (Player p: player)
 			addEntity(p);
 	}
@@ -41,8 +41,15 @@ public class EntityManager {
 	 *  within the entities ArrayList.
 	 */
 	public void tick(){
-		for(int i = 0;i < entities.size();i++){
-			Entity e = entities.get(i);
+
+		Set<Entry<Integer, Entity>> set = entities.entrySet();
+		
+		Iterator<Entry<Integer, Entity>> iter = set.iterator();
+		
+		ArrayList<Integer> entities_to_remove = new ArrayList<Integer>();
+		
+		while(iter.hasNext()){
+			Entity e = iter.next().getValue();
 			e.tick();
 			
 			if(!e.isActive() && e.isEnemy()){
@@ -50,8 +57,17 @@ public class EntityManager {
 			}
 			
 			// If an Entity has died since the last tick(), remove it from entities.
+//			if(!e.isActive())
+//				entities.remove(e.getID());
+			
 			if(!e.isActive())
-				entities.remove(e);
+				entities_to_remove.add(e.getID());
+		}
+		
+		//If an Entity has died since the last tick(), remove it from entities.
+		Iterator<Integer> iter2 = entities_to_remove.iterator();
+		while(iter2.hasNext()){
+			entities.remove(iter2.next());
 		}
 		
 		
@@ -62,7 +78,7 @@ public class EntityManager {
 			if(!e.isActive())
 				DeadEntity.deadEntities.remove(e);
 		}
-		entities.sort(renderSorter);
+		//entities.sort(renderSorter);
 	}
 	
 	/**
@@ -72,9 +88,15 @@ public class EntityManager {
 	 */
 	public void render(Graphics g){
 		
-		for(Entity e : entities){
-			e.render(g);
+		Set<Entry<Integer, Entity>> set = entities.entrySet();
+		
+		Iterator<Entry<Integer, Entity>> iter = set.iterator();
+		
+		while(iter.hasNext()){
+			iter.next().getValue().render(g);
 		}
+		
+		
 		
 		for(Entity e : DeadEntity.deadEntities){
 			e.render(g);
@@ -87,29 +109,32 @@ public class EntityManager {
 	 * @param e the Entity to add to entities.
 	 */
 	public void addEntity(Entity e){
-			entities.add(e);
+			entities.put(e.getID(), e);
 	}
 	
 	/**
-	 * Removes an Entity from the entities ArrayList.
+	 * Removes an Entity from the entities hash map.
 	 * 
 	 * @param e the Entity to remove from entities.
 	 */
 	public void removeEntity(Entity e){
-		entities.remove(e);
+		entities.remove(e.getID());
+	}
+	
+	/**
+	 * Removes an Entity from the entities hash map.
+	 * 
+	 * @param e the Entity to remove from entities.
+	 */
+	public void removeEntity(int id){
+		entities.remove(id);
 	}
 	
 	public Entity getEntity(int index){
 		return entities.get(index);
 	}
 	
-	/**
-	 * @param e an Entity contained in the entities ArrayList
-	 * @return the index of e in the entities ArrayList
-	 */
-	public int getIndex(Entity e){
-		return entities.indexOf(e);
-	}
+	
 	/**
 	 * @return handler
 	 */
@@ -125,9 +150,9 @@ public class EntityManager {
 	}
 
 	/**
-	 * @return entities the ArrayList of entities.
+	 * @return entities the HashMap of entities.
 	 */
-	public ArrayList<Entity> getEntities() {
+	public HashMap<Integer, Entity> getEntities() {
 		return entities;
 	}
 
@@ -135,7 +160,7 @@ public class EntityManager {
 	 * Sets a new ArrayList of entities to entities.
 	 * @param entities
 	 */
-	public void setEntities(ArrayList<Entity> entities) {
+	public void setEntities(HashMap<Integer, Entity> entities) {
 		this.entities = entities;
 	}
 

@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import networking.project.game.entities.Entity;
 import networking.project.game.entities.creatures.Player;
@@ -146,7 +149,11 @@ public class Server implements Runnable{
 			}
 			
 			String s2 = "proj_pos";
-			for(Entity e: game.getHandler().getWorld().getEntityManager().getEntities()){
+			
+			Set<Entry<Integer, Entity>> set = game.getHandler().getWorld().getEntityManager().getEntities().entrySet();
+			Iterator<Entry<Integer, Entity>> iter = set.iterator();
+			while(iter.hasNext()){
+				Entity e = iter.next().getValue();
 				if(e.getClass().equals(Projectile.class)){
 					Projectile p = (Projectile)e;
 					s2 = s2 + " " + (int)p.getX() + " " + (int)p.getY() + " " + p.getID() + " " + p.getMouseX() + " " + p.getMouseY() + " " + p.getCreator().getID();

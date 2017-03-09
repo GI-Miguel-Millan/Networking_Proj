@@ -152,11 +152,7 @@ public class Handler {
 	 * @return
 	 */
 	public Entity getEntity(int id) {
-		for(Entity e: world.getEntityManager().getEntities()){
-			if(e.getID() == id)
-				return e;
-		}
-		return null;
+		return world.getEntityManager().getEntities().get(id);
 	}
 	
 	public ArrayList<Integer> getK_ID(){
@@ -164,6 +160,6 @@ public class Handler {
 	}
 
 	public void killEntity(int id) {
-		world.getEntityManager().removeEntity(getEntity(id));
+		world.getEntityManager().removeEntity(id);
 	}
 }

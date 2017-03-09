@@ -2,6 +2,9 @@ package networking.project.game.entities.creatures.projectiles;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import networking.project.game.Handler;
 import networking.project.game.entities.Entity;
@@ -34,7 +37,15 @@ public class FireBall extends Projectile {
 	 *  and deals 2 damage.
 	 */
 	public void checkAttack(){
-		for(Entity e: handler.getWorld().getEntityManager().getEntities()){
+		
+		Set<Entry<Integer, Entity>> set = handler.getWorld().getEntityManager().getEntities().entrySet();
+		
+		Iterator<Entry<Integer, Entity>> iter = set.iterator();
+		
+		// Loop through each entity that exist in a world.
+		while(iter.hasNext()){
+			Entity e = iter.next().getValue();
+			
 			//No Need to check for collision if e is this projectile or its creator.
 			if(e.equals(this) || e.equals(creator) || e.getClass().equals(Projectile.class))
 				continue;
