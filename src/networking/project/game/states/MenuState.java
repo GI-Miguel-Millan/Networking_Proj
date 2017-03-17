@@ -1,15 +1,13 @@
 package networking.project.game.states;
 
-import java.awt.Graphics;
-
 import networking.project.game.Handler;
-import networking.project.game.entities.creatures.Player;
 import networking.project.game.gfx.Assets;
 import networking.project.game.sound.Sound;
 import networking.project.game.ui.ClickListener;
 import networking.project.game.ui.UIImageButton;
 import networking.project.game.ui.UIManager;
-import networking.project.game.worlds.World;
+
+import java.awt.*;
 
 /**
  *	The MenuState is the pre-game state, giving the option to start the game.
@@ -31,8 +29,8 @@ public class MenuState extends State {
 		uiManager.addObject(new UIImageButton(136, 623, 229, 64, Assets.btn_start, new ClickListener() {
 			@Override
 			public void onClick() {
-				handler.getMouseManager().setUIManager(null);
-				handler.getGame().getGameState().displayState();
+				uiManager.getHandler().getMouseManager().setUIManager(null);
+				uiManager.getHandler().getGame().getGameState().displayState();
 			}
 		}));
 	}

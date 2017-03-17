@@ -1,0 +1,6 @@
+/networking/
+/resources/
+*.class
+bin/
+out/
+.idea/
