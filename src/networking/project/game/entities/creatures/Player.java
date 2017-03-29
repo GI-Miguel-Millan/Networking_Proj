@@ -15,6 +15,7 @@ import networking.project.game.gfx.GameCamera;
 import networking.project.game.sound.Sound;
 import networking.project.game.states.State;
 import networking.project.game.tiles.Tile;
+import networking.project.game.utils.InputFlags;
 import networking.project.game.worlds.World;
 
 /**
@@ -25,7 +26,7 @@ import networking.project.game.worlds.World;
  *	@version 1.0
  *	@since version 1.0
  */
-public class Player extends Creature {
+public class Player extends Creature implements InputFlags {
 	
 	//Animations
 	private Animation animDown, animUp, animLeft, animRight,
@@ -40,7 +41,7 @@ public class Player extends Creature {
 	private int score = 1000;
 	private Rectangle playerBounds = new Rectangle(16,22,32,12);
 	private boolean isHurt = false;
-	private int mouseX =0 , mouseY =0, camX = 0, camY =0;
+	private float mouseX =0 , mouseY =0, camX = 0, camY =0;
 	
 	public Player(Handler handler, float x, float y, InetAddress ip, int port, int id) {
 		super(handler, x, y, Creature.DEFAULT_CREATURE_WIDTH, Creature.DEFAULT_CREATURE_HEIGHT, id);
@@ -98,28 +99,26 @@ public class Player extends Creature {
 	 *  Gets input from the user and sets the players yMove and
 	 *  xMove according to which key is pressed.
 	 */
-	public void applyInput(int up, int down, int left, int right, int xOffset, int yOffset){
+	public void applyInput(byte input, float xOffset, float yOffset){
 		//System.out.println("up: " + up +" down: " + down +" left: " + left +" right: "+ right );
-		
-		
 
-		if(up == 1)
+		if((input & IN_UP) == IN_UP)
 		{
 			yMove = -speed;
 		}
 		
-		if(down == 1)
+		if((input & IN_DOWN) == IN_DOWN)
 		{
 			yMove = speed;
 				
 		}
 		
-		if(left == 1)
+		if((input & IN_LEFT) == IN_LEFT)
 		{
 			xMove = -speed;
 		}
 		
-		if(right == 1)
+		if((input & IN_RIGHT) == IN_RIGHT)
 		{
 			xMove = speed;
 		}		
@@ -172,7 +171,7 @@ public class Player extends Creature {
 	 *  @return the current animation frame based on which direction the player moves.
 	 */
 	private BufferedImage getCurrentAnimationFrame(){
-		if(isHurt == false){
+		/*if(isHurt == false){
 			if(handler.getKeyManager().left){
 				return animLeft.getCurrentFrame();
 			}else if(handler.getKeyManager().right){
@@ -192,7 +191,8 @@ public class Player extends Creature {
 			}else{
 				return hurtDown.getCurrentFrame();
 			}
-		}
+		}*/
+		return null;
 	}
 
 	@Override
@@ -263,16 +263,16 @@ public class Player extends Creature {
 		mouseY = y;
 	}
 
-	public int getMouseX() {
+	public float getMouseX() {
 		return mouseX;
 	}
 
-	public int getMouseY() {
+	public float getMouseY() {
 		
 		return mouseY;
 	}
 	
-	public boolean isReady(){
+	public boolean isReadyToFire(){
 		return readyFire;
 	}
 	
@@ -281,11 +281,11 @@ public class Player extends Creature {
 	}
 	
 	public float getCamX(){
-		return (float) camX;
+		return camX;
 	}
 	
 	public float getCamY(){
-		return (float) camY;
+		return camY;
 	}
 
 	public void setCamX(int cx) {

@@ -242,29 +242,16 @@ public class Game implements Runnable {
 	public Handler getHandler(){
 		return this.handler;
 	}
-	
+
+	public boolean checkInput(byte inputToCheck)
+    {
+        return (keyManager.input & inputToCheck) == inputToCheck;
+    }
 	
 	public String getPlayerInput(){
-		int up = 0, down = 0, left = 0, right = 0, attack = 0;
-		if(keyManager.up){
-			up = 1;
-		}
-		if(keyManager.down){
-			down = 1;
-		}
-		if(keyManager.left){
-			left = 1;
-		}
-		if(keyManager.right){
-			right = 1;
-		}
-		if(keyManager.fire){
-			attack = 1;
-		}
-			
 		gameCamera.checkBlankSpace();
 		
-		return "input " + up + " " + down + " " + left + " " + right + " " + attack + " " +
+		return "input " + keyManager.input + " " +
 		handler.getClientPlayer().getID() + " " + mouseManager.getMouseX() + " " + mouseManager.getMouseY() + " " + 
 		(int)gameCamera.getxOffset()+ " " + (int)gameCamera.getyOffset();
 	}
