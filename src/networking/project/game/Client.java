@@ -5,10 +5,11 @@ import java.util.*;
 
 import networking.project.game.entities.creatures.Player;
 import networking.project.game.entities.creatures.projectiles.Projectile;
+import networking.project.game.utils.NetCodes;
 
 import java.net.*;
 
-public class Client implements Runnable {
+public class Client implements Runnable, NetCodes {
 	private Thread thread;
 	private boolean running = false;
 	private Game game = null;
@@ -18,8 +19,12 @@ public class Client implements Runnable {
 	private void tick(){
 		game.getGameCamera().centerOnEntity(game.getHandler().getClientPlayer());
 		//game.getGameCamera().centerOnCursor();
+        game.tick();
 		game.render();
 		game.getKeyManager().tick();
+        game.getHandler().getClientPlayer().applyInput(game.getKeyManager().input,
+                game.getGameCamera().getxOffset(),
+                game.getGameCamera().getyOffset());
 	}
 	
 	@Override
@@ -29,7 +34,19 @@ public class Client implements Runnable {
 		double delta = 0;
 		long now;
 		long lastTime = System.nanoTime();
-		
+        sendData = true; // TODO removeme
+        while (running) {
+            now = System.nanoTime();
+            delta += (now - lastTime) / timePerTick;
+            lastTime = now;
+
+            if(delta >= 1 && sendData){
+                tick();
+                delta--;
+            }
+        }
+
+        /*
 		DatagramSocket client_socket = null;
 		int port = 7777;
 		BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
@@ -41,7 +58,7 @@ public class Client implements Runnable {
 			InetAddress host;
 			
 			try{
-				host = InetAddress.getByName((String)cin.readLine());
+				host = InetAddress.getByName(cin.readLine());
 			} catch (UnknownHostException e) {
 				host = InetAddress.getByName("localhost"); 	// default to localhost
 				e.printStackTrace();
@@ -55,14 +72,14 @@ public class Client implements Runnable {
 			client_socket.send(dp);
 			
 			while(running){
-				now = System.nanoTime();
-				delta += (now - lastTime) / timePerTick;
-				lastTime = now;
-				
-				if(delta >= 1 && sendData){
-						tick();
-					delta--;
-				}
+                now = System.nanoTime();
+                delta += (now - lastTime) / timePerTick;
+                lastTime = now;
+
+                if(delta >= 1 && sendData){
+                    tick();
+                    delta--;
+                }
 				// Get data from server
 				byte[] buffer = new byte[1460];
 				DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
@@ -81,14 +98,11 @@ public class Client implements Runnable {
 			}
 			stop();
 			
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		*/
 	}
 	
 	private void evaluateData(String messageFromServer) throws NumberFormatException, UnknownHostException{
@@ -211,9 +225,17 @@ public class Client implements Runnable {
 	public synchronized void start(){
 		if(running)
 			return;
+        game = new Game("Battle Arena", 1280, 720);
+        game.init();
+        Player p = new Player(game.getHandler(), 0, 0, null, 7777, 1);
+        game.getHandler().getPlayers().add(p);
+        game.getHandler().setClientPlayer(1);
+        game.getGameState().displayState();
+        game.getHandler().getWorld().getEntityManager().addEntity(p);
 		running = true;
 		thread = new Thread(this);
 		thread.start();
+
 	}
 	
 	/**

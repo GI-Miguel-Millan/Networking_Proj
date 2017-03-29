@@ -3,13 +3,17 @@ package networking.project.game;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.util.ArrayList;
 
 import networking.project.game.entities.Entity;
 import networking.project.game.entities.creatures.Player;
 import networking.project.game.entities.creatures.projectiles.Projectile;
+import networking.project.game.network.PacketManager;
+import networking.project.game.network.packets.ConnectionPacket;
+import networking.project.game.network.packets.EntityPacket;
+import networking.project.game.network.packets.Packet;
+import networking.project.game.utils.NetCodes;
 
-public class Server implements Runnable{
+public class Server implements Runnable, NetCodes {
 
 	private Thread thread;
 	private boolean running = false;
@@ -51,9 +55,9 @@ public class Server implements Runnable{
 			server_socket = new DatagramSocket(7777);
 			
 			
-			byte[] buffer = new byte[65536];
+			byte[] buffer = new byte[1500];
 			DatagramPacket incoming = new DatagramPacket(buffer, buffer.length);
-			
+
 			while(running){
 				now = System.nanoTime();
 				delta += (now - lastTime) / timePerTick;
@@ -70,13 +74,9 @@ public class Server implements Runnable{
 				// Get client data
 				server_socket.receive(incoming);
 				byte[] data = incoming.getData();
-				String s = new String(data, 0, incoming.getLength());
-				
-				// Do stuff with client data
-				evaluateCommand(s, incoming, server_socket);
-				// Return data to client
-				//DatagramPacket dp = new DatagramPacket(s.getBytes(), s.getBytes().length , incoming.getAddress(), incoming.getPort());
-				//server_socket.send(dp);
+                // Determine what it is and do stuff with it
+				Packet p = PacketManager.getPacket(data);
+				evaluateCommand(p, incoming, server_socket);
 			}
 			
 			stop();
@@ -92,12 +92,99 @@ public class Server implements Runnable{
 	 * determine which actions the server should take.
 	 * @throws IOException 
 	 */
-	private void evaluateCommand(String str, DatagramPacket clientDatagram, DatagramSocket serverSocket) throws IOException{
+	private void evaluateCommand(Packet p, DatagramPacket clientDatagram, DatagramSocket serverSocket) throws IOException {
 		String[] commands = {"init", "input"};
-		
+
+        if (p instanceof ConnectionPacket)
+        {
+            switch (p.identifier)
+            {
+                case CONN_REQ:
+                {
+                    // A new client connecting
+                    this.ids +=1; // add new player, must increment ids
+                    this.game.getHandler().getPlayers().add(new Player(game.getHandler(),0,0,clientDatagram.getAddress(), clientDatagram.getPort(), this.ids));
+
+                    // Identify this player to them
+                    ConnectionPacket cp = new ConnectionPacket(CONN_REQ);
+                    cp.dos.writeInt(ids);
+                    cp.send(serverSocket, clientDatagram, true);
+
+
+                    // If this client was the last one we needed, start the game
+                    if (game.getHandler().getPlayers().size() == number_of_players)
+                    {
+                        EntityPacket ep = new EntityPacket(GAME_START);
+                        // TODO: ep.setMode("Battle_Arena")
+                        ep.dos.writeInt(GAMEWIDTH);
+                        ep.dos.writeInt(GAMEHEIGHT);
+                        ep.dos.writeInt(number_of_players);
+                        // Add everybody to this packet
+                        for (Player pl : game.getHandler().getPlayers())
+                        {
+                            ep.dos.writeBytes(pl.getIP().getHostAddress());
+                            ep.dos.writeInt(pl.getPort());
+                            ep.dos.writeInt(pl.getID());
+                        }
+                        // Send this packet to everyone
+                        for (Player pl : game.getHandler().getPlayers())
+                        {
+                            ep.send(serverSocket, pl.getIP(), pl.getPort(), false);
+                        }
+                        // Dispose manually
+                        ep.dispose();
+
+
+
+                        /*String s = "start Battle_Arena " + GAMEWIDTH + " " + GAMEHEIGHT + " " + this.number_of_players;
+                        for (Player p2: game.getHandler().getPlayers()){
+                            s = s + " " + p2.getIP().getHostAddress() + " " + p2.getPort() + " " + p2.getID();
+                        }
+
+                        for (Player player : game.getHandler().getPlayers()){
+                            serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, player.getIP(), player.getPort()));
+                        }*/
+
+                        game.getGameState().displayState();
+                        gameStarted = true;	// start the game (allow it to tick)
+                        game.getHandler().setClientPlayer(1);
+                    }
+                    else
+                    {
+                        // Waiting on more players to join
+                        cp = new ConnectionPacket(CONN_MSG);
+                        cp.dos.writeBytes("Waiting for more players!");
+                        cp.send(serverSocket, clientDatagram, true);
+                    }
+                    break;
+                }
+                case CONN_DISC:
+                {
+                    // TODO: Implement disconnecting (them pressing escape)
+                    break;
+                }
+                // TODO: CONN_MSG here would probably be like some sort of chat, do we want this?
+                default:
+                    break;
+            }
+        }
+        else if (p instanceof EntityPacket)
+        {
+            switch (p.identifier)
+            {
+                case GAME_PLAYER_UPDATE:
+                {
+                    // The player is sending their inputs to us, let's apply them and send updates back
+
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+        /*
 		if(str.contains(commands[0])){
-			this.ids +=1;					// add new player, must increment ids
-			this.game.getHandler().getPlayers().add(new Player(game.getHandler(),0,0,clientDatagram.getAddress(), clientDatagram.getPort(), this.ids));
+
 			
 			//Let the client the id of its own player.
 			String t = "identity " + this.ids;
@@ -123,18 +210,17 @@ public class Server implements Runnable{
 			
 			//This is where most of the game updates happen in real time.
 		}else if (str.contains(commands[1])){
-			// inputs format: "input up down left right attack clientID mouseX mouseY camX camY"
+			// inputs format: "input inputFlags clientID mouseX mouseY camX camY"
 			String[] inputs = str.split("\\s");
-			Player cP = game.getHandler().getPlayer(Integer.parseInt(inputs[6]));
-			cP.applyInput(Integer.parseInt(inputs[1]), Integer.parseInt(inputs[2]), Integer.parseInt(inputs[3]), 
-					Integer.parseInt(inputs[4]), Integer.parseInt(inputs[9]), Integer.parseInt(inputs[10]));
+			Player cP = game.getHandler().getPlayer(Integer.parseInt(inputs[2]));
+			cP.applyInput(Byte.parseByte(inputs[1]), Integer.parseInt(inputs[5]), Integer.parseInt(inputs[6]));
 			
 			cP.setMouseCoord(Integer.parseInt(inputs[7]), Integer.parseInt(inputs[8]));
 			
 			// player making an attack will require additional action than just assigning inputs.
-			if(Integer.parseInt(inputs[5]) == 1 && cP.isReady()){
+			if(Integer.parseInt(inputs[5]) == 1 && cP.isReadyToFire()){
 				cP.setReady(false);
-				performAttack(cP,Integer.parseInt(inputs[7]), Integer.parseInt(inputs[8]), serverSocket);
+				performAttack(cP, Integer.parseInt(inputs[7]), Integer.parseInt(inputs[8]), serverSocket);
 			}
 			
 			String s = "update";
@@ -164,14 +250,13 @@ public class Server implements Runnable{
 			serverSocket.send(new DatagramPacket(s2.getBytes(), s2.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
 			// Send ID's of entities to kill.
 			serverSocket.send(new DatagramPacket(s3.getBytes(), s3.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
-		}
+		}*/
 	}
 	
 	/**
 	 * The client is attacking. Spawn a projectile using the given information, then message all clients 
 	 * telling them to spawn a projectile with the same info.
 	 * @param p
-	 * @param clientDatagram
 	 * @param serverSocket
 	 */
 	private void performAttack(Player p, int mouseX, int mouseY, DatagramSocket serverSocket){
