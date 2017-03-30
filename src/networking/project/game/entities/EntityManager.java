@@ -3,10 +3,10 @@ package networking.project.game.entities;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 
 import networking.project.game.Handler;
 import networking.project.game.entities.creatures.*;
-import networking.project.game.entities.statics.DeadEntity;
 
 /**
  *	The EntityManager manages all entities, rendering each entity
@@ -20,20 +20,16 @@ public class EntityManager {
 	
 	private Handler handler;
 	private ArrayList<Entity> entities;
-	private Comparator<Entity> renderSorter = new Comparator<Entity>(){
-		@Override
-		public int compare(Entity a, Entity b) {
-			if(a.getY() + a.getHeight() < b.getY() + b.getHeight())
-				return -1;
-			return 1;
-		}
-	};
+	private Comparator<Entity> renderSorter = (a, b) -> {
+        if(a.getY() + a.getHeight() < b.getY() + b.getHeight())
+            return -1;
+        return 1;
+    };
 	
 	public EntityManager(Handler handler, ArrayList<Player> player){
 		this.handler = handler;
-		entities = new ArrayList<Entity>();
-		for (Player p: player)
-			addEntity(p);
+		entities = new ArrayList<>();
+        player.forEach(this::addEntity);
 	}
 	
 	/**
@@ -41,27 +37,15 @@ public class EntityManager {
 	 *  within the entities ArrayList.
 	 */
 	public void tick(){
-		for(int i = 0;i < entities.size();i++){
-			Entity e = entities.get(i);
+		Iterator<Entity> entityIterator = entities.iterator();
+		while (entityIterator.hasNext())
+		{
+			Entity e = entityIterator.next();
 			e.tick();
-			
-			if(!e.isActive() && e.isEnemy()){
-				DeadEntity.addDeadEntity(handler, e);
-			}
-			
-			// If an Entity has died since the last tick(), remove it from entities.
-			if(!e.isActive())
-				entities.remove(e);
+			if (!e.isActive())
+				entityIterator.remove();
 		}
-		
-		
-		for (int i = 0; i < DeadEntity.deadEntities.size();i++){
-			Entity e = DeadEntity.deadEntities.get(i);
-			e.tick();
-			
-			if(!e.isActive())
-				DeadEntity.deadEntities.remove(e);
-		}
+
 		entities.sort(renderSorter);
 	}
 	
@@ -70,15 +54,8 @@ public class EntityManager {
 	 * 
 	 * @param g
 	 */
-	public void render(Graphics g){
-		
-		for(Entity e : entities){
-			e.render(g);
-		}
-		
-		for(Entity e : DeadEntity.deadEntities){
-			e.render(g);
-		}
+	public void render(Graphics g) {
+		entities.forEach(e -> e.render(g));
 	}
 
 	/**

@@ -98,21 +98,21 @@ public class GameCamera {
 	/**
 	 * @return xOffset
 	 */
-	public float getxOffset() {
+	public float getXOffset() {
 		return xOffset;
 	}
 
 	/**
 	 * @param xOffset how far to offset the GameCamera in the x direction.
 	 */
-	public void setxOffset(float xOffset) {
+	public void setXOffset(float xOffset) {
 		this.xOffset = xOffset;
 	}
 
 	/**
 	 * @return yOffset
 	 */
-	public float getyOffset() {
+	public float getYOffset() {
 		return yOffset;
 	}
 

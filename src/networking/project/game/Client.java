@@ -1,10 +1,8 @@
 package networking.project.game;
 
-import java.io.*;
-import java.util.*;
-
 import networking.project.game.entities.creatures.Player;
 import networking.project.game.entities.creatures.projectiles.Projectile;
+import networking.project.game.gfx.GameCamera;
 import networking.project.game.utils.NetCodes;
 
 import java.net.*;
@@ -22,9 +20,6 @@ public class Client implements Runnable, NetCodes {
         game.tick();
 		game.render();
 		game.getKeyManager().tick();
-        game.getHandler().getClientPlayer().applyInput(game.getKeyManager().input,
-                game.getGameCamera().getxOffset(),
-                game.getGameCamera().getyOffset());
 	}
 	
 	@Override
@@ -163,8 +158,7 @@ public class Client implements Runnable, NetCodes {
 				current.setX(xPos);
 				current.setY(yPos);
 				current.setMouseCoord(mouseX, mouseY);
-				current.setCamX(camX);
-				current.setCamY(camY);
+                current.setCamPosition(camX, camY);
 				
 				j+=9;
 			}
