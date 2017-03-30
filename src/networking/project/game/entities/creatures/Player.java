@@ -125,6 +125,7 @@ public class Player extends Creature implements InputFlags {
 		
 		this.camX = xOffset;
 		this.camY = yOffset;
+		
 	}
 
 	@Override

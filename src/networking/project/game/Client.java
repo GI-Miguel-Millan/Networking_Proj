@@ -25,6 +25,9 @@ public class Client implements Runnable, NetCodes {
         game.getHandler().getClientPlayer().applyInput(game.getKeyManager().input,
                 game.getGameCamera().getxOffset(),
                 game.getGameCamera().getyOffset());
+        
+        game.getHandler().getClientPlayer().setMouseCoord(game.getMouseManager().getMouseX(), game.getMouseManager().getMouseY());
+        
 	}
 	
 	@Override
