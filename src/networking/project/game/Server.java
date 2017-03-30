@@ -219,7 +219,7 @@ public class Server implements Runnable, NetCodes {
 			
 			// player making an attack will require additional action than just assigning inputs.
 			if(Integer.parseInt(inputs[5]) == 1 && cP.isReadyToFire()){
-				cP.setReady(false);
+				cP.setReadyToFire(false);
 				performAttack(cP, Integer.parseInt(inputs[7]), Integer.parseInt(inputs[8]), serverSocket);
 			}
 			

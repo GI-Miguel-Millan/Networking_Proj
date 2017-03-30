@@ -76,11 +76,11 @@ public class FireBall extends Projectile {
 	
 	@Override
 	public void render(Graphics g) {
-		posX = (int)(x - handler.getGameCamera().getxOffset());
-		posY = (int) (y - handler.getGameCamera().getyOffset());
+		posX = (x - handler.getGameCamera().getXOffset());
+		posY = (y - handler.getGameCamera().getYOffset());
 		g.setColor(Color.red);
 		//g.drawRect(posX, posY, width, height);
-		g.drawImage(Assets.fireBall, posX, posY, width, height, null);
+		g.drawImage(Assets.fireBall, (int)posX, (int)posY, width, height, null);
 		//g.drawImage(Assets.projectile, posX, posY, width, height, null);
 		
 	}

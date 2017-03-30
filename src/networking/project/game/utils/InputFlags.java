@@ -10,5 +10,5 @@ public interface InputFlags {
     byte IN_LEFT = 1 << 3;
     byte IN_ATTK = 1 << 4;
     byte IN_CTRL = 1 << 5;
-    byte IN_PAUSE = 1 << 6;
+    byte IN_ESC = 1 << 6;
 }

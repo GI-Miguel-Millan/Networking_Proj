@@ -56,7 +56,7 @@ public class Game implements Runnable {
 		this.height = height;
 		this.title = title;
 		handler = new Handler(this);
-		keyManager = new KeyManager();
+		keyManager = new KeyManager(this);
 		mouseManager = new MouseManager();
 	}
 	
@@ -245,18 +245,13 @@ public class Game implements Runnable {
 		return this.handler;
 	}
 
-	public boolean checkInput(byte inputToCheck)
-    {
-        return (keyManager.input & inputToCheck) == inputToCheck;
-    }
-	
-	public String getPlayerInput(){
+	/*public String getPlayerInput(){
 		gameCamera.checkBlankSpace();
 		
 		return "input " + keyManager.input + " " +
 		handler.getClientPlayer().getID() + " " + mouseManager.getMouseX() + " " + mouseManager.getMouseY() + " " + 
-		(int)gameCamera.getxOffset()+ " " + (int)gameCamera.getyOffset();
-	}
+		(int)gameCamera.getXOffset()+ " " + (int)gameCamera.getYOffset();
+	}*/
 }
 
 

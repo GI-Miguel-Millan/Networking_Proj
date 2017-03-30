@@ -22,7 +22,7 @@ public abstract class Entity {
 	protected int health;
 	protected Handler handler;
 	protected float x, y;
-	protected int posX, posY;
+	protected float posX, posY;
 	protected int width, height;
 	protected Rectangle bounds;
 	protected boolean active = true;
