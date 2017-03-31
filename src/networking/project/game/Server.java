@@ -4,12 +4,11 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
-import networking.project.game.entities.Entity;
 import networking.project.game.entities.creatures.Player;
 import networking.project.game.entities.creatures.projectiles.Projectile;
-import networking.project.game.network.PacketManager;
 import networking.project.game.network.packets.ConnectionPacket;
-import networking.project.game.network.packets.EntityPacket;
+import networking.project.game.network.packets.PlayerUpdatePacket;
+import networking.project.game.network.packets.GameStartPacket;
 import networking.project.game.network.packets.Packet;
 import networking.project.game.utils.NetCodes;
 
@@ -75,7 +74,7 @@ public class Server implements Runnable, NetCodes {
 				server_socket.receive(incoming);
 				byte[] data = incoming.getData();
                 // Determine what it is and do stuff with it
-				Packet p = PacketManager.getPacket(data);
+				Packet p = Packet.determinePacket(data);
 				evaluateCommand(p, incoming, server_socket);
 			}
 			
@@ -93,7 +92,7 @@ public class Server implements Runnable, NetCodes {
 	 * @throws IOException 
 	 */
 	private void evaluateCommand(Packet p, DatagramPacket clientDatagram, DatagramSocket serverSocket) throws IOException {
-		String[] commands = {"init", "input"};
+
 
         if (p instanceof ConnectionPacket)
         {
@@ -106,7 +105,7 @@ public class Server implements Runnable, NetCodes {
                     this.game.getHandler().getPlayers().add(new Player(game.getHandler(),0,0,clientDatagram.getAddress(), clientDatagram.getPort(), this.ids));
 
                     // Identify this player to them
-                    ConnectionPacket cp = new ConnectionPacket(CONN_REQ);
+                    ConnectionPacket cp = new ConnectionPacket();
                     cp.dos.writeInt(ids);
                     cp.send(serverSocket, clientDatagram, true);
 
@@ -114,25 +113,18 @@ public class Server implements Runnable, NetCodes {
                     // If this client was the last one we needed, start the game
                     if (game.getHandler().getPlayers().size() == number_of_players)
                     {
-                        EntityPacket ep = new EntityPacket(GAME_START);
-                        // TODO: ep.setMode("Battle_Arena")
-                        ep.dos.writeInt(GAMEWIDTH);
-                        ep.dos.writeInt(GAMEHEIGHT);
-                        ep.dos.writeInt(number_of_players);
-                        // Add everybody to this packet
-                        for (Player pl : game.getHandler().getPlayers())
-                        {
-                            ep.dos.writeBytes(pl.getIP().getHostAddress());
-                            ep.dos.writeInt(pl.getPort());
-                            ep.dos.writeInt(pl.getID());
-                        }
+                        GameStartPacket gs = new GameStartPacket();
+                        // TODO: ep.setMode("Battle_Arena") ?
+                        gs.gameWidth = (short)GAMEWIDTH;
+                        gs.gameHeight = (short)GAMEHEIGHT;
+                        gs.numPlayers = (byte)number_of_players;
+                        gs.compose();
+
                         // Send this packet to everyone
                         for (Player pl : game.getHandler().getPlayers())
                         {
-                            ep.send(serverSocket, pl.getIP(), pl.getPort(), false);
+                            gs.send(serverSocket, pl.getIP(), pl.getPort());
                         }
-                        // Dispose manually
-                        ep.dispose();
 
 
 
@@ -168,7 +160,7 @@ public class Server implements Runnable, NetCodes {
                     break;
             }
         }
-        else if (p instanceof EntityPacket)
+        else if (p instanceof PlayerUpdatePacket)
         {
             switch (p.identifier)
             {

@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import networking.project.game.Handler;
 import networking.project.game.entities.creatures.*;
@@ -19,7 +20,7 @@ import networking.project.game.entities.creatures.*;
 public class EntityManager {
 	
 	private Handler handler;
-	private ArrayList<Entity> entities;
+	private CopyOnWriteArrayList<Entity> entities;
 	private Comparator<Entity> renderSorter = (a, b) -> {
         if(a.getY() + a.getHeight() < b.getY() + b.getHeight())
             return -1;
@@ -28,7 +29,7 @@ public class EntityManager {
 	
 	public EntityManager(Handler handler, ArrayList<Player> player){
 		this.handler = handler;
-		entities = new ArrayList<>();
+		entities = new CopyOnWriteArrayList<>();
         player.forEach(this::addEntity);
 	}
 	
@@ -37,14 +38,15 @@ public class EntityManager {
 	 *  within the entities ArrayList.
 	 */
 	public void tick(){
-		Iterator<Entity> entityIterator = entities.iterator();
-		while (entityIterator.hasNext())
+		ArrayList<Entity> toRemove = new ArrayList<>(256);
+		for (Entity e : entities)
 		{
-			Entity e = entityIterator.next();
 			e.tick();
 			if (!e.isActive())
-				entityIterator.remove();
+				toRemove.add(e);
 		}
+
+		toRemove.forEach(e -> entities.remove(e));
 
 		entities.sort(renderSorter);
 	}
@@ -104,7 +106,7 @@ public class EntityManager {
 	/**
 	 * @return entities the ArrayList of entities.
 	 */
-	public ArrayList<Entity> getEntities() {
+	public CopyOnWriteArrayList<Entity> getEntities() {
 		return entities;
 	}
 
@@ -112,7 +114,7 @@ public class EntityManager {
 	 * Sets a new ArrayList of entities to entities.
 	 * @param entities
 	 */
-	public void setEntities(ArrayList<Entity> entities) {
+	public void setEntities(CopyOnWriteArrayList<Entity> entities) {
 		this.entities = entities;
 	}
 

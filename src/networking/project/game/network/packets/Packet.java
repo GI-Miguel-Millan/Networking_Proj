@@ -1,88 +1,70 @@
 package networking.project.game.network.packets;
 
-import networking.project.game.utils.DataCounterStream;
+import networking.project.game.utils.NetCodes;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.nio.ByteBuffer;
 
 /**
  * Created by nick on 3/28/17.
  */
-public class Packet {
+public abstract class Packet implements NetCodes {
 
-    public byte identifier;
+    /**
+     * The binary data of the packet to send. Each packet received is broken down
+     * in child classes, to proper member variables.
+     *
+     * Therefore, this field is only really used when constructing a packet to send.
+     */
+    protected byte[] data;
 
-    // Input packet (recv)
-    DataCounterStream dcs = null;
-    DataInputStream dis = null;
-    ByteArrayInputStream bais = null;
+    /**
+     * Takes an input buffer from a received from a DatagramPacket and,
+     * depending on the child class, reads the appropriate data into the class'
+     * member fields.
+     * @param data The input byte array
+     */
+    public abstract void decompose(byte[] data);
 
-    // Output packet (send)
-    public DataOutputStream dos = null;
-    ByteArrayOutputStream baos = null;
+    /**
+     * Takes what the class has defined in its member variables, and packs
+     * them into the byte array, making it ready for sending.
+     */
+    public abstract void compose();
 
-    // Defaults to being a send packet
-    public Packet()
-    {
-        baos = new ByteArrayOutputStream(1460);
-        dos = new DataOutputStream(baos);
+    /**
+     * Sends a packet over a server socket to a given IP and port.
+     * @param serverSocket The server socket.
+     * @param inet The IP address of the recipient
+     * @param port The port of the recipient
+     * @throws IOException If anything goes wrong.
+     */
+    public void send(DatagramSocket serverSocket, InetAddress inet, int port) throws IOException {
+        serverSocket.send(new DatagramPacket(data, data.length, inet, port));
     }
 
-    // Defaults to being a recv packet
-    public Packet(byte[] input)
+
+    public static Packet determinePacket(byte[] data)
     {
-        bais = new ByteArrayInputStream(input);
-        dis = new DataInputStream(bais);
-        dcs = new DataCounterStream(input, dis);
-        try
+        Packet toReturn;
+        switch (data[0]) // Depending on the identifier byte
         {
-            identifier = dcs.getIndicator();
-        } catch (Exception e)
-        {
-            e.printStackTrace();
+            case CONN_REQ:
+                toReturn = new ConnectionPacket();
+                break;
+            case GAME_START:
+                toReturn = new GameStartPacket();
+                break;
+            default:
+                toReturn = null;
+                break;
         }
-    }
 
-    public byte[] getBytes()
-    {
-        return baos.toByteArray();
-    }
+        if (toReturn != null)
+            toReturn.decompose(data);
 
-    // Used in sending packets, each packet composes differently
-    public void send(DatagramSocket serverSocket, DatagramPacket clientDatagram, boolean disposeAfter) throws IOException
-    {
-        send(serverSocket, clientDatagram.getAddress(), clientDatagram.getPort(), disposeAfter);
-    }
-
-    public void send(DatagramSocket serverSocket, InetAddress inet, int port, boolean dispose) throws IOException
-    {
-        serverSocket.send(new DatagramPacket(baos.toByteArray(), baos.size(), inet, port));
-        if (dispose)
-            dispose();
-    }
-
-    public void dispose()
-    {
-        try
-        {
-            // Output
-            if (dos != null)
-                dos.close();
-            if (baos != null)
-                baos.close();
-
-            // Input
-            if (bais != null)
-                bais.close();
-            if (dis != null)
-                dis.close();
-
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        return toReturn;
     }
 }
