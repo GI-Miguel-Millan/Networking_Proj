@@ -268,6 +268,11 @@ public class Player extends Creature implements InputFlags {
     public void setInput(byte newInput) {
         input = newInput;
     }
+
+    public double getRotation()
+    {
+        return this.rotation;
+    }
 }
 
 

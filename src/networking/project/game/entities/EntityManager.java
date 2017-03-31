@@ -38,7 +38,7 @@ public class EntityManager {
 	 *  within the entities ArrayList.
 	 */
 	public void tick(){
-		ArrayList<Entity> toRemove = new ArrayList<>(200);
+		ArrayList<Entity> toRemove = new ArrayList<>(256);
 		for (Entity e : entities)
 		{
 			e.tick();

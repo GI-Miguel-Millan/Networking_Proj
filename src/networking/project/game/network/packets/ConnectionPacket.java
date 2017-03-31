@@ -1,26 +1,26 @@
 package networking.project.game.network.packets;
 
-import networking.project.game.utils.NetCodes;
-
 /**
  * Created by nick on 3/28/17.
  */
-public class ConnectionPacket extends Packet implements NetCodes {
+public class ConnectionPacket extends Packet {
 
-    public ConnectionPacket(byte[] input)
+    // This is a bit different for this packet, since
+    // all of the connection related ones (ACK/REQ/DISC) all
+    // have the same format, so we just store this here.
+    byte type;
+
+    int ID;
+
+    @Override
+    public void decompose(byte[] data)
     {
-        super(input);
+
     }
 
-    public ConnectionPacket(byte indentifier)
+    @Override
+    public void compose()
     {
-        super();
-        try {
-            dos.writeByte(CONN_DATA);
-            dos.writeByte(indentifier);
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+
     }
 }
