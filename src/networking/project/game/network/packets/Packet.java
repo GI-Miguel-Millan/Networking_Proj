@@ -15,6 +15,9 @@ public class Packet {
 
     public byte identifier;
 
+
+    private byte[] data;
+
     // Input packet (recv)
     DataCounterStream dcs = null;
     DataInputStream dis = null;

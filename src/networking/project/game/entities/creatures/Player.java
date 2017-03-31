@@ -7,6 +7,7 @@ import java.awt.geom.AffineTransform;
 import java.net.*;
 
 import networking.project.game.Handler;
+import networking.project.game.entities.creatures.projectiles.Projectile;
 import networking.project.game.gfx.Assets;
 import networking.project.game.gfx.GameCamera;
 import networking.project.game.input.MouseManager;
@@ -73,12 +74,19 @@ public class Player extends Creature implements InputFlags {
             if (isPressingKey(IN_ESC)) {
                 // TODO: DEAL WITH THIS
             }
+
+            if (isPressingKey(IN_ATTK) && readyFire)
+            {
+                // TODO let the server know we fired, perhaps respond to the server's packet instead of creating this here?
+                handler.getWorld().getEntityManager().addEntity(new Projectile(handler, this, mouseX, mouseY, 100));
+                readyFire = false;
+            }
         }
 
         applyInput();
 
         //lowerBoundCheck();
-        updateCounters();
+        updateFireCounter();
 
         move();
         // only clear movement values after we've moved.
@@ -89,11 +97,11 @@ public class Player extends Creature implements InputFlags {
     /**
      * Updates counters
      */
-    private void updateCounters() {
-        if (!readyFire)
+    private void updateFireCounter() {
+        if (!readyFire && !isPressingKey(IN_ATTK))
             counter++;
 
-        if (counter == 20) {
+        if (counter >= 20) {
             readyFire = true;
             counter = 0;
         }

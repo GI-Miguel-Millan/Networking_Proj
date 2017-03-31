@@ -22,9 +22,9 @@ public class Projectile extends Creature{
 							DEFAULT_PROJECTILE_HEIGHT = 5;
 	protected int counter = 0; 
 	protected Player creator; 
-	protected int mouseX, mouseY;
+	protected float mouseX, mouseY;
 	
-	public Projectile(Handler handler, Player e, int mX, int mY, int id) {
+	public Projectile(Handler handler, Player e, float mX, float mY, int id) {
 		super(handler, e.getX() + e.getWidth()/2, e.getY() + e.getHeight()/2, DEFAULT_PROJECTILE_WIDTH, DEFAULT_PROJECTILE_HEIGHT, id);
 		mouseX=mX;
 		mouseY=mY;
@@ -152,12 +152,12 @@ public class Projectile extends Creature{
 		return creator;
 	}
 	
-	public int getMouseX(){
+	/*public int getMouseX(){
 		return mouseX;
 	}
 	
 	public int getMouseY(){
 		return mouseY;
-	}
+	}*/
 
 }

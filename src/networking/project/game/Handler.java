@@ -30,8 +30,8 @@ public class Handler {
 	
 	private Game game;
 	private World world;
-	private ArrayList<Player> players = new ArrayList<Player>();
-	private ArrayList<Integer> kill_ids = new ArrayList<Integer>();
+	private ArrayList<Player> players = new ArrayList<>();
+	private ArrayList<Integer> kill_ids = new ArrayList<>();
 	private Player clientPlayer;
 
 	

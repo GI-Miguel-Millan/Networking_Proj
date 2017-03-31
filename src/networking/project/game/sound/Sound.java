@@ -159,17 +159,11 @@ public class Sound {
 							
 						clip.addLineListener(new CloseClipWhenDone());
 						clip.start();
-					} catch (LineUnavailableException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (UnsupportedAudioFileException e) {
+					} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					}
+				}
 				}.start();
 			}catch(Exception ex){
 				ex.printStackTrace();
