@@ -1,17 +1,15 @@
 package networking.project.game.entities.creatures;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
-import java.net.*;
-
 import networking.project.game.Handler;
 import networking.project.game.entities.creatures.projectiles.Projectile;
 import networking.project.game.gfx.Assets;
 import networking.project.game.gfx.GameCamera;
 import networking.project.game.input.MouseManager;
 import networking.project.game.utils.InputFlags;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.net.InetAddress;
 
 /**
  * Player is a Creature controlled by the user. This class takes input from the user
@@ -269,9 +267,19 @@ public class Player extends Creature implements InputFlags {
         input = newInput;
     }
 
+    public byte getInput()
+    {
+        return input;
+    }
+
     public double getRotation()
     {
         return this.rotation;
+    }
+
+    public void setRotation(double rot)
+    {
+        rotation = rot;
     }
 }
 

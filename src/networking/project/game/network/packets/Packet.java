@@ -39,10 +39,18 @@ public abstract class Packet implements NetCodes {
      * @param serverSocket The server socket.
      * @param inet The IP address of the recipient
      * @param port The port of the recipient
-     * @throws IOException If anything goes wrong.
      */
-    public void send(DatagramSocket serverSocket, InetAddress inet, int port) throws IOException {
-        serverSocket.send(new DatagramPacket(data, data.length, inet, port));
+    public void send(DatagramSocket serverSocket, InetAddress inet, int port) {
+        try {
+            serverSocket.send(new DatagramPacket(data, data.length, inet, port));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void send(DatagramSocket server, DatagramPacket clientPack)
+    {
+        send(server, clientPack.getAddress(), clientPack.getPort());
     }
 
 
@@ -52,10 +60,19 @@ public abstract class Packet implements NetCodes {
         switch (data[0]) // Depending on the identifier byte
         {
             case CONN_REQ:
+            case CONN_ACK:
+            case CONN_DISC:
+            case CONN_MSG:
                 toReturn = new ConnectionPacket();
                 break;
             case GAME_START:
                 toReturn = new GameStartPacket();
+                break;
+            case GAME_PROJ_UPDATE:
+                toReturn = new ProjectileUpdatePacket();
+                break;
+            case GAME_KILL_UPDATE:
+                toReturn = new KillPacket();
                 break;
             default:
                 toReturn = null;
