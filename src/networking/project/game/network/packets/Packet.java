@@ -74,6 +74,9 @@ public abstract class Packet implements NetCodes {
             case GAME_KILL_UPDATE:
                 toReturn = new KillPacket();
                 break;
+            case GAME_PLAYER_UPDATE:
+            	toReturn = new PlayerUpdatePacket();
+            	break;
             default:
                 toReturn = null;
                 break;

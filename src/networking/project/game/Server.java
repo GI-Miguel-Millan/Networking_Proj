@@ -75,6 +75,10 @@ public class Server implements Runnable, NetCodes {
 				byte[] data = incoming.getData();
                 // Determine what it is and do stuff with it
 				Packet p = Packet.determinePacket(data);
+				
+//				if(gameStarted)
+//					Utils.debug("received a packet");
+				
 				evaluateCommand(p, incoming, server_socket);
 			}
 			
@@ -92,6 +96,13 @@ public class Server implements Runnable, NetCodes {
 	 */
 	private void evaluateCommand(Packet p, DatagramPacket clientDatagram, DatagramSocket serverSocket)
     {
+		if(!(p instanceof ConnectionPacket) && !(p instanceof PlayerUpdatePacket) 
+				&& !(p instanceof ProjectileUpdatePacket))
+		{
+			Utils.debug("Something wrong with packet");
+		}
+		
+		
         if (p instanceof ConnectionPacket)
         {
             ConnectionPacket cp = (ConnectionPacket)p;

@@ -1,6 +1,7 @@
 package networking.project.game.network.packets;
 
 import networking.project.game.utils.NetCodes;
+import networking.project.game.utils.Utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -61,7 +62,7 @@ public class GameStartPacket extends Packet implements NetCodes {
             dos.writeShort(gameWidth);
             dos.writeShort(gameHeight);
             dos.writeByte(numPlayers);
-
+           
             System.arraycopy(baos.toByteArray(), 0, data, 0, baos.size());
         }
         catch (Exception e){
