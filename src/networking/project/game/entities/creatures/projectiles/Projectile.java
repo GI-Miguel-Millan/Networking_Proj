@@ -1,7 +1,7 @@
 package networking.project.game.entities.creatures.projectiles;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 
 import networking.project.game.Handler;
 import networking.project.game.entities.Entity;
@@ -19,14 +19,15 @@ import networking.project.game.sound.Sound;
  */
 public class Projectile extends Creature{
 
-	public static final int DEFAULT_PROJECTILE_WIDTH = 5,
-							DEFAULT_PROJECTILE_HEIGHT = 5;
+	public static final int DEFAULT_PROJECTILE_WIDTH = 15,
+							DEFAULT_PROJECTILE_HEIGHT = 25;
 	protected int counter = 0; 
 	protected Player creator; 
-	protected int mouseX, mouseY;
+	protected float mouseX, mouseY;
+	protected double rotation;
 	
-	public Projectile(Handler handler, Player e, int mX, int mY, int id) {
-		super(handler, e.getX() + e.getWidth()/2, e.getY() + e.getHeight()/2, DEFAULT_PROJECTILE_WIDTH, DEFAULT_PROJECTILE_HEIGHT, id);
+	public Projectile(Handler handler, Player e, float mX, float mY, int id) {
+		super(handler, e.getX() + e.getWidth()/2.0f, e.getY() + e.getHeight()/2.0f, DEFAULT_PROJECTILE_WIDTH, DEFAULT_PROJECTILE_HEIGHT, id);
 		mouseX=mX;
 		mouseY=mY;
 		speed = handler.getGameCamera().getCamSpeed() + 5.0f;
@@ -35,12 +36,12 @@ public class Projectile extends Creature{
 		Sound.lazer.execute();//makes lazer sound while shooting
 		
 		handler.getGameCamera().checkBlankSpace();
-		
-		
+		x -= DEFAULT_PROJECTILE_WIDTH / 2.0f;
 		// Adjust projectile xMove and yMove so that it will travel in the direction of the clients mouse position
-		posX = (int)(x - creator.getCamX());
-		posY = (int) (y - creator.getCamY());
-		float r = (float) Math.sqrt(Math.pow(mouseX - posX, 2) + Math.pow(posY - mouseY, 2));
+		posX = (x - creator.getCamX());
+		posY = (y - creator.getCamY());
+        rotation = e.getRotation();
+		float r = (float) Math.sqrt(Math.pow(mouseX - posX, 2.0) + Math.pow(posY - mouseY, 2.0));
 		float speedX = speed * ( (mouseX - posX)/ r);
 		float speedY = speed * ( (posY - mouseY)/ r);
 		
@@ -127,12 +128,15 @@ public class Projectile extends Creature{
 
 	@Override
 	public void render(Graphics g) {
-		posX = (int)(x - handler.getGameCamera().getxOffset());
-		posY = (int) (y - handler.getGameCamera().getyOffset());
+		posX = (x - handler.getGameCamera().getXOffset());
+		posY = (y - handler.getGameCamera().getYOffset());
 		/*g.setColor(Color.blue);
 		g.drawRect(posX, posY, width, height);*/
-		g.drawImage(Assets.projectile, posX, posY, width, height, null);
-		
+        Graphics2D g2 = (Graphics2D)g;
+        AffineTransform transform = g2.getTransform();
+        g2.rotate(rotation, posX + width / 2.0, posY + width / 2.0);
+		g2.drawImage(Assets.projectile, (int)posX, (int)posY, width, height, null);
+        g2.setTransform(transform);
 	}
 
 	@Override
@@ -153,12 +157,12 @@ public class Projectile extends Creature{
 		return creator;
 	}
 	
-	public int getMouseX(){
+	/*public int getMouseX(){
 		return mouseX;
 	}
 	
 	public int getMouseY(){
 		return mouseY;
-	}
+	}*/
 
 }

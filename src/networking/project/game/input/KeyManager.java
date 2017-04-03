@@ -1,7 +1,13 @@
 package networking.project.game.input;
 
+import networking.project.game.Game;
+import networking.project.game.entities.creatures.Player;
+import networking.project.game.utils.InputFlags;
+
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.HashMap;
 
 /**
  *	The KeyManager keeps track of key presses.
@@ -10,29 +16,36 @@ import java.awt.event.KeyListener;
  *	@version 1.0
  *	@since version 1.0
  */
-public class KeyManager implements KeyListener {
-	
-	private boolean[] keys;
-	public boolean up, down, left, right, fire, paused, wasReleased = true, ctrl, mute;
-	
-	public KeyManager(){
-		keys = new boolean[256];
+public class KeyManager extends KeyAdapter implements InputFlags {
+
+    private byte input;
+
+    // Stores the inputs as a map to the VK_* codes from KeyEvent class
+	private HashMap<Integer, Byte> inputMap;
+
+    private Game game; // Current game object
+
+	public KeyManager(Game g){
+        game = g;
+        inputMap = new HashMap<>();
+		inputMap.put(KeyEvent.VK_W, IN_UP);
+        inputMap.put(KeyEvent.VK_D, IN_RIGHT);
+        inputMap.put(KeyEvent.VK_S, IN_DOWN);
+        inputMap.put(KeyEvent.VK_A, IN_LEFT);
+        inputMap.put(KeyEvent.VK_SPACE, IN_ATTK);
+        inputMap.put(KeyEvent.VK_ESCAPE, IN_ESC);
 	}
 	
 	/**
 	 *  Sets the movement keys to true or false based on
 	 *  whether or not its key is pressed.
 	 */
-	public void tick(){
-		up = keys[KeyEvent.VK_W];
-		down = keys[KeyEvent.VK_S];
-		left = keys[KeyEvent.VK_A];
-		right = keys[KeyEvent.VK_D];
-		fire = keys[KeyEvent.VK_SPACE];
-		ctrl = keys[KeyEvent.VK_CONTROL];
-		mute = keys[KeyEvent.VK_M];
-		
-		paused = keys[KeyEvent.VK_P];	
+	public void tick() {
+        Player p = game.getHandler().getClientPlayer();
+        if (p != null)
+        {
+            p.setInput(input);
+        }
 	}
 
 	/**
@@ -43,7 +56,8 @@ public class KeyManager implements KeyListener {
 	 * @Override
 	 */
 	public void keyPressed(KeyEvent e) {
-		keys[e.getKeyCode()] = true;
+        if (inputMap.containsKey(e.getKeyCode()))
+            input |= inputMap.get(e.getKeyCode());
 	}
 
 	/**
@@ -54,13 +68,7 @@ public class KeyManager implements KeyListener {
 	 * @Override
 	 */
 	public void keyReleased(KeyEvent e) {
-		wasReleased =true;
-		keys[e.getKeyCode()] = false;
+        if (inputMap.containsKey(e.getKeyCode()))
+            input &= ~inputMap.get(e.getKeyCode());
 	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		
-	}
-
 }

@@ -5,8 +5,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 
 import networking.project.game.Handler;
-import networking.project.game.entities.creatures.Player;
-import networking.project.game.gfx.Animation;
 import networking.project.game.gfx.Assets;
 import networking.project.game.sound.Sound;
 import networking.project.game.worlds.World;

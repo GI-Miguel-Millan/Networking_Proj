@@ -8,8 +8,10 @@ import networking.project.game.gfx.Assets;
 import networking.project.game.gfx.GameCamera;
 import networking.project.game.input.KeyManager;
 import networking.project.game.input.MouseManager;
-import networking.project.game.sound.Sound;
-import networking.project.game.states.*;
+import networking.project.game.states.GameOverState;
+import networking.project.game.states.GameState;
+import networking.project.game.states.MenuState;
+import networking.project.game.states.State;
 import networking.project.game.tiles.Tile;
 
 /**
@@ -54,7 +56,7 @@ public class Game implements Runnable {
 		this.height = height;
 		this.title = title;
 		handler = new Handler(this);
-		keyManager = new KeyManager();
+		keyManager = new KeyManager(this);
 		mouseManager = new MouseManager();
 	}
 	
@@ -86,11 +88,11 @@ public class Game implements Runnable {
 	 *  Updates the game every tick.
 	 */
 	public void tick(){
-		//keyManager.tick();
+		keyManager.tick();
 		
 		if(State.getState() != null)
 			State.getState().tick();
-		//this.getGameCamera().centerOnEntity(getHandler().getClientPlayer());
+		this.getGameCamera().centerOnEntity(getHandler().getClientPlayer());
 		
 	}
 	
@@ -122,7 +124,7 @@ public class Game implements Runnable {
 	 */
 	public void run(){
 		
-		init();
+		//init();
 		
 		
 		int fps = 60;  // How many times every second we want to run tick() and render()
@@ -242,32 +244,14 @@ public class Game implements Runnable {
 	public Handler getHandler(){
 		return this.handler;
 	}
-	
-	
-	public String getPlayerInput(){
-		int up = 0, down = 0, left = 0, right = 0, attack = 0;
-		if(keyManager.up){
-			up = 1;
-		}
-		if(keyManager.down){
-			down = 1;
-		}
-		if(keyManager.left){
-			left = 1;
-		}
-		if(keyManager.right){
-			right = 1;
-		}
-		if(keyManager.fire){
-			attack = 1;
-		}
-			
+
+	/*public String getPlayerInput(){
 		gameCamera.checkBlankSpace();
 		
-		return "input " + up + " " + down + " " + left + " " + right + " " + attack + " " +
+		return "input " + keyManager.input + " " +
 		handler.getClientPlayer().getID() + " " + mouseManager.getMouseX() + " " + mouseManager.getMouseY() + " " + 
-		(int)gameCamera.getxOffset()+ " " + (int)gameCamera.getyOffset();
-	}
+		(int)gameCamera.getXOffset()+ " " + (int)gameCamera.getYOffset();
+	}*/
 }
 
 

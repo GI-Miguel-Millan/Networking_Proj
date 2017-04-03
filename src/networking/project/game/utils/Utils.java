@@ -13,6 +13,7 @@ import java.io.IOException;
  *	@since version 1.0
  */
 public class Utils {
+	private static boolean debugging = true;
 	
 	/**
 	 * Loads a file into the game as a string. This is primarily used for loading
@@ -62,6 +63,11 @@ public class Utils {
 	 */
 	public static int randomNum(int min, int max){
 		return (int)(Math.random() * (max - min + 1) + min) ;
+	}
+	
+	public static void debug(String message){
+		if(debugging)
+			System.out.println(message);
 	}
 
 }

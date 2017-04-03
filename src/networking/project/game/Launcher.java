@@ -19,13 +19,5 @@ public class Launcher {
 		}else{
 			new Client().start();
 		}
-		
-		
-		
-		
-		
-		
-		
 	}
-	
 }
