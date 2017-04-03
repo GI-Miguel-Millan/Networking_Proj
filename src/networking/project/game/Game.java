@@ -1,8 +1,5 @@
 package networking.project.game;
 
-import java.awt.Graphics;
-import java.awt.image.BufferStrategy;
-
 import networking.project.game.display.Display;
 import networking.project.game.gfx.Assets;
 import networking.project.game.gfx.GameCamera;
@@ -13,6 +10,9 @@ import networking.project.game.states.GameState;
 import networking.project.game.states.MenuState;
 import networking.project.game.states.State;
 import networking.project.game.tiles.Tile;
+
+import java.awt.*;
+import java.awt.image.BufferStrategy;
 
 /**
  *	The Game class runs the game: 
@@ -63,14 +63,19 @@ public class Game implements Runnable {
 	/**
 	 *  Initializes everything.
 	 */
-	public void init(){
-		display = new Display(title, width, height);
-		display.getFrame().addKeyListener(keyManager);
-		display.getFrame().addMouseListener(mouseManager);
-		display.getFrame().addMouseMotionListener(mouseManager);
-		display.getCanvas().addMouseListener(mouseManager);
-		display.getCanvas().addMouseMotionListener(mouseManager);
-		Assets.init();
+	public void init(boolean server){
+		if (server) {
+			Assets.initFilenames();
+		}
+		else {
+			display = new Display(title, width, height);
+			display.getFrame().addKeyListener(keyManager);
+			display.getFrame().addMouseListener(mouseManager);
+			display.getFrame().addMouseMotionListener(mouseManager);
+			display.getCanvas().addMouseListener(mouseManager);
+			display.getCanvas().addMouseMotionListener(mouseManager);
+			Assets.init();
+		}
 		//Sound.background.play();//New jon edit
 		
 		gameState = new GameState(handler);

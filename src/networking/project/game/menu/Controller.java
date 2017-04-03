@@ -71,7 +71,7 @@ public class Controller implements Initializable {
             if (textField.getText().matches("[0-9]*")) {
                 new Server(Integer.parseInt(textField.getText())).startServer();
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(1000);
                 }
                 catch (Exception ignored0) {}
                 new Client("localhost").startClient(); //Connect to self

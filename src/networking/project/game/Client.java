@@ -83,7 +83,7 @@ public class Client implements Runnable, NetCodes {
 				byte[] buffer = new byte[1500];
 				DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 				client_socket.receive(reply);
-				
+
 				byte[] data = reply.getData();
 				Packet p = Packet.determinePacket(data);
 				evaluateData(p, reply, client_socket);
@@ -120,7 +120,7 @@ public class Client implements Runnable, NetCodes {
 			Utils.debug("received gameStart packet");
 			GameStartPacket gs = (GameStartPacket)p;
 			game = new Game("Battle Arena", gs.gameWidth, gs.gameHeight);
-			game.init();
+			game.init(false);
 			int numP = gs.numPlayers;
 			for (int i =0; i < numP; i++){
 				// players are identified by their ID's, so no need

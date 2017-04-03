@@ -1,10 +1,9 @@
 package networking.project.game.gfx;
 
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-
+import networking.project.game.sound.Sound;
 import resources.ResourceLoader;
+
+import java.awt.image.BufferedImage;
 
 /**
  *	Assets loads in and stores all the assets for the game.
@@ -71,10 +70,7 @@ public class Assets {
 	 *  Loads all assets into the game. This should only be called once.
 	 */
 	public static void init(){
-		String regex = "\\s+";
-		String pathsFile = ResourceLoader.loadFileAsString("Paths.txt");
-		//Splits up each file name into the fileNames array
-		fileNames = pathsFile.split(regex);
+		initFilenames();
 		
 //		for(String i: fileNames)
 //			System.out.println(i);
@@ -189,7 +185,15 @@ public class Assets {
 		boosted = sheet.crop(width * 5, height * 7, width, height);
 		invincible = sheet.crop(width * 6, height *7, width, height);
 		//test comment
-		
+		// Init all the sounds
+		Sound.init();
 	}
-	
+
+	public static void initFilenames()
+	{
+		String regex = "\\s+";
+		String pathsFile = ResourceLoader.loadFileAsString("Paths.txt");
+		//Splits up each file name into the fileNames array
+		fileNames = pathsFile.split(regex);
+	}
 }

@@ -1,7 +1,6 @@
 package networking.project.game;
 
 import networking.project.game.entities.creatures.Player;
-import networking.project.game.entities.creatures.projectiles.Projectile;
 import networking.project.game.network.packets.*;
 import networking.project.game.utils.NetCodes;
 import networking.project.game.utils.Utils;
@@ -47,8 +46,7 @@ public class Server implements Runnable, NetCodes {
 		long timer = 0;
 		int ticks = 0;
 		DatagramSocket server_socket = null;
-		game.init();		// initialze the game before creating players to avoid null pointers
-		game.getDisplay().setVisible(false); //server doesn't need to display anything.
+		game.init(true);		// initialze the game before creating players to avoid null pointers
 		
 		try {
 			server_socket = new DatagramSocket(7777);
