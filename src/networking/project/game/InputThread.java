@@ -34,15 +34,14 @@ public class InputThread extends Thread {
 		
 		Player player = game.getHandler().getClientPlayer();
 		
+		int fps = 80;  // How many times every second we want to send
+		double timePerTick = 1000000000 / fps;
+		double delta = 0;
+		long now;
+		long lastTime = System.nanoTime();
+		long timer = 0;
+		int ticks = 0;
 		while(true){
-			int fps = 100;  // How many times every second we want to send
-			double timePerTick = 1000000000 / fps;
-			double delta = 0;
-			long now;
-			long lastTime = System.nanoTime();
-			long timer = 0;
-			int ticks = 0;
-			
 			now = System.nanoTime();
 			delta += (now - lastTime) / timePerTick;
 			lastTime = now;
@@ -74,9 +73,12 @@ public class InputThread extends Thread {
 					projUP.send(client_socket,  host, port);
 					
 				}
+				
 				ticks++;
 				delta--;
 			}
+			
+			
 			
 			// Temporary FPS counter
 			if(timer >= 1000000000){
