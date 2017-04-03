@@ -51,27 +51,6 @@ public class Projectile extends Creature{
 		//System.out.println("poX: " + posX + ", posY: " + posY + ", mX: " + mouseX + " " + ", mY: " +  mouseY);
 	
 	}
-	
-	public Projectile(Handler handler, Player e, int id) {
-		super(handler, e.getX() + e.getWidth()/2.0f, e.getY() + e.getHeight()/2.0f, DEFAULT_PROJECTILE_WIDTH, DEFAULT_PROJECTILE_HEIGHT, id);
-		speed = handler.getGameCamera().getCamSpeed() + 5.0f;
-		health = 1;
-		creator = e;
-		Sound.lazer.execute();//makes lazer sound while shooting
-		
-		handler.getGameCamera().checkBlankSpace();
-		x -= DEFAULT_PROJECTILE_WIDTH / 2.0f;
-		// Adjust projectile xMove and yMove so that it will travel in the direction of the clients mouse position
-        rotation = e.getRotation();
-		float speedX = speed * (float)Math.cos(rotation);
-		float speedY = speed * (float)Math.sin(rotation);
-		
-		xMove = speedX;
-		yMove = speedY;
-		//System.out.println("speedX: "+ speedX + ", speedY: " + speedY);
-		//System.out.println("poX: " + posX + ", posY: " + posY + ", mX: " + mouseX + " " + ", mY: " +  mouseY);
-	
-	}
 
 	@Override
 	public void tick() {

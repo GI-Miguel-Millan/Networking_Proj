@@ -147,7 +147,7 @@ public class Client implements Runnable, NetCodes {
 			Utils.debug("received ProjectileUpdatePacket");
 			ProjectileUpdatePacket pup = (ProjectileUpdatePacket)p;
 			Handler h = game.getHandler();
-			h.getWorld().getEntityManager().addEntity(new Projectile(h, h.getPlayer(pup.parentID), pup.ID));
+			h.getWorld().getEntityManager().addEntity(new Projectile(h, h.getPlayer(pup.parentID), pup.mX, pup.mY, pup.ID));
 			if(h.getClientPlayer().getID() == pup.parentID){
 				h.getClientPlayer().setReadyToFire(false);
 			}

@@ -217,6 +217,8 @@ public class Server implements Runnable, NetCodes {
                 otherPUP.rotation = projUP.rotation;
                 otherPUP.xPos = projUP.xPos;
                 otherPUP.yPos = projUP.yPos;
+                otherPUP.mX = projUP.mX;
+                otherPUP.mY = projUP.mY;
                 otherPUP.compose();
                 		
         		// Tell each player to spawn a projectile

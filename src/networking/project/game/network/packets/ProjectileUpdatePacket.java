@@ -14,7 +14,7 @@ public class ProjectileUpdatePacket extends Packet {
 
     public double rotation;
 
-    public float xPos, yPos;
+    public float xPos, yPos, mX, mY;
 
     @Override
     public void decompose(byte[] data)
@@ -29,6 +29,8 @@ public class ProjectileUpdatePacket extends Packet {
                 rotation = dis.readDouble();
                 xPos = dis.readFloat();
                 yPos = dis.readFloat();
+                mX = dis.readFloat();
+                mY = dis.readFloat();
             }
         }
         catch (Exception e)
@@ -53,6 +55,8 @@ public class ProjectileUpdatePacket extends Packet {
             dos.writeDouble(rotation);
             dos.writeFloat(xPos);
             dos.writeFloat(yPos);
+            dos.writeFloat(mX);
+            dos.writeFloat(mY);
 
             System.arraycopy(baos.toByteArray(), 0, data, 0, baos.size());
         }

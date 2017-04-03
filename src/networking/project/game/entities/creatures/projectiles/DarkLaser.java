@@ -16,8 +16,8 @@ import networking.project.game.gfx.Assets;
  */
 public class DarkLaser extends Projectile {
 
-	public DarkLaser(Handler handler, Player e, int id) {
-		super(handler, e, id);
+	public DarkLaser(Handler handler, Player e, float mX, float mY, int id) {
+		super(handler, e, mX, mY, id);
 		speed = 8.0f + handler.getGameCamera().getCamSpeed();
 	}
 	
