@@ -47,7 +47,7 @@ public abstract class Packet implements NetCodes {
             e.printStackTrace();
         }
     }
-
+    
     public void send(DatagramSocket server, DatagramPacket clientPack)
     {
         send(server, clientPack.getAddress(), clientPack.getPort());

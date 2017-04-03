@@ -43,7 +43,11 @@ public class PlayerUpdatePacket extends Packet {
     @Override
     public void compose()
     {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(1460);
+    	if(data == null){
+    		
+    		data = new byte[1500];
+    	}
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(1500);
              DataOutputStream dos = new DataOutputStream(baos))
         {
             dos.writeByte(GAME_PLAYER_UPDATE);

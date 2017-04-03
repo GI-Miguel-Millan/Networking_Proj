@@ -50,6 +50,10 @@ public class GameStartPacket extends Packet implements NetCodes {
     @Override
     public void compose()
     {
+    	if(data == null){
+    		
+    		data = new byte[1500];
+    	}
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream(1460);
              DataOutputStream dos = new DataOutputStream(baos))
         {
