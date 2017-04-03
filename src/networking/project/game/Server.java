@@ -64,7 +64,7 @@ public class Server implements Runnable, NetCodes {
 				lastTime = now;
 				
 				if(delta >= 1 && gameStarted){
-						tick();
+					tick();
 					ticks++;
 					delta--;
 				}
