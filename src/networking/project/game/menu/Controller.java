@@ -11,10 +11,8 @@ import javafx.stage.Stage;
 import networking.project.game.Client;
 import networking.project.game.Server;
 
-
-import java.net.InetAddress;
 import java.net.URL;
-import java.net.UnknownHostException;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -23,7 +21,7 @@ public class Controller implements Initializable {
     private Button button;
 
     @FXML
-    private ChoiceBox choiceBox;
+    private ChoiceBox<String> choiceBox;
 
     @FXML
     private TextField textField;
@@ -31,24 +29,19 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        textField.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                buttonCheck();
-            }
-        });
+        textField.textProperty().addListener((observable, oldValue, newValue) -> buttonCheck());
 
 
         choiceBox.getItems().addAll("Host a Game", "Join a Host", "Server Only");
-        choiceBox.valueProperty().addListener(new ChangeListener() {
+        choiceBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 buttonCheck();
 
-                if (newValue == "Host a Game") {
+                if (Objects.equals(newValue, "Host a Game")) {
                     button.setText("Play Game!");
                     textField.setPromptText("Number of Players");
-                } else if (newValue == "Join a Host") {
+                } else if (Objects.equals(newValue, "Join a Host")) {
                     button.setText("Play Game!");
                     textField.setPromptText("Host IP Address");
                 } else {
@@ -77,6 +70,10 @@ public class Controller implements Initializable {
         } else if (choiceBox.valueProperty().getValue().equals("Host a Game")) { //starts the server, and a client, if input valid
             if (textField.getText().matches("[0-9]*")) {
                 new Server(Integer.parseInt(textField.getText())).startServer();
+                try {
+                    Thread.sleep(5000);
+                }
+                catch (Exception ignored0) {}
                 new Client("localhost").startClient(); //Connect to self
             } else {
                 textField.clear();
