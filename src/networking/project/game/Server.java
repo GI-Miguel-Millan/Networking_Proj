@@ -47,7 +47,7 @@ public class Server implements Runnable, NetCodes {
 		int ticks = 0;
 		DatagramSocket server_socket = null;
 		game.init();		// initialze the game before creating players to avoid null pointers
-		
+		game.getDisplay().setVisible(false);
 		try {
 			server_socket = new DatagramSocket(7777);
 			

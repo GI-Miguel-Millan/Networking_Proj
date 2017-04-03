@@ -68,4 +68,8 @@ public class Display {
 		frame.setVisible(true);
 	}
 	
+	public void setVisible(boolean visibility){
+		frame.setVisible(visibility);
+	}
+	
 }
