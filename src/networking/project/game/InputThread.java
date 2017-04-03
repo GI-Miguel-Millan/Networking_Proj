@@ -34,7 +34,7 @@ public class InputThread extends Thread {
 		
 		Player player = game.getHandler().getClientPlayer();
 		
-		int fps = 80;  // How many times every second we want to send
+		int fps = 150;  // How many times every second we want to send
 		double timePerTick = 1000000000 / fps;
 		double delta = 0;
 		long now;
