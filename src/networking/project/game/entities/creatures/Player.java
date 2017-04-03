@@ -20,7 +20,6 @@ import java.net.InetAddress;
  * @since version 1.0
  */
 public class Player extends Creature implements InputFlags {
-
     //Networking info
     private InetAddress ip;
     private final int port;
@@ -37,6 +36,7 @@ public class Player extends Creature implements InputFlags {
     private int score = 1000;
     private Rectangle playerBounds = new Rectangle(16, 22, 32, 12);
     private float mouseX = 0, mouseY = 0, camX = 0, camY = 0;
+    public boolean wantToFire = false;
 
     public Player(Handler handler, float x, float y, InetAddress ip, int port, int id) {
         super(handler, x, y, Creature.DEFAULT_CREATURE_WIDTH, Creature.DEFAULT_CREATURE_HEIGHT, id);
@@ -76,9 +76,12 @@ public class Player extends Creature implements InputFlags {
             if (isPressingKey(IN_ATTK) && readyFire)
             {
                 // TODO let the server know we fired, perhaps respond to the server's packet instead of creating this here?
-                handler.getWorld().getEntityManager().addEntity(new Projectile(handler, this, mouseX, mouseY, 100));
-                readyFire = false;
-            }
+//                handler.getWorld().getEntityManager().addEntity(new Projectile(handler, this, mouseX, mouseY, 100));
+//                readyFire = false;
+            	
+            	wantToFire = true;
+            }else
+            	wantToFire = false;
         }
 
         applyInput();
@@ -138,6 +141,9 @@ public class Player extends Creature implements InputFlags {
     public void render(Graphics g) {
         Graphics2D gr = (Graphics2D) g;
         AffineTransform transform = gr.getTransform();
+        GameCamera gc = handler.getGameCamera();
+        posX = (x - gc.getXOffset());
+        posY = (y - gc.getYOffset());
 
         gr.rotate(rotation, posX + width / 2.0, posY + width / 2.0);
 

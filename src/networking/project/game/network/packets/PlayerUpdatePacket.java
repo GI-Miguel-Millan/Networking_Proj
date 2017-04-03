@@ -6,6 +6,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
+import networking.project.game.utils.Utils;
+
 /**
  * Created by nick on 3/28/17.
  */
@@ -43,7 +45,11 @@ public class PlayerUpdatePacket extends Packet {
     @Override
     public void compose()
     {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(1460);
+    	if(data == null){
+    		
+    		data = new byte[1500];
+    	}
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(1500);
              DataOutputStream dos = new DataOutputStream(baos))
         {
             dos.writeByte(GAME_PLAYER_UPDATE);
@@ -53,8 +59,10 @@ public class PlayerUpdatePacket extends Packet {
             dos.writeDouble(rotation);
             dos.writeFloat(posX);
             dos.writeFloat(posY);
-
+            
+            //Utils.debug(baos.toString());
             System.arraycopy(baos.toByteArray(), 0, data, 0, baos.size());
+            
         }
         catch (Exception e)
         {

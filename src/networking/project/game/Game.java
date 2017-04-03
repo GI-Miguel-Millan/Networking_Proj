@@ -88,11 +88,11 @@ public class Game implements Runnable {
 	 *  Updates the game every tick.
 	 */
 	public void tick(){
-		//keyManager.tick();
+		keyManager.tick();
 		
 		if(State.getState() != null)
 			State.getState().tick();
-		//this.getGameCamera().centerOnEntity(getHandler().getClientPlayer());
+		this.getGameCamera().centerOnEntity(getHandler().getClientPlayer());
 		
 	}
 	
@@ -124,7 +124,7 @@ public class Game implements Runnable {
 	 */
 	public void run(){
 		
-		init();
+		//init();
 		
 		
 		int fps = 60;  // How many times every second we want to run tick() and render()

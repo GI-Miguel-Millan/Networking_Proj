@@ -18,8 +18,8 @@ import networking.project.game.gfx.Assets;
  */
 public class FireBall extends Projectile {
 
-	public FireBall(Handler handler, Player e, int orient, int offset, int id) {
-		super(handler, e, orient, offset, id);
+	public FireBall(Handler handler, Player e, float mX, float mY, int id) {
+		super(handler, e, mX, mY, id);
 		speed = 3.0f;
 		width = 20;
 		height = 20;

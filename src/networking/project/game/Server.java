@@ -4,6 +4,7 @@ import networking.project.game.entities.creatures.Player;
 import networking.project.game.entities.creatures.projectiles.Projectile;
 import networking.project.game.network.packets.*;
 import networking.project.game.utils.NetCodes;
+import networking.project.game.utils.Utils;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -32,8 +33,8 @@ public class Server implements Runnable, NetCodes {
 	}
 
 	private void tick(){
-		game.tick();
-		game.render();
+		//game.tick();
+		//game.render();
 	}
 	
 	@Override
@@ -47,6 +48,7 @@ public class Server implements Runnable, NetCodes {
 		int ticks = 0;
 		DatagramSocket server_socket = null;
 		game.init();		// initialze the game before creating players to avoid null pointers
+		game.getDisplay().setVisible(false); //server doesn't need to display anything.
 		
 		try {
 			server_socket = new DatagramSocket(7777);
@@ -62,7 +64,7 @@ public class Server implements Runnable, NetCodes {
 				lastTime = now;
 				
 				if(delta >= 1 && gameStarted){
-						tick();
+					tick();
 					ticks++;
 					delta--;
 				}
@@ -73,6 +75,10 @@ public class Server implements Runnable, NetCodes {
 				byte[] data = incoming.getData();
                 // Determine what it is and do stuff with it
 				Packet p = Packet.determinePacket(data);
+				
+//				if(gameStarted)
+//					Utils.debug("received a packet");
+				
 				evaluateCommand(p, incoming, server_socket);
 			}
 			
@@ -90,6 +96,13 @@ public class Server implements Runnable, NetCodes {
 	 */
 	private void evaluateCommand(Packet p, DatagramPacket clientDatagram, DatagramSocket serverSocket)
     {
+		if(!(p instanceof ConnectionPacket) && !(p instanceof PlayerUpdatePacket) 
+				&& !(p instanceof ProjectileUpdatePacket))
+		{
+			Utils.debug("Something wrong with packet");
+		}
+		
+		
         if (p instanceof ConnectionPacket)
         {
             ConnectionPacket cp = (ConnectionPacket)p;
@@ -152,6 +165,7 @@ public class Server implements Runnable, NetCodes {
         }
         else if (p instanceof PlayerUpdatePacket)
         {
+        	Utils.debug("received an update packet from the player");
             PlayerUpdatePacket pup = (PlayerUpdatePacket)p;
             // This is a player sending an update to us.
             // First, update this player
@@ -187,28 +201,36 @@ public class Server implements Runnable, NetCodes {
 
                 // TODO: Send the killed list to the player
             }
+        }else if (p instanceof ProjectileUpdatePacket){
+        	ProjectileUpdatePacket projUP = (ProjectileUpdatePacket)p;
+        	
+        	if (projUP.ID == -1)		// An ID of -1 indicates a player wants to spawn a projectile
+        	{
+        		if(ids <255)			// increment ids to indicate a new projectile spawn
+        			ids++;
+        		else					
+        			ids = number_of_players +1;
+        		
+        		ProjectileUpdatePacket otherPUP = new ProjectileUpdatePacket();
+                otherPUP.ID = ids;
+                otherPUP.parentID = projUP.parentID;
+                otherPUP.rotation = projUP.rotation;
+                otherPUP.xPos = projUP.xPos;
+                otherPUP.yPos = projUP.yPos;
+                otherPUP.mX = projUP.mX;
+                otherPUP.mY = projUP.mY;
+                otherPUP.compose();
+                		
+        		// Tell each player to spawn a projectile
+                for (Player pl : game.getHandler().getPlayers())
+                {
+                    otherPUP.send(serverSocket, pl.getIP(), pl.getPort());
+                }
+        	}else						// otherwise (something)
+        	{
+        		
+        	}
         }
-	}
-	
-	/**
-	 * The client is attacking. Spawn a projectile using the given information, then message all clients 
-	 * telling them to spawn a projectile with the same info.
-	 * @param p
-	 * @param serverSocket
-	 */
-	private void performAttack(Player p, int mouseX, int mouseY, DatagramSocket serverSocket){
-		ids+=1;		// add new entity, increment ids 
-		game.getHandler().getWorld().getEntityManager().addEntity(new Projectile(game.getHandler(), p, mouseX, mouseY, ids));
-		String s = "spawnProj " + p.getID() + " " + mouseX + " " + mouseY + " " + ids;
-		for (Player p2: game.getHandler().getPlayers()){
-			try {
-				serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, p2.getIP(), p2.getPort()));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
 	}
 	
 	/**
