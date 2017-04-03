@@ -2,18 +2,14 @@ package networking.project.game;
 
 import networking.project.game.entities.creatures.Player;
 import networking.project.game.entities.creatures.projectiles.Projectile;
-import networking.project.game.gfx.GameCamera;
-import networking.project.game.network.packets.ConnectionPacket;
-import networking.project.game.network.packets.GameStartPacket;
-import networking.project.game.network.packets.Packet;
-import networking.project.game.network.packets.PlayerUpdatePacket;
-import networking.project.game.network.packets.ProjectileUpdatePacket;
+import networking.project.game.network.packets.*;
 import networking.project.game.utils.NetCodes;
 import networking.project.game.utils.Utils;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class Client implements Runnable, NetCodes {
 	private Thread thread;
@@ -21,8 +17,20 @@ public class Client implements Runnable, NetCodes {
 	private boolean running = false;
 	private Game game = null;
 	private boolean sendData = false;
-	private int playerID; 
-	
+	private int playerID;
+	private String hostname;
+
+	public Client(String hostname)
+    {
+        this.hostname = hostname;
+    }
+
+    public void startClient()
+    {
+        System.out.println("Started client!");
+        this.start();
+    }
+
 	private void tick(){
 		game.getGameCamera().centerOnEntity(game.getHandler().getClientPlayer());
 		//game.getGameCamera().centerOnCursor();
@@ -41,16 +49,15 @@ public class Client implements Runnable, NetCodes {
   
 		DatagramSocket client_socket = null;
 		int port = 7777;
-		BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
+		//BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
 		
 		try {
 			client_socket = new DatagramSocket();
-			System.out.println("Enter the ip address of the server.");
 			
 			InetAddress host;
 			
 			try{
-				host = InetAddress.getByName(cin.readLine());
+				host = InetAddress.getByName(hostname);
 			} catch (UnknownHostException e) {
 				host = InetAddress.getByName("localhost"); 	// default to localhost
 				e.printStackTrace();
@@ -68,7 +75,7 @@ public class Client implements Runnable, NetCodes {
                 delta += (now - lastTime) / timePerTick;
                 lastTime = now;
 
-                if(delta >= 1 && sendData){
+                if(delta >= 1 /*&& sendData*/){
                     tick();
                     delta--;
                 }
