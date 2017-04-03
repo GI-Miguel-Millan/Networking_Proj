@@ -79,22 +79,6 @@ public class Client implements Runnable, NetCodes {
 				byte[] data = reply.getData();
 				Packet p = Packet.determinePacket(data);
 				evaluateData(p, reply, client_socket);
-				
-//				if(sendData){
-//					Utils.debug("Sending update packet");
-//					PlayerUpdatePacket pup = new PlayerUpdatePacket();
-//					Player player = game.getHandler().getClientPlayer();
-//					
-//					pup.ID = playerID;
-//					pup.input = player.getInput();
-//					pup.health = player.getHealth();
-//					pup.posX = player.getX();
-//					pup.posY = player.getY();
-//					pup.rotation = player.getRotation();
-//					pup.compose();
-//					pup.send(client_socket, host, port);
-//					
-//				}
 			}
 			stop();
 			

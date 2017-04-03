@@ -137,6 +137,9 @@ public class Player extends Creature implements InputFlags {
     public void render(Graphics g) {
         Graphics2D gr = (Graphics2D) g;
         AffineTransform transform = gr.getTransform();
+        GameCamera gc = handler.getGameCamera();
+        posX = (x - gc.getXOffset());
+        posY = (y - gc.getYOffset());
 
         gr.rotate(rotation, posX + width / 2.0, posY + width / 2.0);
 
