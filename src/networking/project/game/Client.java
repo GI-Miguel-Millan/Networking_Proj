@@ -8,6 +8,7 @@ import networking.project.game.network.packets.GameStartPacket;
 import networking.project.game.network.packets.Packet;
 import networking.project.game.network.packets.PlayerUpdatePacket;
 import networking.project.game.utils.NetCodes;
+import networking.project.game.utils.Utils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -15,11 +16,11 @@ import java.net.*;
 
 public class Client implements Runnable, NetCodes {
 	private Thread thread;
+	private InputThread inThread;
 	private boolean running = false;
 	private Game game = null;
 	private boolean sendData = false;
 	private int playerID; 
-	public boolean debugging = true;
 	
 	private void tick(){
 		game.getGameCamera().centerOnEntity(game.getHandler().getClientPlayer());
@@ -71,7 +72,7 @@ public class Client implements Runnable, NetCodes {
                     delta--;
                 }
 				// Get data from server
-				byte[] buffer = new byte[1460];
+				byte[] buffer = new byte[1500];
 				DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 				client_socket.receive(reply);
 				
@@ -79,21 +80,21 @@ public class Client implements Runnable, NetCodes {
 				Packet p = Packet.determinePacket(data);
 				evaluateData(p, reply, client_socket);
 				
-				if(sendData){
-					debug("Sending update packet");
-					PlayerUpdatePacket pup = new PlayerUpdatePacket();
-					Player player = game.getHandler().getClientPlayer();
-					
-					pup.ID = playerID;
-					pup.input = player.getInput();
-					pup.health = player.getHealth();
-					pup.posX = player.getX();
-					pup.posY = player.getY();
-					pup.rotation = player.getRotation();
-					pup.compose();
-					pup.send(client_socket, host, port);
-					
-				}
+//				if(sendData){
+//					Utils.debug("Sending update packet");
+//					PlayerUpdatePacket pup = new PlayerUpdatePacket();
+//					Player player = game.getHandler().getClientPlayer();
+//					
+//					pup.ID = playerID;
+//					pup.input = player.getInput();
+//					pup.health = player.getHealth();
+//					pup.posX = player.getX();
+//					pup.posY = player.getY();
+//					pup.rotation = player.getRotation();
+//					pup.compose();
+//					pup.send(client_socket, host, port);
+//					
+//				}
 			}
 			stop();
 			
@@ -108,7 +109,7 @@ public class Client implements Runnable, NetCodes {
 		
 		if (p instanceof ConnectionPacket)
         {
-			debug("received connection packet");
+			Utils.debug("received connection packet");
             ConnectionPacket cp = (ConnectionPacket)p;
             switch (cp.type)
             {
@@ -124,7 +125,7 @@ public class Client implements Runnable, NetCodes {
             }
         }
 		if (p instanceof GameStartPacket){
-			debug("received gameStart packet");
+			Utils.debug("received gameStart packet");
 			GameStartPacket gs = (GameStartPacket)p;
 			game = new Game("Battle Arena", gs.gameWidth, gs.gameHeight);
 			game.init();
@@ -139,9 +140,13 @@ public class Client implements Runnable, NetCodes {
 			game.getGameState().displayState();
 			game.start();
 			sendData = true;
+			inThread = new InputThread(game, clientSocket, serverDatagram.getAddress(), serverDatagram.getPort());
+			inThread.start();
+			
+			
 		}
 		if (p instanceof PlayerUpdatePacket){
-			debug("received playerUpdate packet");
+			Utils.debug("received playerUpdate packet");
 			PlayerUpdatePacket pup = (PlayerUpdatePacket)p;
 			Player player = game.getHandler().getPlayer(pup.ID);
 			if(player != null){
@@ -177,14 +182,12 @@ public class Client implements Runnable, NetCodes {
 		running = false;
 		try {
 			thread.join();
+			inThread.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void debug(String message){
-		if(debugging)
-			System.out.println(message);
-	}
+	
 
 }

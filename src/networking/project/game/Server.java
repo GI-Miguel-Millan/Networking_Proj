@@ -4,6 +4,7 @@ import networking.project.game.entities.creatures.Player;
 import networking.project.game.entities.creatures.projectiles.Projectile;
 import networking.project.game.network.packets.*;
 import networking.project.game.utils.NetCodes;
+import networking.project.game.utils.Utils;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -32,8 +33,8 @@ public class Server implements Runnable, NetCodes {
 	}
 
 	private void tick(){
-		game.tick();
-		game.render();
+		//game.tick();
+		//game.render();
 	}
 	
 	@Override
@@ -47,7 +48,8 @@ public class Server implements Runnable, NetCodes {
 		int ticks = 0;
 		DatagramSocket server_socket = null;
 		game.init();		// initialze the game before creating players to avoid null pointers
-		game.getDisplay().setVisible(false);
+		game.getDisplay().setVisible(false); //server doesn't need to display anything.
+		
 		try {
 			server_socket = new DatagramSocket(7777);
 			
@@ -152,6 +154,7 @@ public class Server implements Runnable, NetCodes {
         }
         else if (p instanceof PlayerUpdatePacket)
         {
+        	Utils.debug("received an update packet from the player");
             PlayerUpdatePacket pup = (PlayerUpdatePacket)p;
             // This is a player sending an update to us.
             // First, update this player
