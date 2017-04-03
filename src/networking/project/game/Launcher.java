@@ -17,7 +17,7 @@ public class Launcher {
 				new Server(1).startServer();
 			}
 		}else{
-			new Client().start();
+			//new Client().start();
 		}
 	}
 }
