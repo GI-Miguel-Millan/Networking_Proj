@@ -1,22 +1,20 @@
 package networking.project.game.network.packets;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
 /**
- * Created by nick on 3/28/17.
+ * Created by nick on 3/31/17.
  */
-public class PlayerUpdatePacket extends Packet {
+public class ProjectileUpdatePacket extends Packet {
 
-
-    public int ID, health;
-    public byte input;
+    public int ID, parentID;
 
     public double rotation;
-    public float posX, posY;
+
+    public float xPos, yPos;
 
     @Override
     public void decompose(byte[] data)
@@ -24,14 +22,9 @@ public class PlayerUpdatePacket extends Packet {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(data);
              DataInputStream dis = new DataInputStream(bais))
         {
-            if (dis.readByte() == GAME_PLAYER_UPDATE)
+            if (dis.readByte() == GAME_PROJ_UPDATE)
             {
-                ID = dis.readInt();
-                health = dis.readInt();
-                input = dis.readByte();
-                rotation = dis.readDouble();
-                posX = dis.readFloat();
-                posY = dis.readFloat();
+
             }
         }
         catch (Exception e)
@@ -46,13 +39,7 @@ public class PlayerUpdatePacket extends Packet {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream(1460);
              DataOutputStream dos = new DataOutputStream(baos))
         {
-            dos.writeByte(GAME_PLAYER_UPDATE);
-            dos.writeInt(ID);
-            dos.writeInt(health);
-            dos.writeByte(input);
-            dos.writeDouble(rotation);
-            dos.writeFloat(posX);
-            dos.writeFloat(posY);
+
 
             System.arraycopy(baos.toByteArray(), 0, data, 0, baos.size());
         }

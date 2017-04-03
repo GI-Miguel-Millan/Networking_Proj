@@ -1,16 +1,14 @@
 package networking.project.game;
 
+import networking.project.game.entities.creatures.Player;
+import networking.project.game.entities.creatures.projectiles.Projectile;
+import networking.project.game.network.packets.*;
+import networking.project.game.utils.NetCodes;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-
-import networking.project.game.entities.creatures.Player;
-import networking.project.game.entities.creatures.projectiles.Projectile;
-import networking.project.game.network.packets.ConnectionPacket;
-import networking.project.game.network.packets.PlayerUpdatePacket;
-import networking.project.game.network.packets.GameStartPacket;
-import networking.project.game.network.packets.Packet;
-import networking.project.game.utils.NetCodes;
+import java.util.ArrayList;
 
 public class Server implements Runnable, NetCodes {
 
@@ -89,25 +87,26 @@ public class Server implements Runnable, NetCodes {
 	/**
 	 * This method will evaluate the command sent from the client to
 	 * determine which actions the server should take.
-	 * @throws IOException 
 	 */
-	private void evaluateCommand(Packet p, DatagramPacket clientDatagram, DatagramSocket serverSocket) throws IOException {
-
-
+	private void evaluateCommand(Packet p, DatagramPacket clientDatagram, DatagramSocket serverSocket)
+    {
         if (p instanceof ConnectionPacket)
         {
-            switch (p.identifier)
+            ConnectionPacket cp = (ConnectionPacket)p;
+            switch (cp.type)
             {
                 case CONN_REQ:
                 {
                     // A new client connecting
-                    this.ids +=1; // add new player, must increment ids
+                    this.ids++; // add new player, must increment ids
                     this.game.getHandler().getPlayers().add(new Player(game.getHandler(),0,0,clientDatagram.getAddress(), clientDatagram.getPort(), this.ids));
 
                     // Identify this player to them
-                    ConnectionPacket cp = new ConnectionPacket();
-                    cp.dos.writeInt(ids);
-                    cp.send(serverSocket, clientDatagram, true);
+                    ConnectionPacket ack = new ConnectionPacket();
+                    ack.type = CONN_ACK;
+                    ack.ID = ids;
+                    ack.compose();
+                    ack.send(serverSocket, clientDatagram);
 
 
                     // If this client was the last one we needed, start the game
@@ -126,17 +125,6 @@ public class Server implements Runnable, NetCodes {
                             gs.send(serverSocket, pl.getIP(), pl.getPort());
                         }
 
-
-
-                        /*String s = "start Battle_Arena " + GAMEWIDTH + " " + GAMEHEIGHT + " " + this.number_of_players;
-                        for (Player p2: game.getHandler().getPlayers()){
-                            s = s + " " + p2.getIP().getHostAddress() + " " + p2.getPort() + " " + p2.getID();
-                        }
-
-                        for (Player player : game.getHandler().getPlayers()){
-                            serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, player.getIP(), player.getPort()));
-                        }*/
-
                         game.getGameState().displayState();
                         gameStarted = true;	// start the game (allow it to tick)
                         game.getHandler().setClientPlayer(1);
@@ -144,9 +132,11 @@ public class Server implements Runnable, NetCodes {
                     else
                     {
                         // Waiting on more players to join
-                        cp = new ConnectionPacket(CONN_MSG);
-                        cp.dos.writeBytes("Waiting for more players!");
-                        cp.send(serverSocket, clientDatagram, true);
+                        ConnectionPacket mess = new ConnectionPacket();
+                        mess.type = CONN_MSG;
+                        mess.message = "Waiting for more players!";
+                        mess.compose();
+                        mess.send(serverSocket, clientDatagram);
                     }
                     break;
                 }
@@ -162,87 +152,42 @@ public class Server implements Runnable, NetCodes {
         }
         else if (p instanceof PlayerUpdatePacket)
         {
-            switch (p.identifier)
+            PlayerUpdatePacket pup = (PlayerUpdatePacket)p;
+            // This is a player sending an update to us.
+            // First, update this player
+            Player player = game.getHandler().getPlayer(pup.ID);
+            if (player != null)
             {
-                case GAME_PLAYER_UPDATE:
-                {
-                    // The player is sending their inputs to us, let's apply them and send updates back
+                player.setInput(pup.input);
+                player.setHealth(pup.health);
+                player.setX(pup.posX);
+                player.setY(pup.posY);
+                player.setRotation(pup.rotation);
 
-                    break;
+                // Update this player with everybody else's data
+                ArrayList<Player> players = game.getHandler().getPlayers();
+                for (Player other : players)
+                {
+                    // Don't care about this same player
+                    if (other.getID() == pup.ID)
+                        continue;
+
+                    PlayerUpdatePacket pupOther = new PlayerUpdatePacket();
+                    pupOther.ID = other.getID();
+                    pupOther.input = other.getInput();
+                    pupOther.health = other.getHealth();
+                    pupOther.posX = other.getX();
+                    pupOther.posY = other.getY();
+                    pupOther.rotation = other.getRotation();
+                    pupOther.compose();
+                    pupOther.send(serverSocket, clientDatagram);
                 }
-                default:
-                    break;
+
+                // TODO: Update the projectiles for this player
+
+                // TODO: Send the killed list to the player
             }
         }
-        /*
-		if(str.contains(commands[0])){
-
-			
-			//Let the client the id of its own player.
-			String t = "identity " + this.ids;
-			serverSocket.send(new DatagramPacket(t.getBytes(), t.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
-			
-			if (game.getHandler().getPlayers().size() == this.number_of_players){
-				
-				String s = "start Battle_Arena " + GAMEWIDTH + " " + GAMEHEIGHT + " " + this.number_of_players;
-				for (Player p2: game.getHandler().getPlayers()){
-					s = s + " " + p2.getIP().getHostAddress() + " " + p2.getPort() + " " + p2.getID();
-				}
-				
-				for (Player p: game.getHandler().getPlayers()){
-					serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, p.getIP(), p.getPort()));
-				}
-				game.getGameState().displayState();
-				gameStarted = true;	// start the game (allow it to tick)
-				game.getHandler().setClientPlayer(1);
-			}else{
-				String s = "waiting for players";
-				serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
-			}
-			
-			//This is where most of the game updates happen in real time.
-		}else if (str.contains(commands[1])){
-			// inputs format: "input inputFlags clientID mouseX mouseY camX camY"
-			String[] inputs = str.split("\\s");
-			Player cP = game.getHandler().getPlayer(Integer.parseInt(inputs[2]));
-			cP.applyInput(Byte.parseByte(inputs[1]), Integer.parseInt(inputs[5]), Integer.parseInt(inputs[6]));
-			
-			cP.setMouseCoord(Integer.parseInt(inputs[7]), Integer.parseInt(inputs[8]));
-			
-			// player making an attack will require additional action than just assigning inputs.
-			if(Integer.parseInt(inputs[5]) == 1 && cP.isReadyToFire()){
-				cP.setReadyToFire(false);
-				performAttack(cP, Integer.parseInt(inputs[7]), Integer.parseInt(inputs[8]), serverSocket);
-			}
-			
-			String s = "update";
-			for (Player p2: game.getHandler().getPlayers()){
-				//System.out.println("Server side player " + p2);
-				s = s + " " + p2.getIP().getHostAddress() + " " + p2.getPort() + " " + p2.getHealth() 
-				+ " " + (int)p2.getX() + " " + (int)p2.getY() + " " + p2.getMouseX() + " " + p2.getMouseY()
-				+ " " + (int)p2.getCamX() + " " + (int)p2.getCamY();
-			}
-			
-			String s2 = "proj_pos";
-			for(Entity e: game.getHandler().getWorld().getEntityManager().getEntities()){
-				if(e.getClass().equals(Projectile.class)){
-					Projectile p = (Projectile)e;
-					s2 = s2 + " " + (int)p.getX() + " " + (int)p.getY() + " " + p.getID() + " " + p.getMouseX() + " " + p.getMouseY() + " " + p.getCreator().getID();
-				}
-			}
-			
-			String s3 = "kill";
-			for(Integer i: game.getHandler().getK_ID()){
-				s3 = s3 + " " + i.intValue();
-			}
-			
-			// Send player info
-			serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
-			// Send projectile positions
-			serverSocket.send(new DatagramPacket(s2.getBytes(), s2.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
-			// Send ID's of entities to kill.
-			serverSocket.send(new DatagramPacket(s3.getBytes(), s3.getBytes().length, clientDatagram.getAddress(), clientDatagram.getPort()));
-		}*/
 	}
 	
 	/**
