@@ -201,28 +201,34 @@ public class Server implements Runnable, NetCodes {
 
                 // TODO: Send the killed list to the player
             }
+        }else if (p instanceof ProjectileUpdatePacket){
+        	ProjectileUpdatePacket projUP = (ProjectileUpdatePacket)p;
+        	
+        	if (projUP.ID == -1)		// An ID of -1 indicates a player wants to spawn a projectile
+        	{
+        		if(ids <255)			// increment ids to indicate a new projectile spawn
+        			ids++;
+        		else					
+        			ids = number_of_players +1;
+        		
+        		ProjectileUpdatePacket otherPUP = new ProjectileUpdatePacket();
+                otherPUP.ID = ids;
+                otherPUP.parentID = projUP.parentID;
+                otherPUP.rotation = projUP.rotation;
+                otherPUP.xPos = projUP.xPos;
+                otherPUP.yPos = projUP.yPos;
+                otherPUP.compose();
+                		
+        		// Tell each player to spawn a projectile
+                for (Player pl : game.getHandler().getPlayers())
+                {
+                    otherPUP.send(serverSocket, pl.getIP(), pl.getPort());
+                }
+        	}else						// otherwise (something)
+        	{
+        		
+        	}
         }
-	}
-	
-	/**
-	 * The client is attacking. Spawn a projectile using the given information, then message all clients 
-	 * telling them to spawn a projectile with the same info.
-	 * @param p
-	 * @param serverSocket
-	 */
-	private void performAttack(Player p, int mouseX, int mouseY, DatagramSocket serverSocket){
-		ids+=1;		// add new entity, increment ids 
-		game.getHandler().getWorld().getEntityManager().addEntity(new Projectile(game.getHandler(), p, mouseX, mouseY, ids));
-		String s = "spawnProj " + p.getID() + " " + mouseX + " " + mouseY + " " + ids;
-		for (Player p2: game.getHandler().getPlayers()){
-			try {
-				serverSocket.send(new DatagramPacket(s.getBytes(), s.getBytes().length, p2.getIP(), p2.getPort()));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
 	}
 	
 	/**

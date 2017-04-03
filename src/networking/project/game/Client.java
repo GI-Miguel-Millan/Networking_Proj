@@ -7,6 +7,7 @@ import networking.project.game.network.packets.ConnectionPacket;
 import networking.project.game.network.packets.GameStartPacket;
 import networking.project.game.network.packets.Packet;
 import networking.project.game.network.packets.PlayerUpdatePacket;
+import networking.project.game.network.packets.ProjectileUpdatePacket;
 import networking.project.game.utils.NetCodes;
 import networking.project.game.utils.Utils;
 
@@ -139,6 +140,16 @@ public class Client implements Runnable, NetCodes {
 				player.setX(pup.posX);
 				player.setY(pup.posY);
 				player.setRotation(pup.rotation);
+			}
+		}
+		
+		if (p instanceof ProjectileUpdatePacket){
+			Utils.debug("received ProjectileUpdatePacket");
+			ProjectileUpdatePacket pup = (ProjectileUpdatePacket)p;
+			Handler h = game.getHandler();
+			h.getWorld().getEntityManager().addEntity(new Projectile(h, h.getPlayer(pup.parentID), pup.ID));
+			if(h.getClientPlayer().getID() == pup.parentID){
+				h.getClientPlayer().setReadyToFire(false);
 			}
 		}
 	}

@@ -24,7 +24,11 @@ public class ProjectileUpdatePacket extends Packet {
         {
             if (dis.readByte() == GAME_PROJ_UPDATE)
             {
-
+            	ID = dis.readInt();
+                parentID = dis.readInt();
+                rotation = dis.readDouble();
+                xPos = dis.readFloat();
+                yPos = dis.readFloat();
             }
         }
         catch (Exception e)
@@ -43,7 +47,12 @@ public class ProjectileUpdatePacket extends Packet {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream(1460);
              DataOutputStream dos = new DataOutputStream(baos))
         {
-
+        	dos.writeByte(GAME_PROJ_UPDATE);
+            dos.writeInt(ID);
+            dos.writeInt(parentID);
+            dos.writeDouble(rotation);
+            dos.writeFloat(xPos);
+            dos.writeFloat(yPos);
 
             System.arraycopy(baos.toByteArray(), 0, data, 0, baos.size());
         }
