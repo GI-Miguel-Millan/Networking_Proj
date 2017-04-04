@@ -22,7 +22,7 @@ public abstract class Creature extends Entity {
 
 	protected float speed;
 	protected float xMove, yMove;
-	protected boolean drawHealthBars = false;
+	protected boolean drawHealthBars = true;
 
 	public Creature(Handler handler, float x, float y, int width, int height, int id) {
 		super(handler, x, y, width, height, id);
@@ -102,9 +102,9 @@ public abstract class Creature extends Entity {
 			g.setColor(Color.green);
 			g.fillRect(x - offset, y - offset, (((width + (2*offset))/maxHealth) * health)/scale, 5);
 			
-			g.setColor(Color.black);
-			for(int i = x - offset + ((width + (2*offset))/maxHealth)/scale; i < x - offset + (width + (2*offset)); i+=((width + (2*offset))/maxHealth)/scale)
-				g.fillRect(i,y - offset, 1, 10);
+//			g.setColor(Color.black);
+//			for(int i = x - offset + ((width + (2*offset))/maxHealth)/scale; i < x - offset + (width + (2*offset)); i+=((width + (2*offset))/maxHealth)/scale)
+//				g.fillRect(i,y - offset, 1, 10);
 		}
 		
 	}

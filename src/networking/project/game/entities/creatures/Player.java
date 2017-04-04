@@ -157,6 +157,8 @@ public class Player extends Creature implements InputFlags {
             gr.drawImage(Assets.interceptor, (int) posX, (int) posY, width, height, null);
 
         gr.setTransform(transform);
+        
+        drawHealthBar((int)posX, (int)posY, width, height, 50, health, 10,1, g);
 
         //g.drawLine((int)posX+width/2, (int)posY, (int)(handler.getMouseManager().getMouseX()),(int)(handler.getMouseManager().getMouseY()));
         //g.drawRect(posX, posY, width, height);
