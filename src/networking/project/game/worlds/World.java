@@ -1,13 +1,13 @@
 package networking.project.game.worlds;
 
-import java.awt.Graphics;
-
 import networking.project.game.Handler;
 import networking.project.game.entities.EntityManager;
 import networking.project.game.entities.creatures.Player;
 import networking.project.game.tiles.Tile;
 import networking.project.game.utils.Utils;
 import resources.ResourceLoader;
+
+import java.awt.*;
 
 /**
  *	A world is made of Tiles and Entities. A world is what the player

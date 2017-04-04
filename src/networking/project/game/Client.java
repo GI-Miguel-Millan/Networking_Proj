@@ -111,6 +111,11 @@ public class Client implements Runnable, NetCodes {
                     
                     break;
                 }
+                case CONN_DISC:
+                {
+                    int otherID = cp.ID;
+                    game.getHandler().getPlayer(otherID).setActive(false);
+                }
                 // TODO: CONN_MSG here would probably be like some sort of chat, do we want this?
                 default:
                     break;
@@ -133,6 +138,7 @@ public class Client implements Runnable, NetCodes {
 			game.start();
 			sendData = true;
 			inThread = new InputThread(game, clientSocket, serverDatagram.getAddress(), serverDatagram.getPort());
+			game.getHandler().getClientPlayer().addListener(inThread);
 			inThread.start();
 			
 		}

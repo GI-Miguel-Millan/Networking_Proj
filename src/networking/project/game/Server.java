@@ -153,7 +153,15 @@ public class Server implements Runnable, NetCodes {
                 }
                 case CONN_DISC:
                 {
-                    // TODO: Implement disconnecting (them pressing escape)
+                    ConnectionPacket disc = new ConnectionPacket();
+                    disc.type = CONN_DISC;
+                    disc.ID = cp.ID;
+                    disc.compose();
+                    // Now send it everywhere
+					for (Player pl : game.getHandler().getPlayers())
+					{
+						disc.send(serverSocket, pl.getIP(), pl.getPort());
+					}
                     break;
                 }
                 // TODO: CONN_MSG here would probably be like some sort of chat, do we want this?
