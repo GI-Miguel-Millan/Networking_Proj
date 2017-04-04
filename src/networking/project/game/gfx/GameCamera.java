@@ -39,8 +39,8 @@ public class GameCamera {
 			xOffset = handler.getWorld().getWidth() * Tile.TILEWIDTH - handler.getWidth();
 		}
 		
-		if(yOffset < -50){
-			yOffset = -50;
+		if(yOffset < 0){
+			yOffset = 0;
 		}else if(yOffset > handler.getWorld().getHeight() * Tile.TILEHEIGHT - handler.getHeight()){
 			yOffset = handler.getWorld().getHeight() * Tile.TILEHEIGHT - handler.getHeight();
 		}
