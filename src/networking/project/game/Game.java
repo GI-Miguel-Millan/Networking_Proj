@@ -1,6 +1,8 @@
 package networking.project.game;
 
 import networking.project.game.display.Display;
+import networking.project.game.entities.creatures.Player;
+import networking.project.game.entities.events.PlayerDisconnectEvent;
 import networking.project.game.gfx.Assets;
 import networking.project.game.gfx.GameCamera;
 import networking.project.game.input.KeyManager;
@@ -12,6 +14,8 @@ import networking.project.game.states.State;
 import networking.project.game.tiles.Tile;
 
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 
 /**
@@ -23,14 +27,14 @@ import java.awt.image.BufferStrategy;
  *	@version 1.0
  *	@since version 1.0
  */
-public class Game implements Runnable {
+public class Game extends WindowAdapter implements Runnable {
 
 	private Display display;
 	private int width, height;
 	public String title;
 	public static boolean MUTED = false;
 	
-	private boolean running = false;
+	private boolean running = false, isServer = false;
 	private Thread thread;
 	
 	private BufferStrategy bs;
@@ -59,13 +63,25 @@ public class Game implements Runnable {
 		keyManager = new KeyManager(this);
 		mouseManager = new MouseManager();
 	}
-	
-	/**
+
+    @Override
+    public void windowClosing(WindowEvent e)
+    {
+        if (!isServer)
+        {
+            Player p = handler.getClientPlayer();
+            if (p != null)
+                p.fireEvent(new PlayerDisconnectEvent(p));
+        }
+    }
+
+    /**
 	 *  Initializes everything.
 	 */
 	public void init(boolean server){
+	    isServer = server;
 		if (!server) {
-			display = new Display(title, width, height);
+			display = new Display(title, width, height, this);
 			display.getFrame().addKeyListener(keyManager);
 			display.getFrame().addMouseListener(mouseManager);
 			display.getFrame().addMouseMotionListener(mouseManager);
