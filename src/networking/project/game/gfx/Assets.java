@@ -1,6 +1,7 @@
 package networking.project.game.gfx;
 
 import networking.project.game.sound.Sound;
+import networking.project.game.tiles.Tile;
 import resources.ResourceLoader;
 
 import java.awt.image.BufferedImage;
@@ -195,5 +196,6 @@ public class Assets {
 		//test comment
 		// Init all the sounds
 		Sound.init();
+		Tile.init();
 	}
 }

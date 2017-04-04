@@ -1,7 +1,5 @@
 package networking.project.game.tiles;
 
-import java.awt.image.BufferedImage;
-
 import networking.project.game.gfx.Assets;
 
 /**
@@ -15,7 +13,6 @@ public class BossFightStartTile extends Tile{
 
 	public BossFightStartTile(int id) {
 		super(Assets.space2, id);
-		// TODO Auto-generated constructor stub
 	}
 
 	public boolean isBFight(){

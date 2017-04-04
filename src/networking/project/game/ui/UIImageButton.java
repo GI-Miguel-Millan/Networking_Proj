@@ -1,9 +1,7 @@
 package networking.project.game.ui;
 
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-
-import networking.project.game.gfx.Assets;
 
 public class UIImageButton extends UIObject {
 

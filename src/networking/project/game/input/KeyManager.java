@@ -6,7 +6,6 @@ import networking.project.game.utils.InputFlags;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.HashMap;
 
 /**

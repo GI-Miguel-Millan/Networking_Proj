@@ -13,7 +13,5 @@ public class PSpawnTile extends Tile{
 
 	public PSpawnTile(int id) {
 		super(Assets.spaceBound, id);
-		// TODO Auto-generated constructor stub
 	}
-
 }

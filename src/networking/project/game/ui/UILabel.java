@@ -1,6 +1,6 @@
 package networking.project.game.ui;
 
-import java.awt.Graphics;
+import java.awt.*;
 
 public class UILabel extends UIObject {
 

@@ -12,17 +12,17 @@ import networking.project.game.tiles.Tile;
  *	@since version 1.0
  */
 public class GameCamera {
-	
+
+	public static final int DEFAULT_CAMSPEED = 0;
 	private Handler handler;
 	private float xOffset, yOffset;
-	private boolean cameraStop = false;
-	public static final int DEFAULT_CAMSPEED = 0;
-	private int camSpeed = DEFAULT_CAMSPEED;
+	private int camSpeed;
 	
 	public GameCamera(Handler handler, float xOffset, float yOffset){
 		this.handler = handler;
 		this.xOffset = xOffset;
 		this.yOffset = yOffset;
+		camSpeed = DEFAULT_CAMSPEED;
 	}
 	
 	/**
@@ -66,20 +66,6 @@ public class GameCamera {
 	public void centerOnCursor(){
 		xOffset = handler.getMouseManager().getMouseX() - handler.getWidth() / 2 + handler.getMouseManager().getMouseX() / 2;
 		yOffset = handler.getMouseManager().getMouseY() - handler.getHeight() / 2 + handler.getMouseManager().getMouseY() / 2;
-		checkBlankSpace();
-	}
-	
-	/**
-	 * Moves the GameCamera at a constant speed.
-	 * 
-	 * @param e
-	 */
-	public void staticCamera(Entity e){
-		//xOffset = e.getX() - handler.getWidth() / 2 + e.getWidth() / 2;
-		if(cameraStop)
-			camSpeed=0;
-		xOffset = Tile.TILEWIDTH/2 + 5;
-		yOffset -= 1;
 		checkBlankSpace();
 	}
 	

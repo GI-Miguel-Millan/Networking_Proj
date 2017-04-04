@@ -75,21 +75,19 @@ public class Sound {
 	{
 		if(!Game.MUTED){
 			try{
-				new Thread(){
-					public void run(){
-						try {
-							if(!clip.isOpen()){
-								clip.open(audioInputStream);
-								clip.loop(Clip.LOOP_CONTINUOUSLY);
-								FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-									gainControl.setValue(gain); 
-								clip.start();
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}.start();			
+				new Thread(() -> {
+                    try {
+                        if(!clip.isOpen()){
+                            clip.open(audioInputStream);
+                            clip.loop(Clip.LOOP_CONTINUOUSLY);
+                            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                                gainControl.setValue(gain);
+                            clip.start();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }).start();
 			}catch(Exception ex){
 				ex.printStackTrace();
 				

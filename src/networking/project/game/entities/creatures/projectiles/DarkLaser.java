@@ -1,11 +1,10 @@
 package networking.project.game.entities.creatures.projectiles;
 
-import java.awt.Color;
-import java.awt.Graphics;
-
 import networking.project.game.Handler;
 import networking.project.game.entities.creatures.Player;
 import networking.project.game.gfx.Assets;
+
+import java.awt.*;
 
 /**
  *	A DarkLaser is a faster projectile with a different texture.

@@ -24,6 +24,9 @@ import java.util.ArrayList;
  * @since version 1.0
  */
 public class Player extends Creature implements InputFlags {
+
+    private static final int MAX_HEALTH = 100;
+
     //Networking info
     private InetAddress ip;
     private final int port;
@@ -62,7 +65,7 @@ public class Player extends Creature implements InputFlags {
         counter = 0;
         input = 0;
         readyFire = true;
-        health = 50;
+        health = MAX_HEALTH;
         speed = 5;
 
         this.ip = ip;
@@ -86,7 +89,7 @@ public class Player extends Creature implements InputFlags {
 
             rotation = Math.atan2((posX + width / 2) - mouseX, -((posY + height / 2) - mouseY)) - Math.PI;
 
-            if (isPressingKey(IN_ESC)) {
+            if (isPressingKey(IN_ESC) || health <= 0) {
                 fireEvent(new PlayerDisconnectEvent(this));
                 System.exit(0);
             }
@@ -113,7 +116,7 @@ public class Player extends Creature implements InputFlags {
         if (!readyFire && !isPressingKey(IN_ATTK))
             counter++;
 
-        if (counter >= 20) {
+        if (counter >= 15) {
             readyFire = true;
             counter = 0;
         }
@@ -142,10 +145,6 @@ public class Player extends Creature implements InputFlags {
         if (isPressingKey(IN_RIGHT)) {
             xMove = speed;
         }
-
-        if (isPressingKey(IN_ESC)) {
-            // TODO: Do we want to do anything with this?
-        }
     }
 
     @Override
@@ -169,7 +168,7 @@ public class Player extends Creature implements InputFlags {
 
         gr.setTransform(transform);
         
-        drawHealthBar((int)posX, (int)posY, width, height, 50, health, 10,1, g);
+        drawHealthBar((int)posX, (int)posY, width, height, MAX_HEALTH, health, 0,1, g);
 
         //g.drawLine((int)posX+width/2, (int)posY, (int)(handler.getMouseManager().getMouseX()),(int)(handler.getMouseManager().getMouseY()));
         //g.drawRect(posX, posY, width, height);

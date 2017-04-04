@@ -1,22 +1,14 @@
 package networking.project.game;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.util.ArrayList;
-
 import networking.project.game.entities.Entity;
 import networking.project.game.entities.creatures.Player;
-import networking.project.game.entities.creatures.projectiles.Projectile;
-import networking.project.game.gfx.Assets;
 import networking.project.game.gfx.GameCamera;
 import networking.project.game.input.KeyManager;
 import networking.project.game.input.MouseManager;
 import networking.project.game.worlds.World;
+
+import java.net.InetAddress;
+import java.util.ArrayList;
 
 /**
  *	Handler stores references to objects which need to be

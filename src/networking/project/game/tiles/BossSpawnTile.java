@@ -13,7 +13,6 @@ public class BossSpawnTile extends Tile{
 
 	public BossSpawnTile(int id) {
 		super(Assets.space, id);
-		// TODO Auto-generated constructor stub
 	}
 	
 }

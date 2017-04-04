@@ -67,13 +67,5 @@ public class Display {
 	public JFrame getFrame(){
 		return frame;
 	}
-	
-	public void trueVisibility(){
-		frame.setVisible(true);
-	}
-	
-	public void setVisible(boolean visibility){
-		frame.setVisible(visibility);
-	}
-	
+
 }

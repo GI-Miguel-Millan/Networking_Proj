@@ -1,6 +1,6 @@
 package networking.project.game.tiles;
 
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
@@ -13,19 +13,35 @@ import java.awt.image.BufferedImage;
 public class Tile {
 	
 	//STATIC STUFF HERE
-	
+	public static boolean initted = false;
 	public static Tile[] tiles = new Tile[256];
-	public static Tile grassTile = new Space2File(0);
-	public static Tile dirtTile = new SpaceTile(1);
-	public static Tile rockTile = new SpaceBoundsTile(2);
-	public static Tile playerSpawnTile = new PSpawnTile(3);
-	public static Tile enemySpawnTile = new ESpawnTile(4);
-	public static Tile goalTile = new GoalTile(5);
-	public static Tile bossSpawnTile = new BossSpawnTile(6);
-	public static Tile blackHoleTile = new BlackHoleTile(7);
-	public static Tile slowVortexTile = new SlowVortexTile(8);
-	public static Tile bossFightStartTile = new BossFightStartTile(9);
-	
+	public static Tile grassTile;
+	public static Tile dirtTile;
+	public static Tile rockTile;
+	public static Tile playerSpawnTile;
+	public static Tile enemySpawnTile;
+	public static Tile goalTile;
+	public static Tile bossSpawnTile;
+	public static Tile blackHoleTile;
+	public static Tile slowVortexTile;
+	public static Tile bossFightStartTile;
+
+	public static void init()
+    {
+        if (initted)
+            return;
+        grassTile = new Space2File(0);
+        dirtTile = new SpaceTile(1);
+        rockTile = new SpaceBoundsTile(2);
+        playerSpawnTile = new PSpawnTile(3);
+        enemySpawnTile = new ESpawnTile(4);
+        goalTile = new GoalTile(5);
+        bossSpawnTile = new BossSpawnTile(6);
+        blackHoleTile = new BlackHoleTile(7);
+        slowVortexTile = new SlowVortexTile(8);
+        bossFightStartTile = new BossFightStartTile(9);
+        initted = true;
+    }
 	
 	//CLASS
 	
@@ -75,10 +91,7 @@ public class Tile {
 	 * @return false if it IS NOT a player spawn Tile
 	 */
 	public boolean isPSpawn(){
-		if(this.getId() == playerSpawnTile.getId())
-			return true;
-		else
-			return false;
+		return this.getId() == playerSpawnTile.getId();
 	}
 	
 	/**
@@ -87,10 +100,7 @@ public class Tile {
 	 * @return false if it IS Not an Enemy Spawn Tile
 	 */
 	public boolean isESpawn(){
-		if(this.getId() == enemySpawnTile.getId())
-			return true;
-		else
-			return false;
+		return this.getId() == enemySpawnTile.getId();
 	}
 	
 	/**
@@ -99,11 +109,8 @@ public class Tile {
 	 * @return false if not
 	 */
 	public boolean isGoal(){
-		
-		if(this.getId() == goalTile.getId())
-			return true;
-		else 
-			return false;
+
+		return this.getId() == goalTile.getId();
 	}
 	
 	/**
@@ -112,11 +119,8 @@ public class Tile {
 	 * @return false if not
 	 */
 	public boolean isBlackHole(){
-		
-		if(this.getId() == blackHoleTile.getId())
-			return true;
-		else 
-			return false;
+
+		return this.getId() == blackHoleTile.getId();
 	}
 	
 	/**
@@ -125,11 +129,8 @@ public class Tile {
 	 * @return false if not
 	 */
 	public boolean isSlowVortex(){
-		
-		if(this.getId() == slowVortexTile.getId())
-			return true;
-		else 
-			return false;
+
+		return this.getId() == slowVortexTile.getId();
 	}
 	
 	/**
@@ -145,10 +146,7 @@ public class Tile {
 	 * @return false if not
 	 */
 	public boolean isBossSpawn() {
-		if(this.getId() == bossSpawnTile.getId())
-			return true;
-		else
-			return false;
+		return this.getId() == bossSpawnTile.getId();
 	}
 	
 	public void showGoal(){

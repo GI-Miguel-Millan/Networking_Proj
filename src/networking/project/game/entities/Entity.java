@@ -1,10 +1,8 @@
 package networking.project.game.entities;
 
-import java.awt.Graphics;
-import java.awt.Rectangle;
-
 import networking.project.game.Handler;
-import networking.project.game.entities.creatures.projectiles.Projectile;
+
+import java.awt.*;
 
 /**
  *  An Entity is anything in the game which is not a Tile. 
@@ -89,22 +87,6 @@ public abstract class Entity {
 			}
 				
 		}
-		return false;
-	}
-	
-	/**
-	 * Should be overwritten to return true if an Entity is an Enemy.
-	 * @return false by default.
-	 */
-	public boolean isEnemy(){
-		return false;
-	}
-	
-	/**
-	 * Should be overwritten to return true if an Entity is a Boss.
-	 * @return false by default.
-	 */
-	public boolean isBoss(){
 		return false;
 	}
 	

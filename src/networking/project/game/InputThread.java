@@ -21,7 +21,7 @@ public class InputThread extends Thread implements PlayerListener, NetCodes {
 	private int port;
 
 	private int projUP_counter = 0;
-	private int waitTime = 15; 		// wait time before sending packet, in nanoseconds
+	private int waitTime = 5; // wait time before sending packet, in ticks
 	private boolean readyToSendProjUP = true;
 	
 	

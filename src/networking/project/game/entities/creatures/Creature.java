@@ -98,9 +98,9 @@ public abstract class Creature extends Entity {
         try {
             if (drawHealthBars) {
                 g.setColor(Color.red);
-                g.fillRect(x + offset, y - offset, (((width + (2 * offset)) / maxHealth) * maxHealth) / scale, 5);
+                g.fillRect(x + offset, y - offset, (int)((((double)(width + (2 * offset)) / (double)maxHealth) * (double)maxHealth) / (double)scale), 5);
                 g.setColor(Color.green);
-                g.fillRect(x + offset, y - offset, (((width + (2 * offset)) / maxHealth) * health) / scale, 5);
+                g.fillRect(x + offset, y - offset, (int)((((double)(width + (2 * offset)) / (double)maxHealth) * (double)health) / (double)scale), 5);
 //			g.setColor(Color.black);
 //			for(int i = x - offset + ((width + (2*offset))/maxHealth)/scale; i < x - offset + (width + (2*offset)); i+=((width + (2*offset))/maxHealth)/scale)
 //				g.fillRect(i,y - offset, 1, 10);
@@ -126,13 +126,10 @@ public abstract class Creature extends Entity {
         int ty = (int) (y + yMove + bounds.y) / Tile.TILEHEIGHT;
         int tx = (int) (x + xMove + bounds.x + bounds.width) / Tile.TILEWIDTH;
 
-        if (!collisionWithTile((int) (x + bounds.x) / Tile.TILEWIDTH, ty) &&
+        return !collisionWithTile((int) (x + bounds.x) / Tile.TILEWIDTH, ty) &&
                 !collisionWithTile((int) (x + bounds.x + bounds.width) / Tile.TILEWIDTH, ty) &&
                 !collisionWithTile(tx, (int) (y + bounds.y) / Tile.TILEHEIGHT) &&
-                !collisionWithTile(tx, (int) (y + bounds.y + bounds.height) / Tile.TILEHEIGHT)) {
-            return true;
-        } else
-            return false;
+                !collisionWithTile(tx, (int) (y + bounds.y + bounds.height) / Tile.TILEHEIGHT);
 
     }
 

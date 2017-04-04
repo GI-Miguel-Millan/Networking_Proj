@@ -13,7 +13,5 @@ public class ESpawnTile extends Tile{
 
 	public ESpawnTile(int id) {
 		super(Assets.space, id);
-		// TODO Auto-generated constructor stub
 	}
-
 }

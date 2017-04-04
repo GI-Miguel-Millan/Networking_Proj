@@ -1,7 +1,6 @@
 package networking.project.game.ui;
 
-import java.awt.Graphics;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 
 public abstract class UIObject {
@@ -27,10 +26,7 @@ public abstract class UIObject {
 	
 	public void onMouseMove(MouseEvent e){
 		//System.out.println(e.getPoint());
-		if(bounds.contains(e.getX(), e.getY()))
-			hovering = true;
-		else
-			hovering = false;
+		hovering = bounds.contains(e.getX(), e.getY());
 	}
 	
 	public void onMouseRelease(MouseEvent e){
