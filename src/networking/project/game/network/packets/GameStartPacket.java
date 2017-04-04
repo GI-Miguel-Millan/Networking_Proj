@@ -1,7 +1,6 @@
 package networking.project.game.network.packets;
 
 import networking.project.game.utils.NetCodes;
-import networking.project.game.utils.Utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

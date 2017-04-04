@@ -1,7 +1,10 @@
 package networking.project.game.entities.creatures;
 
 import networking.project.game.Handler;
-import networking.project.game.entities.creatures.projectiles.Projectile;
+import networking.project.game.entities.events.PlayerDisconnectEvent;
+import networking.project.game.entities.events.PlayerEvent;
+import networking.project.game.entities.events.PlayerFireEvent;
+import networking.project.game.entities.events.PlayerListener;
 import networking.project.game.gfx.Assets;
 import networking.project.game.gfx.GameCamera;
 import networking.project.game.input.MouseManager;
@@ -10,6 +13,7 @@ import networking.project.game.utils.InputFlags;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.net.InetAddress;
+import java.util.ArrayList;
 
 /**
  * Player is a Creature controlled by the user. This class takes input from the user
@@ -20,6 +24,9 @@ import java.net.InetAddress;
  * @since version 1.0
  */
 public class Player extends Creature implements InputFlags {
+
+    private static final int MAX_HEALTH = 100;
+
     //Networking info
     private InetAddress ip;
     private final int port;
@@ -36,16 +43,29 @@ public class Player extends Creature implements InputFlags {
     private int score = 1000;
     private Rectangle playerBounds = new Rectangle(16, 22, 32, 12);
     private float mouseX = 0, mouseY = 0, camX = 0, camY = 0;
-    public boolean wantToFire = false;
+
+    public ArrayList<PlayerListener> listeners;
+
+    public void addListener(PlayerListener p)
+    {
+        listeners.add(p);
+    }
+
+    public void fireEvent(PlayerEvent p)
+    {
+        listeners.forEach(l -> l.handleEvent(p));
+    }
 
     public Player(Handler handler, float x, float y, InetAddress ip, int port, int id) {
         super(handler, x, y, Creature.DEFAULT_CREATURE_WIDTH, Creature.DEFAULT_CREATURE_HEIGHT, id);
+
+        listeners = new ArrayList<>();
 
         //bounds = playerBounds;
         counter = 0;
         input = 0;
         readyFire = true;
-        health = 50;
+        health = MAX_HEALTH;
         speed = 5;
 
         this.ip = ip;
@@ -69,19 +89,13 @@ public class Player extends Creature implements InputFlags {
 
             rotation = Math.atan2((posX + width / 2) - mouseX, -((posY + height / 2) - mouseY)) - Math.PI;
 
-            if (isPressingKey(IN_ESC)) {
-                // TODO: DEAL WITH THIS
+            if (isPressingKey(IN_ESC) || health <= 0) {
+                fireEvent(new PlayerDisconnectEvent(this));
+                System.exit(0);
             }
 
             if (isPressingKey(IN_ATTK) && readyFire)
-            {
-                // TODO let the server know we fired, perhaps respond to the server's packet instead of creating this here?
-//                handler.getWorld().getEntityManager().addEntity(new Projectile(handler, this, mouseX, mouseY, 100));
-//                readyFire = false;
-            	
-            	wantToFire = true;
-            }else
-            	wantToFire = false;
+                fireEvent(new PlayerFireEvent(this));
         }
 
         applyInput();
@@ -102,7 +116,7 @@ public class Player extends Creature implements InputFlags {
         if (!readyFire && !isPressingKey(IN_ATTK))
             counter++;
 
-        if (counter >= 20) {
+        if (counter >= 15) {
             readyFire = true;
             counter = 0;
         }
@@ -131,10 +145,6 @@ public class Player extends Creature implements InputFlags {
         if (isPressingKey(IN_RIGHT)) {
             xMove = speed;
         }
-
-        if (isPressingKey(IN_ESC)) {
-            // TODO: Do we want to do anything with this?
-        }
     }
 
     @Override
@@ -157,6 +167,8 @@ public class Player extends Creature implements InputFlags {
             gr.drawImage(Assets.interceptor, (int) posX, (int) posY, width, height, null);
 
         gr.setTransform(transform);
+        
+        drawHealthBar((int)posX, (int)posY, width, height, MAX_HEALTH, health, 0,1, g);
 
         //g.drawLine((int)posX+width/2, (int)posY, (int)(handler.getMouseManager().getMouseX()),(int)(handler.getMouseManager().getMouseY()));
         //g.drawRect(posX, posY, width, height);

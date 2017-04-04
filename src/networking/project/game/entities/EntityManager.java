@@ -1,13 +1,12 @@
 package networking.project.game.entities;
 
-import java.awt.Graphics;
+import networking.project.game.Handler;
+import networking.project.game.entities.creatures.Player;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import networking.project.game.Handler;
-import networking.project.game.entities.creatures.*;
 
 /**
  *	The EntityManager manages all entities, rendering each entity
@@ -46,7 +45,7 @@ public class EntityManager {
 				toRemove.add(e);
 		}
 
-		toRemove.forEach(e -> entities.remove(e));
+		entities.removeAll(toRemove);
 
 		entities.sort(renderSorter);
 	}

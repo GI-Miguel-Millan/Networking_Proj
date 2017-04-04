@@ -1,7 +1,5 @@
 package networking.project.game.tiles;
 
-import java.awt.image.BufferedImage;
-
 import networking.project.game.gfx.Assets;
 
 /**
@@ -15,7 +13,5 @@ public class BlackHoleTile extends Tile{
 
 	public BlackHoleTile(int id) {
 		super(Assets.blackHole, id);
-		// TODO Auto-generated constructor stub
 	}
-
 }

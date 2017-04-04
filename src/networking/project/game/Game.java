@@ -1,18 +1,21 @@
 package networking.project.game;
 
-import java.awt.Graphics;
-import java.awt.image.BufferStrategy;
-
 import networking.project.game.display.Display;
+import networking.project.game.entities.creatures.Player;
+import networking.project.game.entities.events.PlayerDisconnectEvent;
 import networking.project.game.gfx.Assets;
 import networking.project.game.gfx.GameCamera;
 import networking.project.game.input.KeyManager;
 import networking.project.game.input.MouseManager;
-import networking.project.game.states.GameOverState;
 import networking.project.game.states.GameState;
-import networking.project.game.states.MenuState;
 import networking.project.game.states.State;
 import networking.project.game.tiles.Tile;
+import networking.project.game.utils.Utils;
+
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferStrategy;
 
 /**
  *	The Game class runs the game: 
@@ -23,20 +26,17 @@ import networking.project.game.tiles.Tile;
  *	@version 1.0
  *	@since version 1.0
  */
-public class Game implements Runnable {
+public class Game extends WindowAdapter implements Runnable {
 
 	private Display display;
 	private int width, height;
 	public String title;
 	public static boolean MUTED = false;
 	
-	private boolean running = false;
+	private boolean running = false, isServer = false;
 	private Thread thread;
-	
-	private BufferStrategy bs;
-	private Graphics g;
-	
-	//States
+
+    //States
 	private State gameState;
 	private State menuState;
 	private State GameOverState;
@@ -59,29 +59,36 @@ public class Game implements Runnable {
 		keyManager = new KeyManager(this);
 		mouseManager = new MouseManager();
 	}
-	
-	/**
+
+    @Override
+    public void windowClosing(WindowEvent e)
+    {
+        if (!isServer)
+        {
+            Player p = handler.getClientPlayer();
+            if (p != null)
+                p.fireEvent(new PlayerDisconnectEvent(p));
+        }
+    }
+
+    /**
 	 *  Initializes everything.
 	 */
-	public void init(){
-		display = new Display(title, width, height);
-		display.getFrame().addKeyListener(keyManager);
-		display.getFrame().addMouseListener(mouseManager);
-		display.getFrame().addMouseMotionListener(mouseManager);
-		display.getCanvas().addMouseListener(mouseManager);
-		display.getCanvas().addMouseMotionListener(mouseManager);
+	public void init(boolean server){
+	    isServer = server;
+		if (!server) {
+			display = new Display(title, width, height, this);
+			display.getFrame().addKeyListener(keyManager);
+			display.getFrame().addMouseListener(mouseManager);
+			display.getFrame().addMouseMotionListener(mouseManager);
+			display.getCanvas().addMouseListener(mouseManager);
+			display.getCanvas().addMouseMotionListener(mouseManager);
+		}
 		Assets.init();
 		//Sound.background.play();//New jon edit
 		
 		gameState = new GameState(handler);
-		GameOverState = new GameOverState(handler);
-		menuState = new MenuState(handler);
-		
-		
 		gameCamera = new GameCamera(handler, 0, handler.getWorld().getHeight() * Tile.TILEHEIGHT);
-		
-		
-		
 	}
 	
 	/**
@@ -100,22 +107,28 @@ public class Game implements Runnable {
 	 *  Renders all the graphics in the game to the screen.
 	 */
 	public void render(){
-		bs = display.getCanvas().getBufferStrategy();
+        BufferStrategy bs = display.getCanvas().getBufferStrategy();
 		if(bs == null){
 			display.getCanvas().createBufferStrategy(3);
 			return;
 		}
-		g = bs.getDrawGraphics();
-		//Clear Screen
-		g.clearRect(0, 0, width, height);
-		//Draw Here!
-		
-		if(State.getState() != null)
-			State.getState().render(g);
-		
-		//End Drawing!
-		bs.show();
-		g.dispose();
+		try {
+            Graphics g = bs.getDrawGraphics();
+            //Clear Screen
+            g.clearRect(0, 0, width, height);
+            //Draw Here!
+
+            if(State.getState() != null)
+                State.getState().render(g);
+
+            //End Drawing!
+            bs.show();
+            g.dispose();
+        }
+		catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 	}
 	
 	/**
@@ -153,7 +166,7 @@ public class Game implements Runnable {
 			
 			// Temporary FPS counter
 			if(timer >= 1000000000){
-				System.out.println("Ticks and Frames: " + ticks);
+                Utils.debug("Ticks and Frames: " + ticks);
 				ticks = 0;
 				timer = 0;
 			}
@@ -229,14 +242,6 @@ public class Game implements Runnable {
 		return display;
 	}
 	
-	public MenuState getMenuState(){
-		return (MenuState) menuState;
-	}
-	
-	public GameOverState getGameOverState(){
-		return (GameOverState) GameOverState;
-	}
-	
 	public GameState getGameState(){
 		return (GameState) gameState;
 	}
@@ -244,23 +249,4 @@ public class Game implements Runnable {
 	public Handler getHandler(){
 		return this.handler;
 	}
-
-	/*public String getPlayerInput(){
-		gameCamera.checkBlankSpace();
-		
-		return "input " + keyManager.input + " " +
-		handler.getClientPlayer().getID() + " " + mouseManager.getMouseX() + " " + mouseManager.getMouseY() + " " + 
-		(int)gameCamera.getXOffset()+ " " + (int)gameCamera.getYOffset();
-	}*/
 }
-
-
-
-
-
-
-
-
-
-
-

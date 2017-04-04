@@ -1,10 +1,10 @@
 package networking.project.game.ui;
 
-import java.awt.Graphics;
+import networking.project.game.Handler;
+
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-
-import networking.project.game.Handler;
 
 public class UIManager {
 
@@ -13,7 +13,7 @@ public class UIManager {
 	
 	public UIManager(Handler handler){
 		this.handler = handler;
-		objects = new ArrayList<UIObject>();
+		objects = new ArrayList<>();
 	}
 	
 	public void tick(){

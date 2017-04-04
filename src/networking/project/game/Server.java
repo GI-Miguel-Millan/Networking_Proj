@@ -1,7 +1,6 @@
 package networking.project.game;
 
 import networking.project.game.entities.creatures.Player;
-import networking.project.game.entities.creatures.projectiles.Projectile;
 import networking.project.game.network.packets.*;
 import networking.project.game.utils.NetCodes;
 import networking.project.game.utils.Utils;
@@ -44,14 +43,10 @@ public class Server implements Runnable, NetCodes {
 		double delta = 0;
 		long now;
 		long lastTime = System.nanoTime();
-		long timer = 0;
-		int ticks = 0;
-		DatagramSocket server_socket = null;
-		game.init();		// initialze the game before creating players to avoid null pointers
-		game.getDisplay().setVisible(false); //server doesn't need to display anything.
+		game.init(true);		// initialze the game before creating players to avoid null pointers
 		
 		try {
-			server_socket = new DatagramSocket(7777);
+			DatagramSocket server_socket = new DatagramSocket(7777);
 			
 			
 			byte[] buffer = new byte[1500];
@@ -60,12 +55,10 @@ public class Server implements Runnable, NetCodes {
 			while(running){
 				now = System.nanoTime();
 				delta += (now - lastTime) / timePerTick;
-				timer += now - lastTime;
 				lastTime = now;
 				
 				if(delta >= 1 && gameStarted){
 					tick();
-					ticks++;
 					delta--;
 				}
 				
@@ -85,7 +78,6 @@ public class Server implements Runnable, NetCodes {
 			stop();
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -126,7 +118,6 @@ public class Server implements Runnable, NetCodes {
                     if (game.getHandler().getPlayers().size() == number_of_players)
                     {
                         GameStartPacket gs = new GameStartPacket();
-                        // TODO: ep.setMode("Battle_Arena") ?
                         gs.gameWidth = (short)GAMEWIDTH;
                         gs.gameHeight = (short)GAMEHEIGHT;
                         gs.numPlayers = (byte)number_of_players;
@@ -155,10 +146,17 @@ public class Server implements Runnable, NetCodes {
                 }
                 case CONN_DISC:
                 {
-                    // TODO: Implement disconnecting (them pressing escape)
+                    ConnectionPacket disc = new ConnectionPacket();
+                    disc.type = CONN_DISC;
+                    disc.ID = cp.ID;
+                    disc.compose();
+                    // Now send it everywhere
+					for (Player pl : game.getHandler().getPlayers())
+					{
+						disc.send(serverSocket, pl.getIP(), pl.getPort());
+					}
                     break;
                 }
-                // TODO: CONN_MSG here would probably be like some sort of chat, do we want this?
                 default:
                     break;
             }
@@ -196,12 +194,9 @@ public class Server implements Runnable, NetCodes {
                     pupOther.compose();
                     pupOther.send(serverSocket, clientDatagram);
                 }
-
-                // TODO: Update the projectiles for this player
-
-                // TODO: Send the killed list to the player
             }
-        }else if (p instanceof ProjectileUpdatePacket){
+        }
+        else if (p instanceof ProjectileUpdatePacket){
         	ProjectileUpdatePacket projUP = (ProjectileUpdatePacket)p;
         	
         	if (projUP.ID == -1)		// An ID of -1 indicates a player wants to spawn a projectile
@@ -226,9 +221,6 @@ public class Server implements Runnable, NetCodes {
                 {
                     otherPUP.send(serverSocket, pl.getIP(), pl.getPort());
                 }
-        	}else						// otherwise (something)
-        	{
-        		
         	}
         }
 	}

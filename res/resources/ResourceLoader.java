@@ -1,15 +1,11 @@
 package resources;
 
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-
-import javax.imageio.ImageIO;
 
 
 public class ResourceLoader {
@@ -61,7 +57,11 @@ public class ResourceLoader {
 					InputStreamReader(rl.getClass().getResource("worlds/" + fileName).openStream()));
 			String line;
 			while((line = br.readLine()) != null)
-				builder.append(line + "\n");
+			{
+				builder.append(line);
+				builder.append("\n");
+			}
+
 			
 			br.close();
 		}catch(IOException e){
@@ -75,21 +75,23 @@ public class ResourceLoader {
 	 * Loads a file from the files folder into the game as a string. This is primarily used for loading
 	 * pre-made worlds into the game.
 	 * 
-	 * @param path the location of the target file to be loaded
+	 * @param fileName the location of the target file to be loaded
 	 * @return a string containing the information of the file.
 	 */
 	public static String loadFileAsString(String fileName){
 		StringBuilder builder = new StringBuilder();
 		
-		try{
-			BufferedReader br = new BufferedReader(new 
-					InputStreamReader(rl.getClass().getResource("files/" + fileName).openStream()));
+		try (InputStreamReader isr = new InputStreamReader(rl.getClass().getResource("files/" + fileName).openStream());
+			BufferedReader br = new BufferedReader(isr))
+		{
 			String line;
 			while((line = br.readLine()) != null)
-				builder.append(line + "\n");
-			
-			br.close();
-		}catch(IOException e){
+			{
+				builder.append(line);
+				builder.append("\n");
+			}
+
+		} catch(IOException e){
 			e.printStackTrace();
 		}
 		

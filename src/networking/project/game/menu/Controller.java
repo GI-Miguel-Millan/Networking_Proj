@@ -1,7 +1,5 @@
 package networking.project.game.menu;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -33,21 +31,18 @@ public class Controller implements Initializable {
 
 
         choiceBox.getItems().addAll("Host a Game", "Join a Host", "Server Only");
-        choiceBox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                buttonCheck();
+        choiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            buttonCheck();
 
-                if (Objects.equals(newValue, "Host a Game")) {
-                    button.setText("Play Game!");
-                    textField.setPromptText("Number of Players");
-                } else if (Objects.equals(newValue, "Join a Host")) {
-                    button.setText("Play Game!");
-                    textField.setPromptText("Host IP Address");
-                } else {
-                    button.setText("Start Server!");
-                    textField.setPromptText("Number of Players");
-                }
+            if (Objects.equals(newValue, "Host a Game")) {
+                button.setText("Play Game!");
+                textField.setPromptText("Number of Players");
+            } else if (Objects.equals(newValue, "Join a Host")) {
+                button.setText("Play Game!");
+                textField.setPromptText("Host IP Address");
+            } else {
+                button.setText("Start Server!");
+                textField.setPromptText("Number of Players");
             }
         });
 
@@ -71,7 +66,7 @@ public class Controller implements Initializable {
             if (textField.getText().matches("[0-9]*")) {
                 new Server(Integer.parseInt(textField.getText())).startServer();
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(1000);
                 }
                 catch (Exception ignored0) {}
                 new Client("localhost").startClient(); //Connect to self

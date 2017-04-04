@@ -1,14 +1,15 @@
 package networking.project.game.entities.creatures.projectiles;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-
 import networking.project.game.Handler;
 import networking.project.game.entities.Entity;
 import networking.project.game.entities.creatures.Creature;
 import networking.project.game.entities.creatures.Player;
 import networking.project.game.gfx.Assets;
 import networking.project.game.sound.Sound;
+import networking.project.game.utils.Utils;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 
 /**
  *	A Projectile is a moving Entity which deals damage to creatures.
@@ -20,7 +21,8 @@ import networking.project.game.sound.Sound;
 public class Projectile extends Creature{
 
 	public static final int DEFAULT_PROJECTILE_WIDTH = 15,
-							DEFAULT_PROJECTILE_HEIGHT = 25;
+							DEFAULT_PROJECTILE_HEIGHT = 25,
+							DEFAULT_PROJECTILE_DAMAGE = 10;
 	protected int counter = 0; 
 	protected Player creator; 
 	protected float mouseX, mouseY;
@@ -38,8 +40,8 @@ public class Projectile extends Creature{
 		handler.getGameCamera().checkBlankSpace();
 		x -= DEFAULT_PROJECTILE_WIDTH / 2.0f;
 		// Adjust projectile xMove and yMove so that it will travel in the direction of the clients mouse position
-		posX = (x - creator.getCamX());
-		posY = (y - creator.getCamY());
+		posX = x;
+		posY = y;
         rotation = e.getRotation();
 		float r = (float) Math.sqrt(Math.pow(mouseX - posX, 2.0) + Math.pow(posY - mouseY, 2.0));
 		float speedX = speed * ( (mouseX - posX)/ r);
@@ -48,7 +50,7 @@ public class Projectile extends Creature{
 		xMove = speedX;
 		yMove = speedY;
 		//System.out.println("speedX: "+ speedX + ", speedY: " + speedY);
-		//System.out.println("poX: " + posX + ", posY: " + posY + ", mX: " + mouseX + " " + ", mY: " +  mouseY);
+        Utils.debug("poX: " + posX + ", posY: " + posY + ", mX: " + mouseX + " " + ", mY: " + mouseY + ", camX:" + creator.getCamX() + ", camY: " + creator.getCamX());
 	
 	}
 
@@ -82,18 +84,18 @@ public class Projectile extends Creature{
 			if(e.getCollisionBounds(0, 0).intersects(getCollisionBounds(xMove,yMove))){
 			
 				// If this projectile collides with the player hurt it.
-				if(e.getClass().equals(Player.class) && !e.getIsInvinc()){
-					e.hurt(1);
+				if(e instanceof Player && !e.getIsInvinc()){
+					e.hurt(DEFAULT_PROJECTILE_DAMAGE);
 				}
-					
+
 				// If the creator of this projectile is the player, then it should hurt
-				// all other entities (except FireBalls).
-				if(creator.getClass().equals(Player.class) && !e.getClass().equals(FireBall.class))
-					e.hurt(1);
+				// all other entities (except FireBalls and the player again).
+				if(creator instanceof Player && !(e instanceof FireBall || e instanceof Player))
+					e.hurt(DEFAULT_PROJECTILE_DAMAGE);
 				
 				// Regardless of whether or not the projectile deals damage,
 				// if it has collided with an entity it must kill itself.
-				this.hurt(1);
+				this.hurt(DEFAULT_PROJECTILE_DAMAGE);
 			}
 		}
 	}
@@ -156,13 +158,4 @@ public class Projectile extends Creature{
 	public Entity getCreator(){
 		return creator;
 	}
-	
-	/*public int getMouseX(){
-		return mouseX;
-	}
-	
-	public int getMouseY(){
-		return mouseY;
-	}*/
-
 }

@@ -1,8 +1,8 @@
 package networking.project.game.states;
 
-import java.awt.Graphics;
-
 import networking.project.game.Handler;
+
+import java.awt.*;
 
 /**
  *  A State is any given phase of the game. It determines what will

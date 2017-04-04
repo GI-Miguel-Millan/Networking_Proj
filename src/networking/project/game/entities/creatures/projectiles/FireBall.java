@@ -1,12 +1,11 @@
 package networking.project.game.entities.creatures.projectiles;
 
-import java.awt.Color;
-import java.awt.Graphics;
-
 import networking.project.game.Handler;
 import networking.project.game.entities.Entity;
 import networking.project.game.entities.creatures.Player;
 import networking.project.game.gfx.Assets;
+
+import java.awt.*;
 
 /**
  *	A FireBall is a slow moving projectile which deals more damage and does not kill itself
@@ -36,7 +35,7 @@ public class FireBall extends Projectile {
 	public void checkAttack(){
 		for(Entity e: handler.getWorld().getEntityManager().getEntities()){
 			//No Need to check for collision if e is this projectile or its creator.
-			if(e.equals(this) || e.equals(creator) || e.getClass().equals(Projectile.class))
+			if(e.equals(this) || e.equals(creator) || e instanceof Projectile)
 				continue;
 			if(e.getCollisionBounds(0, 0).intersects(getCollisionBounds(0,yMove))){
 			
@@ -47,12 +46,11 @@ public class FireBall extends Projectile {
 					
 				// If the creator of this projectile is the player, then it should hurt
 				// all other entities.
-				if(creator.getClass().equals(Player.class)){
+				if(creator instanceof Player){
 					e.hurt(2);
 				}
 				
-				if(!e.getClass().equals(Projectile.class))
-					this.hurt(1);
+				this.hurt(1);
 			}
 		}
 	}
