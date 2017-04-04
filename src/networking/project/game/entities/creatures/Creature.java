@@ -98,9 +98,9 @@ public abstract class Creature extends Entity {
 	public void drawHealthBar(int x, int y, int width, int height , int maxHealth, int health, int offset, int scale, Graphics g){
 		if(drawHealthBars){
 			g.setColor(Color.red);
-			g.fillRect(x - offset, y - offset, (((width + (2*offset))/maxHealth) * maxHealth)/scale, 5);
+			g.fillRect(x + offset, y - offset, (((width + (2*offset))/maxHealth) * maxHealth)/scale, 5);
 			g.setColor(Color.green);
-			g.fillRect(x - offset, y - offset, (((width + (2*offset))/maxHealth) * health)/scale, 5);
+			g.fillRect(x + offset, y - offset, (((width + (2*offset))/maxHealth) * health)/scale, 5);
 			
 //			g.setColor(Color.black);
 //			for(int i = x - offset + ((width + (2*offset))/maxHealth)/scale; i < x - offset + (width + (2*offset)); i+=((width + (2*offset))/maxHealth)/scale)
