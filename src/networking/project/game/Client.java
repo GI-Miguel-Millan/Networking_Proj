@@ -135,22 +135,24 @@ public class Client implements Runnable, NetCodes {
 			inThread = new InputThread(game, clientSocket, serverDatagram.getAddress(), serverDatagram.getPort());
 			inThread.start();
 			
-			
 		}
-		if (p instanceof PlayerUpdatePacket){
+		else if (p instanceof PlayerUpdatePacket){
 			Utils.debug("received playerUpdate packet");
 			PlayerUpdatePacket pup = (PlayerUpdatePacket)p;
 			Player player = game.getHandler().getPlayer(pup.ID);
-			if(player != null){
-				player.setInput(pup.input);
-				player.setHealth(pup.health);
-				player.setX(pup.posX);
-				player.setY(pup.posY);
-				player.setRotation(pup.rotation);
-			}
+			if (player == null)
+            {
+                player = new Player(game.getHandler(), 0, 0, null, -1, pup.ID);
+                game.getHandler().getPlayers().add(player);
+            }
+
+			player.setInput(pup.input);
+            player.setHealth(pup.health);
+            player.setX(pup.posX);
+            player.setY(pup.posY);
+            player.setRotation(pup.rotation);
 		}
-		
-		if (p instanceof ProjectileUpdatePacket){
+		else if (p instanceof ProjectileUpdatePacket){
 			Utils.debug("received ProjectileUpdatePacket");
 			ProjectileUpdatePacket pup = (ProjectileUpdatePacket)p;
 			Handler h = game.getHandler();
