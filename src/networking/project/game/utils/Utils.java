@@ -13,7 +13,7 @@ import java.io.IOException;
  *	@since version 1.0
  */
 public class Utils {
-	private static boolean debugging = false;
+	private static boolean debugging = true;
 	
 	/**
 	 * Loads a file into the game as a string. This is primarily used for loading

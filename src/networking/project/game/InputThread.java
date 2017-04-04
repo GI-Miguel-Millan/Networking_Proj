@@ -15,7 +15,7 @@ public class InputThread extends Thread {
 	private int port;
 
 	private int projUP_counter = 0;
-	private int waitTime = 600; 		// wait time before sending packet, in nanoseconds
+	private int waitTime = 15; 		// wait time before sending packet, in nanoseconds
 	private boolean readyToSendProjUP = true;
 	
 	
@@ -47,6 +47,11 @@ public class InputThread extends Thread {
 			
 			if(delta >= 1){
 				
+				if(projUP_counter >= waitTime){
+					readyToSendProjUP = true;
+					projUP_counter = 0;
+				}
+				
 				Utils.debug("sending player data");
 				pup.ID = player.getID();
 				pup.input = player.getInput();
@@ -72,18 +77,15 @@ public class InputThread extends Thread {
 					
 				}
 				
+				if(!readyToSendProjUP){
+					projUP_counter++;
+				}
+				
 				ticks++;
 				delta--;
 			}
 			
-			if(!readyToSendProjUP){
-				projUP_counter++;
-				
-				if(projUP_counter == waitTime){
-					readyToSendProjUP = true;
-					projUP_counter = 0;
-				}
-			}
+			
 		}
 	}
 }
