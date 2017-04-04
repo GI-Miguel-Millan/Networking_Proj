@@ -1,14 +1,12 @@
 package networking.project.game;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-
 import networking.project.game.entities.creatures.Player;
-import networking.project.game.network.packets.Packet;
 import networking.project.game.network.packets.PlayerUpdatePacket;
 import networking.project.game.network.packets.ProjectileUpdatePacket;
 import networking.project.game.utils.Utils;
+
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 
 public class InputThread extends Thread {
 	private Game game;
@@ -67,8 +65,8 @@ public class InputThread extends Thread {
 					projUP.rotation = player.getRotation();
 					projUP.xPos = player.getX();
 					projUP.yPos = player.getY();
-					projUP.mX = player.getMouseX();
-					projUP.mY = player.getMouseY();
+					projUP.mX = player.getCamX() + player.getMouseX();
+					projUP.mY = player.getCamY() + player.getMouseY();
 					projUP.compose();
 					projUP.send(client_socket,  host, port);
 					
