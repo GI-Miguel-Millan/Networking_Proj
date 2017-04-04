@@ -30,6 +30,8 @@ public class Sound {
 
 	public static void init()
 	{
+	    if (initted)
+	        return;
 		bgm4 = new Sound(ResourceLoader.loadSounds(Assets.fileNames[16]), -15);
 		venus = new Sound(ResourceLoader.loadSounds(Assets.fileNames[15]), -15);
 		bgm3 = new Sound(ResourceLoader.loadSounds(Assets.fileNames[17]), -15);

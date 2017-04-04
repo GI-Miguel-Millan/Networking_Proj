@@ -64,29 +64,21 @@ public class Game implements Runnable {
 	 *  Initializes everything.
 	 */
 	public void init(boolean server){
-		if (server) {
-			Assets.initFilenames();
-		}
-		else {
+		if (!server) {
 			display = new Display(title, width, height);
 			display.getFrame().addKeyListener(keyManager);
 			display.getFrame().addMouseListener(mouseManager);
 			display.getFrame().addMouseMotionListener(mouseManager);
 			display.getCanvas().addMouseListener(mouseManager);
 			display.getCanvas().addMouseMotionListener(mouseManager);
-			Assets.init();
 		}
+		Assets.init();
 		//Sound.background.play();//New jon edit
 		
 		gameState = new GameState(handler);
 		GameOverState = new GameOverState(handler);
 		menuState = new MenuState(handler);
-		
-		
 		gameCamera = new GameCamera(handler, 0, handler.getWorld().getHeight() * Tile.TILEHEIGHT);
-		
-		
-		
 	}
 	
 	/**

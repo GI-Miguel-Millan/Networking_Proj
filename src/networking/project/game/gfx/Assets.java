@@ -13,7 +13,10 @@ import java.awt.image.BufferedImage;
  *	@since version 1.0
  */
 public class Assets {
-	
+
+
+    public static boolean initted = false;
+
 	//Dimensions of tiles in the SpriteSheet
 	private static final int width = 64, height = 64;
 	
@@ -70,7 +73,12 @@ public class Assets {
 	 *  Loads all assets into the game. This should only be called once.
 	 */
 	public static void init(){
-		initFilenames();
+	    if (initted)
+	        return;
+        String regex = "\\s+";
+        String pathsFile = ResourceLoader.loadFileAsString("Paths.txt");
+        //Splits up each file name into the fileNames array
+        fileNames = pathsFile.split(regex);
 		
 //		for(String i: fileNames)
 //			System.out.println(i);
@@ -187,13 +195,5 @@ public class Assets {
 		//test comment
 		// Init all the sounds
 		Sound.init();
-	}
-
-	public static void initFilenames()
-	{
-		String regex = "\\s+";
-		String pathsFile = ResourceLoader.loadFileAsString("Paths.txt");
-		//Splits up each file name into the fileNames array
-		fileNames = pathsFile.split(regex);
 	}
 }
