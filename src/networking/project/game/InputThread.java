@@ -1,14 +1,20 @@
 package networking.project.game;
 
 import networking.project.game.entities.creatures.Player;
+import networking.project.game.entities.events.PlayerDisconnectEvent;
+import networking.project.game.entities.events.PlayerEvent;
+import networking.project.game.entities.events.PlayerFireEvent;
+import networking.project.game.entities.events.PlayerListener;
+import networking.project.game.network.packets.ConnectionPacket;
 import networking.project.game.network.packets.PlayerUpdatePacket;
 import networking.project.game.network.packets.ProjectileUpdatePacket;
+import networking.project.game.utils.NetCodes;
 import networking.project.game.utils.Utils;
 
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-public class InputThread extends Thread {
+public class InputThread extends Thread implements PlayerListener, NetCodes {
 	private Game game;
 	private DatagramSocket client_socket;
 	private InetAddress host;
@@ -61,21 +67,7 @@ public class InputThread extends Thread {
 				pup.rotation = player.getRotation();
 				pup.compose();
 				pup.send(client_socket, host, port);
-				
-				if(player.wantToFire && readyToSendProjUP){
-					readyToSendProjUP = false; 			// start counting down before sending another proj update packet
-					ProjectileUpdatePacket projUP = new ProjectileUpdatePacket();
-					projUP.ID = -1; // let the server assign proper ID to projectile
-					projUP.parentID = player.getID();
-					projUP.rotation = player.getRotation();
-					projUP.xPos = player.getX();
-					projUP.yPos = player.getY();
-					projUP.mX = player.getCamX() + player.getMouseX();
-					projUP.mY = player.getCamY() + player.getMouseY();
-					projUP.compose();
-					projUP.send(client_socket,  host, port);
-					
-				}
+
 				
 				if(!readyToSendProjUP){
 					projUP_counter++;
@@ -86,6 +78,39 @@ public class InputThread extends Thread {
 			}
 			
 			
+		}
+	}
+
+	@Override
+	public void handleEvent(PlayerEvent pe) {
+
+		if (pe instanceof PlayerFireEvent)
+		{
+			if (!readyToSendProjUP)
+				return;
+			Player player = pe.player;
+
+			ProjectileUpdatePacket projUP = new ProjectileUpdatePacket();
+			projUP.ID = -1; // let the server assign proper ID to projectile
+			projUP.parentID = player.getID();
+			projUP.rotation = player.getRotation();
+			projUP.xPos = player.getX();
+			projUP.yPos = player.getY();
+			projUP.mX = player.getCamX() + player.getMouseX();
+			projUP.mY = player.getCamY() + player.getMouseY();
+			projUP.compose();
+			projUP.send(client_socket,  host, port);
+
+			readyToSendProjUP = false;
+		}
+
+		else if (pe instanceof PlayerDisconnectEvent)
+		{
+			ConnectionPacket cp = new ConnectionPacket();
+			cp.type = CONN_DISC;
+			cp.ID = pe.player.getID();
+			cp.compose();
+			cp.send(client_socket, host, port);
 		}
 	}
 }

@@ -1,7 +1,10 @@
 package networking.project.game.entities.creatures;
 
 import networking.project.game.Handler;
-import networking.project.game.entities.creatures.projectiles.Projectile;
+import networking.project.game.entities.events.PlayerDisconnectEvent;
+import networking.project.game.entities.events.PlayerEvent;
+import networking.project.game.entities.events.PlayerFireEvent;
+import networking.project.game.entities.events.PlayerListener;
 import networking.project.game.gfx.Assets;
 import networking.project.game.gfx.GameCamera;
 import networking.project.game.input.MouseManager;
@@ -10,6 +13,7 @@ import networking.project.game.utils.InputFlags;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.net.InetAddress;
+import java.util.ArrayList;
 
 /**
  * Player is a Creature controlled by the user. This class takes input from the user
@@ -36,10 +40,23 @@ public class Player extends Creature implements InputFlags {
     private int score = 1000;
     private Rectangle playerBounds = new Rectangle(16, 22, 32, 12);
     private float mouseX = 0, mouseY = 0, camX = 0, camY = 0;
-    public boolean wantToFire = false;
+
+    public ArrayList<PlayerListener> listeners;
+
+    public void addListener(PlayerListener p)
+    {
+        listeners.add(p);
+    }
+
+    public void fireEvent(PlayerEvent p)
+    {
+        listeners.forEach(l -> l.handleEvent(p));
+    }
 
     public Player(Handler handler, float x, float y, InetAddress ip, int port, int id) {
         super(handler, x, y, Creature.DEFAULT_CREATURE_WIDTH, Creature.DEFAULT_CREATURE_HEIGHT, id);
+
+        listeners = new ArrayList<>();
 
         //bounds = playerBounds;
         counter = 0;
@@ -70,18 +87,12 @@ public class Player extends Creature implements InputFlags {
             rotation = Math.atan2((posX + width / 2) - mouseX, -((posY + height / 2) - mouseY)) - Math.PI;
 
             if (isPressingKey(IN_ESC)) {
-                // TODO: DEAL WITH THIS
+                fireEvent(new PlayerDisconnectEvent(this));
+                System.exit(0);
             }
 
             if (isPressingKey(IN_ATTK) && readyFire)
-            {
-                // TODO let the server know we fired, perhaps respond to the server's packet instead of creating this here?
-//                handler.getWorld().getEntityManager().addEntity(new Projectile(handler, this, mouseX, mouseY, 100));
-//                readyFire = false;
-            	
-            	wantToFire = true;
-            }else
-            	wantToFire = false;
+                fireEvent(new PlayerFireEvent(this));
         }
 
         applyInput();
