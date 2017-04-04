@@ -48,7 +48,7 @@ public class Projectile extends Creature{
 		xMove = speedX;
 		yMove = speedY;
 		//System.out.println("speedX: "+ speedX + ", speedY: " + speedY);
-		//System.out.println("poX: " + posX + ", posY: " + posY + ", mX: " + mouseX + " " + ", mY: " +  mouseY);
+		System.out.println("poX: " + posX + ", posY: " + posY + ", mX: " + mouseX + " " + ", mY: " +  mouseY + ", camX:" + creator.getCamX() + ", camY: " + creator.getCamX());
 	
 	}
 
