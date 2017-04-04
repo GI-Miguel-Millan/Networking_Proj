@@ -1,14 +1,14 @@
 package networking.project.game.entities.creatures.projectiles;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-
 import networking.project.game.Handler;
 import networking.project.game.entities.Entity;
 import networking.project.game.entities.creatures.Creature;
 import networking.project.game.entities.creatures.Player;
 import networking.project.game.gfx.Assets;
 import networking.project.game.sound.Sound;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 
 /**
  *	A Projectile is a moving Entity which deals damage to creatures.
@@ -38,8 +38,8 @@ public class Projectile extends Creature{
 		handler.getGameCamera().checkBlankSpace();
 		x -= DEFAULT_PROJECTILE_WIDTH / 2.0f;
 		// Adjust projectile xMove and yMove so that it will travel in the direction of the clients mouse position
-		posX = (x - creator.getCamX());
-		posY = (y - creator.getCamY());
+		posX = x;
+		posY = y;
         rotation = e.getRotation();
 		float r = (float) Math.sqrt(Math.pow(mouseX - posX, 2.0) + Math.pow(posY - mouseY, 2.0));
 		float speedX = speed * ( (mouseX - posX)/ r);
