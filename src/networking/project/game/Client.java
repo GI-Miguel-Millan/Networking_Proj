@@ -29,11 +29,11 @@ public class Client implements Runnable, NetCodes {
     }
 
     private void tick() {
-        game.getGameCamera().centerOnEntity(game.getHandler().getClientPlayer());
-        //game.getGameCamera().centerOnCursor();
-        game.tick();
-        game.render();
-        game.getKeyManager().tick();
+//        game.getGameCamera().centerOnEntity(game.getHandler().getClientPlayer());
+//        //game.getGameCamera().centerOnCursor();
+//        game.tick();
+//        game.render();
+//        game.getKeyManager().tick();
     }
 
     @Override
